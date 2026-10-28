@@ -43,7 +43,7 @@
       "id": "A-02",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-02",
-      "trangThai": "Trống",
+      "trangThai": "Bảo trì",
       "loaiXe": "OTO",
       "bienSoXe": null,
       "thoiGianVao": null
@@ -461,6 +461,22 @@
     }
   ],
   "LuotVaoRa": [
+    {
+      "id": "LVR-1793199079152",
+      "bienSo": "30K-123.88",
+      "loaiXe": "O to",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-28T14:51:19.152Z",
+      "thoiGianRa": "2026-10-28T14:51:26.770Z",
+      "anhVao": "/uploads/default_in.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 0,
+      "phuongThucThanhToan": "VE_THANG",
+      "doTinCayAI": 0.88,
+      "soGioGui": 1,
+      "loaiVe": "VE_THANG"
+    },
     {
       "id": "LVR-1793184306040",
       "bienSo": "88A-456.78",

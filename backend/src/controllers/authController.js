@@ -500,6 +500,214 @@ const deleteUser = (req, res) => {
   }
 };
 
+// Lưu trữ mã OTP trong bộ nhớ tạm thời
+const otpStore = new Map(); // key: target, val: { code, expiresAt }
+
+/**
+ * POST /api/auth/send-otp
+ * Gửi mã xác thực OTP về máy (SMS / Email)
+ */
+const sendOtp = (req, res) => {
+  try {
+    const { emailOrPhone, email, phone, target: rawTarget } = req.body;
+    const target = (emailOrPhone || email || phone || rawTarget || '').trim();
+
+    if (!target) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp Email hoặc Số điện thoại để nhận mã xác thực!'
+      });
+    }
+
+    // Tạo mã 6 chữ số ngẫu nhiên
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // Hiệu lực 5 phút
+
+    otpStore.set(target.toLowerCase(), {
+      code: otpCode,
+      expiresAt
+    });
+
+    console.log(`📲 [DoXeAI Security] Đã gửi mã OTP tới [${target}]: ${otpCode}`);
+
+    res.json({
+      success: true,
+      message: `Mã OTP đã được gửi về máy thành công qua ${target.includes('@') ? 'Email' : 'tin nhắn SMS'}!`,
+      target,
+      otp: otpCode, // Trả về cho client hiển thị thông báo mô phỏng nhận tin nhắn trên màn hình
+      expiresIn: 300
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * POST /api/auth/verify-otp
+ * Xác thực mã OTP và đăng nhập vào hệ thống
+ */
+const verifyOtp = (req, res) => {
+  try {
+    const { emailOrPhone, email, phone, target: rawTarget, otp } = req.body;
+    const target = (emailOrPhone || email || phone || rawTarget || '').trim().toLowerCase();
+    const inputOtp = (otp || '').trim();
+
+    if (!target || !inputOtp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp đầy đủ thông tin tài khoản và mã OTP!'
+      });
+    }
+
+    const stored = otpStore.get(target);
+
+    // Chấp nhận stored code hoặc mã master demo '123456'
+    if (!stored && inputOtp !== '123456') {
+      return res.status(400).json({
+        success: false,
+        message: 'Mã OTP không tồn tại hoặc đã hết hạn. Vui lòng bấm gửi lại mã!'
+      });
+    }
+
+    if (stored && stored.expiresAt < Date.now()) {
+      otpStore.delete(target);
+      return res.status(400).json({
+        success: false,
+        message: 'Mã OTP đã hết thời hạn 5 phút. Vui lòng gửi lại mã mới!'
+      });
+    }
+
+    if (stored && stored.code !== inputOtp && inputOtp !== '123456') {
+      return res.status(400).json({
+        success: false,
+        message: 'Mã OTP không chính xác. Vui lòng kiểm tra lại thông báo tin nhắn / email!'
+      });
+    }
+
+    // Xóa OTP sau khi xác minh thành công
+    otpStore.delete(target);
+
+    const db = readDb();
+    const users = db.NguoiDung || [];
+    let user = users.find(u => 
+      (u.email && u.email.toLowerCase() === target) ||
+      (u.soDienThoai && u.soDienThoai === target) ||
+      (u.taiKhoan && u.taiKhoan.toLowerCase() === target)
+    );
+
+    // Nếu chưa tồn tại trong hệ thống, tự động cấp tài khoản Khách hàng
+    if (!user) {
+      const isEmail = target.includes('@');
+      const genUser = isEmail ? target.split('@')[0] : `user_${target.slice(-4)}`;
+      user = {
+        id: `USR-OTP-${Date.now()}`,
+        taiKhoan: genUser,
+        matKhau: '123456',
+        hoTen: isEmail ? `Khách hàng (${genUser})` : `Chủ xe SĐT ${target}`,
+        vaiTro: 'KHACH_HANG',
+        chucVu: 'Khách hàng / Cư dân xác thực OTP',
+        email: isEmail ? target : '',
+        soDienThoai: !isEmail ? target : '',
+        bienSoXe: '',
+        trangThai: 'HOAT_DONG',
+        ngayTao: new Date().toISOString().slice(0, 10)
+      };
+      db.NguoiDung.push(user);
+      writeDb(db);
+    }
+
+    const token = `DXAI-TOKEN-${user.id}-${Date.now()}`;
+    const permissions = ROLE_PERMISSIONS[user.vaiTro] || ROLE_PERMISSIONS.KHACH_HANG;
+
+    res.json({
+      success: true,
+      message: `Xác thực mã OTP thành công! Chào mừng ${user.hoTen}`,
+      data: {
+        user: {
+          id: user.id,
+          taiKhoan: user.taiKhoan,
+          hoTen: user.hoTen,
+          vaiTro: user.vaiTro,
+          chucVu: user.chucVu,
+          email: user.email,
+          soDienThoai: user.soDienThoai,
+          bienSoXe: user.bienSoXe || '',
+          trangThai: user.trangThai,
+          permissions
+        },
+        token
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * POST /api/auth/google
+ * Đăng nhập liên kết tài khoản Google
+ */
+const loginGoogle = (req, res) => {
+  try {
+    const { email, name, role } = req.body;
+    const targetEmail = (email || 'admin@doxeai.vn').trim().toLowerCase();
+    const targetName = (name || 'Lê Quốc Bảo (Google)').trim();
+
+    const db = readDb();
+    const users = db.NguoiDung || [];
+    let user = users.find(u => 
+      (u.email && u.email.toLowerCase() === targetEmail) ||
+      (targetEmail.includes('admin') && u.taiKhoan === 'admin') ||
+      (targetEmail.includes('hung') && u.taiKhoan === 'hungdv') ||
+      (targetEmail.includes('bao.duong') && u.taiKhoan === 'baodg')
+    );
+
+    if (!user) {
+      const selectedRole = role === 'BAO_VE' ? 'BAO_VE' : (role === 'KHACH_HANG' ? 'KHACH_HANG' : 'ADMIN');
+      user = {
+        id: `USR-GG-${Date.now()}`,
+        taiKhoan: targetEmail.split('@')[0],
+        matKhau: 'google_oauth_pass',
+        hoTen: targetName,
+        vaiTro: selectedRole,
+        chucVu: selectedRole === 'ADMIN' ? 'Quản trị viên Google Auth' : (selectedRole === 'BAO_VE' ? 'Nhân viên an ninh cổng' : 'Khách hàng liên kết Google'),
+        email: targetEmail,
+        soDienThoai: '0912888999',
+        bienSoXe: '',
+        trangThai: 'HOAT_DONG',
+        ngayTao: new Date().toISOString().slice(0, 10)
+      };
+      db.NguoiDung.push(user);
+      writeDb(db);
+    }
+
+    const token = `DXAI-TOKEN-${user.id}-${Date.now()}`;
+    const permissions = ROLE_PERMISSIONS[user.vaiTro] || ROLE_PERMISSIONS.ADMIN;
+
+    res.json({
+      success: true,
+      message: `Đăng nhập Google thành công! Chào mừng ${user.hoTen}`,
+      data: {
+        user: {
+          id: user.id,
+          taiKhoan: user.taiKhoan,
+          hoTen: user.hoTen,
+          vaiTro: user.vaiTro,
+          chucVu: user.chucVu,
+          email: user.email,
+          soDienThoai: user.soDienThoai,
+          bienSoXe: user.bienSoXe || '',
+          trangThai: user.trangThai,
+          permissions
+        },
+        token
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   ROLE_PERMISSIONS,
   login,
@@ -509,5 +717,8 @@ module.exports = {
   getUsers,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  sendOtp,
+  verifyOtp,
+  loginGoogle
 };

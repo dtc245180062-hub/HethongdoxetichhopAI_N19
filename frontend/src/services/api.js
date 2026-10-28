@@ -25,6 +25,33 @@ export const api = {
     return res.json();
   },
 
+  async sendOtp(emailOrPhone) {
+    const res = await fetch(`${API_BASE}/auth/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emailOrPhone })
+    });
+    return res.json();
+  },
+
+  async verifyOtp(emailOrPhone, otp) {
+    const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emailOrPhone, otp })
+    });
+    return res.json();
+  },
+
+  async loginGoogle(payload = {}) {
+    const res = await fetch(`${API_BASE}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return res.json();
+  },
+
   async register(userData) {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
