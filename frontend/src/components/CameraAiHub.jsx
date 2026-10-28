@@ -35,28 +35,6 @@ export default function CameraAiHub({ slots = [], zones = [], onSelectSlot }) {
     box: [180, 240, 480, 310]
   });
 
-  const SAMPLE_PLATES = [
-    { plate: '30A-999.99', type: 'OTO', conf: 0.96, title: 'Ô tô Mercedes C300 (Rõ nét)' },
-    { plate: '51K-892.45', type: 'OTO', conf: 0.92, title: 'Ô tô VinFast VF8 (Biển dài)' },
-    { plate: '29-B1 123.45', type: 'XE_MAY', conf: 0.89, title: 'Xe máy Honda SH (2 dòng)' },
-    { plate: '14-A2 555.66', type: 'OTO', conf: 0.65, title: 'Biển số góc xiên / Mờ (Low conf < 70%)' }
-  ];
-
-  const handleSimulateScan = (sample) => {
-    setIsScanning(true);
-    setTimeout(() => {
-      setAnprResult({
-        plate: sample.plate,
-        type: sample.type,
-        confidence: sample.conf,
-        processTimeMs: Math.floor(Math.random() * 40 + 70),
-        engine: 'YOLOv8n + EasyOCR (FastAPI Port 8000)',
-        box: [160, 220, 460, 300]
-      });
-      setIsScanning(false);
-    }, 700);
-  };
-
   // =========================================================================
   // 2. GỢI Ý VỊ TRÍ ĐỖ XE TỐI ƯU (OPTIMAL SLOT RECOMMENDATION)
   // =========================================================================
@@ -248,25 +226,6 @@ export default function CameraAiHub({ slots = [], zones = [], onSelectSlot }) {
               </div>
               <div className="absolute bottom-3 right-3 text-[10px] font-mono text-slate-300 bg-black/60 px-2 py-1 rounded backdrop-blur-sm">
                 LATENCY: {anprResult.processTimeMs} ms
-              </div>
-            </div>
-
-            {/* Thử nghiệm với các ảnh biển số mẫu */}
-            <div className="space-y-2 pt-2">
-              <span className="text-xs font-semibold text-slate-700 block">Chọn biển số mẫu kiểm thử AI:</span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {SAMPLE_PLATES.map((sample) => (
-                  <button
-                    key={sample.plate}
-                    type="button"
-                    onClick={() => handleSimulateScan(sample)}
-                    disabled={isScanning}
-                    className="p-2 rounded-xl border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50/50 text-left transition cursor-pointer disabled:opacity-50"
-                  >
-                    <div className="text-[11px] font-mono font-bold text-slate-900">{sample.plate}</div>
-                    <div className="text-[10px] text-slate-500 mt-0.5 truncate">{sample.title}</div>
-                  </button>
-                ))}
               </div>
             </div>
           </div>

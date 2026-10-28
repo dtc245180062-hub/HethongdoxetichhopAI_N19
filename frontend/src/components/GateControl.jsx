@@ -258,76 +258,6 @@ export default function GateControl({
     }, 'image/jpeg', 0.95);
   };
 
-  // ================= DỮ LIỆU MẪU KIỂM THỬ (KHÔNG CHỨA ICON / EMOJI) =================
-  const SAMPLE_VEHICLES = [
-    {
-      id: 'bike_12b1',
-      title: 'Xe máy',
-      plate: '12-B1 168.88',
-      type: 'Xe may',
-      badge: '2 dòng số',
-      badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      imgUrl: '/uploads/plate-1790933101057-93459260.jpg'
-    },
-    {
-      id: 'car_30h',
-      title: 'Ô tô',
-      plate: '30H-892.45',
-      type: 'O to',
-      badge: 'Thường trú',
-      badgeClass: 'bg-blue-50 text-blue-700 border-blue-200',
-      imgUrl: '/uploads/plate-1787582830275-878774211.jpg'
-    },
-    {
-      id: 'car_51k',
-      title: 'Ô tô VIP',
-      plate: '51K-345.67',
-      type: 'O to',
-      badge: 'Cư dân',
-      badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
-      imgUrl: '/uploads/plate-1787583758275-659382424.jpg'
-    },
-    {
-      id: 'uc15_test',
-      title: 'Biển mờ',
-      plate: 'Nhập tay',
-      type: 'O to',
-      badge: 'Kiểm tra',
-      badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
-      isLowConf: true
-    }
-  ];
-
-  const handleLoadPreset = async (preset) => {
-    if (preset.isLowConf) {
-      setInImageFile(null);
-      setInImagePreview(null);
-      setInBox(null);
-      setInPlateCropBase64(null);
-      triggerInAiScan(null, true);
-      return;
-    }
-    try {
-      setInScanning(true);
-      setInMessage(null);
-      setInBox(null);
-      setInPlateCropBase64(null);
-
-      const res = await fetch(preset.imgUrl);
-      const blob = await res.blob();
-      const filename = preset.imgUrl.split('/').pop() || 'preset.jpg';
-      const file = new File([blob], filename, { type: blob.type || 'image/jpeg' });
-
-      setInImageFile(file);
-      setInImagePreview(URL.createObjectURL(blob));
-
-      await triggerInAiScan(file, false);
-    } catch (err) {
-      console.warn('Lỗi nạp mẫu xe:', err);
-      triggerInAiScan(null, false);
-    }
-  };
-
   // ================= TÍNH CƯỚC THỰC TẾ CHO CỔNG RA =================
   useEffect(() => {
     if (!outPlate) {
@@ -742,37 +672,8 @@ export default function GateControl({
 
             {/* Layout 2 Cột Nội Bộ Của Cổng Vào */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Cột trái (7 cols): Mẫu phương tiện + Camera Viewport + Crop ROI + Độ tin cậy */}
+              {/* Cột trái (7 cols): Camera Viewport + Crop ROI + Độ tin cậy */}
               <div className="lg:col-span-7 space-y-4">
-                {/* Dữ liệu mẫu kiểm thử phương tiện (Xóa toàn bộ icon/emoji) */}
-                <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-700">Dữ liệu mẫu kiểm thử:</span>
-                    <span className="text-[10px] text-slate-400 font-mono">Nạp tự động</span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {SAMPLE_VEHICLES.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleLoadPreset(item)}
-                        disabled={inScanning}
-                        className="p-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 transition-all text-left cursor-pointer disabled:opacity-50 shadow-2xs"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-800 truncate">{item.title}</span>
-                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${item.badgeClass}`}>
-                            {item.badge}
-                          </span>
-                        </div>
-                        <div className="text-[11px] font-mono text-slate-600 font-semibold mt-1 truncate">
-                          {item.plate}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Camera Giám Sát Làn Vào */}
                 <div className="relative rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden min-h-[260px] flex flex-col justify-between p-3.5 shadow-inner">
                   {/* Viewport Header */}

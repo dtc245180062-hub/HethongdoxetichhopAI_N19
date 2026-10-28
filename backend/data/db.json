@@ -458,123 +458,9 @@
       "loaiDangKy": "VANG_LAI",
       "maTheRFID": "RFID-276009",
       "ngayDangKy": "2026-10-27"
-    },
-    {
-      "id": "XE-1793184155189",
-      "bienSo": "30A-10054",
-      "loaiXe": "OTO",
-      "chuXe": "Khách vãng lai",
-      "soDienThoai": "",
-      "loaiDangKy": "VANG_LAI",
-      "maTheRFID": "RFID-578271",
-      "ngayDangKy": "2026-10-28"
-    },
-    {
-      "id": "XE-1793184446895",
-      "bienSo": "51K-92702",
-      "loaiXe": "OTO",
-      "chuXe": "Khách vãng lai",
-      "soDienThoai": "",
-      "loaiDangKy": "VANG_LAI",
-      "maTheRFID": "RFID-361105",
-      "ngayDangKy": "2026-10-28"
-    },
-    {
-      "id": "XE-1793184622142",
-      "bienSo": "51K-12220",
-      "loaiXe": "OTO",
-      "chuXe": "Khách vãng lai",
-      "soDienThoai": "",
-      "loaiDangKy": "VANG_LAI",
-      "maTheRFID": "RFID-323410",
-      "ngayDangKy": "2026-10-28"
-    },
-    {
-      "id": "XE-1793184736472",
-      "bienSo": "51K-16159",
-      "loaiXe": "OTO",
-      "chuXe": "Khách vãng lai",
-      "soDienThoai": "",
-      "loaiDangKy": "VANG_LAI",
-      "maTheRFID": "RFID-879164",
-      "ngayDangKy": "2026-10-28"
-    },
-    {
-      "id": "XE-1793185016125",
-      "bienSo": "51K-55464",
-      "loaiXe": "OTO",
-      "chuXe": "Khách vãng lai",
-      "soDienThoai": "",
-      "loaiDangKy": "VANG_LAI",
-      "maTheRFID": "RFID-242819",
-      "ngayDangKy": "2026-10-28"
     }
   ],
   "LuotVaoRa": [
-    {
-      "id": "LVR-1793185016125",
-      "bienSo": "51K-55464",
-      "loaiXe": "O to",
-      "maViTri": "A-01",
-      "thoiGianVao": "2026-10-28T10:56:56.125Z",
-      "thoiGianRa": "2026-10-28T10:56:56.134Z",
-      "anhVao": "/uploads/default_in.jpg",
-      "anhRa": "/uploads/default_out.jpg",
-      "trangThai": "Đã ra",
-      "tongTien": 20000,
-      "phuongThucThanhToan": "VIETQR",
-      "doTinCayAI": 0.88,
-      "soGioGui": 1,
-      "loaiVe": "VANG_LAI"
-    },
-    {
-      "id": "LVR-1793184736472",
-      "bienSo": "51K-16159",
-      "loaiXe": "O to",
-      "maViTri": "A-01",
-      "thoiGianVao": "2026-10-28T10:52:16.472Z",
-      "thoiGianRa": "2026-10-28T10:52:16.485Z",
-      "anhVao": "/uploads/default_in.jpg",
-      "anhRa": "/uploads/default_out.jpg",
-      "trangThai": "Đã ra",
-      "tongTien": 20000,
-      "phuongThucThanhToan": "VIETQR",
-      "doTinCayAI": 0.88,
-      "soGioGui": 1,
-      "loaiVe": "VANG_LAI"
-    },
-    {
-      "id": "LVR-1793184622142",
-      "bienSo": "51K-12220",
-      "loaiXe": "O to",
-      "maViTri": "A-01",
-      "thoiGianVao": "2026-10-28T10:50:22.142Z",
-      "thoiGianRa": "2026-10-28T10:50:22.155Z",
-      "anhVao": "/uploads/default_in.jpg",
-      "anhRa": "/uploads/default_out.jpg",
-      "trangThai": "Đã ra",
-      "tongTien": 20000,
-      "phuongThucThanhToan": "VIETQR",
-      "doTinCayAI": 0.88,
-      "soGioGui": 1,
-      "loaiVe": "VANG_LAI"
-    },
-    {
-      "id": "LVR-1793184446895",
-      "bienSo": "51K-92702",
-      "loaiXe": "O to",
-      "maViTri": "A-01",
-      "thoiGianVao": "2026-10-28T10:47:26.895Z",
-      "thoiGianRa": "2026-10-28T10:47:26.907Z",
-      "anhVao": "/uploads/default_in.jpg",
-      "anhRa": "/uploads/default_out.jpg",
-      "trangThai": "Đã ra",
-      "tongTien": 20000,
-      "phuongThucThanhToan": "VIETQR",
-      "doTinCayAI": 0.88,
-      "soGioGui": 1,
-      "loaiVe": "VANG_LAI"
-    },
     {
       "id": "LVR-1793184306040",
       "bienSo": "88A-456.78",
@@ -587,22 +473,6 @@
       "trangThai": "Đã ra",
       "tongTien": 20000,
       "phuongThucThanhToan": "QR_CODE",
-      "doTinCayAI": 0.88,
-      "soGioGui": 1,
-      "loaiVe": "VANG_LAI"
-    },
-    {
-      "id": "LVR-1793184155188",
-      "bienSo": "30A-10054",
-      "loaiXe": "O to",
-      "maViTri": "A-01",
-      "thoiGianVao": "2026-10-28T10:42:35.188Z",
-      "thoiGianRa": "2026-10-28T10:42:35.208Z",
-      "anhVao": "/uploads/default_in.jpg",
-      "anhRa": "/uploads/default_out.jpg",
-      "trangThai": "Đã ra",
-      "tongTien": 20000,
-      "phuongThucThanhToan": "TIEN_MAT",
       "doTinCayAI": 0.88,
       "soGioGui": 1,
       "loaiVe": "VANG_LAI"
@@ -1633,34 +1503,6 @@
   ],
   "DatCho": [
     {
-      "id": "BK-016201",
-      "bienSo": "30H-892.45",
-      "loaiXe": "OTO",
-      "maKhuVuc": "KV-A",
-      "maViTriGiuCho": "A-01",
-      "hoTen": "Khách hàng",
-      "soDienThoai": "",
-      "thoiGianDat": "2026-10-28T10:56:56.201Z",
-      "thoiGianDen": "2026-10-28T11:26:56.201Z",
-      "hanGiuCho": "2026-10-28T11:41:56.201Z",
-      "trangThai": "DA_XAC_NHAN",
-      "ghiChu": "Đặt chỗ đỗ thử nghiệm hệ thống"
-    },
-    {
-      "id": "BK-736534",
-      "bienSo": "30H-892.45",
-      "loaiXe": "OTO",
-      "maKhuVuc": "KV-A",
-      "maViTriGiuCho": "A-01",
-      "hoTen": "Khách hàng",
-      "soDienThoai": "",
-      "thoiGianDat": "2026-10-28T10:52:16.534Z",
-      "thoiGianDen": "2026-10-28T11:22:16.534Z",
-      "hanGiuCho": "2026-10-28T11:37:16.534Z",
-      "trangThai": "DA_XAC_NHAN",
-      "ghiChu": "Đặt chỗ đỗ thử nghiệm hệ thống"
-    },
-    {
       "id": "BK-359646",
       "bienSo": "30H-892.45",
       "loaiXe": "OTO",
@@ -1705,30 +1547,6 @@
   ],
   "YeuCauHoTro": [
     {
-      "id": "SUP-016210",
-      "tieuDe": "Kiểm thử báo cáo sự cố",
-      "noiDung": "Test chức năng báo cáo sự cố bãi xe",
-      "bienSo": "30H-892.45",
-      "loaiSuCo": "HO_TRO_CHUNG",
-      "hoTen": "Khách hàng",
-      "soDienThoai": "",
-      "thoiGianGui": "2026-10-28T10:56:56.210Z",
-      "trangThai": "DANG_TIEP_NHAN",
-      "phanHoi": "Ban Quản lý đã tiếp nhận yêu cầu và nhân viên an ninh sẽ hỗ trợ bạn trong ít phút."
-    },
-    {
-      "id": "SUP-736544",
-      "tieuDe": "Kiểm thử báo cáo sự cố",
-      "noiDung": "Test chức năng báo cáo sự cố bãi xe",
-      "bienSo": "30H-892.45",
-      "loaiSuCo": "HO_TRO_CHUNG",
-      "hoTen": "Khách hàng",
-      "soDienThoai": "",
-      "thoiGianGui": "2026-10-28T10:52:16.544Z",
-      "trangThai": "DANG_TIEP_NHAN",
-      "phanHoi": "Ban Quản lý đã tiếp nhận yêu cầu và nhân viên an ninh sẽ hỗ trợ bạn trong ít phút."
-    },
-    {
       "id": "SUP-794087",
       "tieuDe": "hhhh",
       "noiDung": "hhh",
@@ -1754,16 +1572,6 @@
     }
   ],
   "DanhSachDen": [
-    {
-      "id": "BL-1793184622212",
-      "bienSo": "99A-999.99",
-      "loaiXe": "OTO",
-      "lyDo": "Xe nghi vấn vi phạm kiểm tra tự động",
-      "mucDo": "NGUY_HIEM",
-      "nguoiTao": "admin",
-      "ngayTao": "2026-10-28",
-      "ghiChu": ""
-    },
     {
       "id": "BL-001",
       "bienSo": "29A-999.99",
