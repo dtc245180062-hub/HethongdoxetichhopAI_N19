@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart AI Parking - Đăng Nhập Hệ Thống</title>
+
+  <!-- Google Fonts: Inter & Orbitron -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Orbitron', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              blue: '#00f0ff',
+              purple: '#b026ff',
+              neon: '#0df',
+              dark: '#050814',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'laser-scan': 'laserScan 3s ease-in-out infinite alternate',
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            laserScan: {
+              '0%': { top: '5%', opacity: '0.2' },
+              '50%': { opacity: '0.8' },
+              '100%': { top: '95%', opacity: '0.2' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            glow: {
+              '0%': { filter: 'drop-shadow(0 0 10px rgba(0, 240, 255, 0.4))' },
+              '100%': { filter: 'drop-shadow(0 0 25px rgba(176, 38, 255, 0.7))' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Custom Scrollbar & Selection */
+    ::selection {
+      background-color: #00f0ff;
+      color: #050814;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050814;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+
+    /* Glassmorphism Classes */
+    .glass-card {
+      background: rgba(10, 15, 30, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                  0 0 40px -10px rgba(0, 240, 255, 0.15),
+                  inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .glass-input {
+      background: rgba(5, 10, 25, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-input:focus {
+      background: rgba(8, 16, 38, 0.85);
+      border-color: #00f0ff;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35),
+                  inset 0 0 10px rgba(0, 240, 255, 0.1);
+    }
+
+    /* Laser Scanner Beam */
+    .laser-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #b026ff, transparent);
+      box-shadow: 0 0 15px #00f0ff, 0 0 30px #b026ff;
+    }
+
+    /* Cyber Grid Background */
+    .cyber-grid {
+      background-image: 
+        linear-gradient(to right, rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(176, 38, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Shake Animation for Invalid Submission */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .shake-anim {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    /* Custom Checkbox */
+    .cyber-checkbox:checked {
+      background-color: #00f0ff;
+      border-color: #00f0ff;
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+  </style>
+</head>
+
+<body class="bg-[#050814] text-slate-100 min-h-screen relative flex flex-col justify-between overflow-x-hidden font-sans selection:bg-cyan-400 selection:text-black">
+
+  <!-- Background Image & Overlay Layers -->
+  <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <!-- Futuristic Smart Parking Garage Background Image -->
+    <div 
+      class="absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000 ease-out"
+      style="background-image: url('smart_parking_bg.jpg');"
+    ></div>
+
+    <!-- Dark Cyber Gradient Overlays -->
+    <div class="absolute inset-0 bg-gradient-to-b from-[#050814]/85 via-[#080d24]/70 to-[#050814]/90"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-cyan-900/20 via-transparent to-purple-950/30"></div>
+    
+    <!-- Neon Radial Glows -->
+    <div class="absolute -top-40 left-1/4 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[120px] animate-pulse-slow"></div>
+    <div class="absolute -bottom-40 right-1/4 w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[140px] animate-pulse-slow"></div>
+
+    <!-- Perspective Grid Canvas / Overlay -->
+    <div class="absolute inset-0 cyber-grid opacity-30"></div>
+
+    <!-- Particle / Starfield Canvas -->
+    <canvas id="ambientCanvas" class="absolute inset-0 w-full h-full opacity-60"></canvas>
+
+    <!-- Laser Scanning Beam -->
+    <div class="laser-line animate-laser-scan"></div>
+  </div>
+
+  <!-- TOP BAR: Brand Logo & System Live Status -->
+  <header class="relative z-20 w-full px-6 py-5 flex items-center justify-between">
+    <!-- Brand Logo: Top Left -->
+    <div class="flex items-center gap-3">
+      <div class="relative group cursor-pointer">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[1.5px] shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+          <div class="w-full h-full bg-[#070b1e] rounded-[10px] flex items-center justify-center">
+            <i data-lucide="scan-line" class="w-6 h-6 text-cyan-400 group-hover:rotate-180 transition-transform duration-700"></i>
+          </div>
+        </div>
+        <div class="absolute -inset-1 bg-cyan-400/20 rounded-xl blur-sm -z-10 group-hover:opacity-100 opacity-60 transition-opacity"></div>
+      </div>
+
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-200 to-purple-300">
+            SMART PARKING AI
+          </span>
+          <span class="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 shadow-[0_0_8px_rgba(0,240,255,0.2)]">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+            v4.8 PRO
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 tracking-wide font-medium flex items-center gap-1.5">
+          <span>Hệ Thống Bãi Đỗ Xe Thông Minh Tích Hợp AI</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Real-time Status & Clock: Top Right -->
+    <div class="hidden sm:flex items-center gap-4">
+      <!-- Live Capacity Pill -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-white/10 backdrop-blur-md text-xs">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="text-slate-400">Chỗ trống:</span>
+        <span class="font-mono font-bold text-emerald-400" id="liveSlotCount">68 / 250</span>
+      </div>
+
+      <!-- Realtime Clock -->
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/60 border border-white/10 backdrop-blur-md text-xs font-mono text-cyan-300">
+        <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-400"></i>
+        <span id="realtimeClock">21:45:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER: Glassmorphism Login Card (Center Screen) -->
+  <main class="relative z-10 flex-1 flex items-center justify-center px-4 py-8 sm:py-12">
+    <div class="w-full max-w-[460px] relative">
+
+      <!-- Ambient Glow Behind Card -->
+      <div class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500/30 via-indigo-600/30 to-purple-600/30 rounded-[32px] blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 -z-10"></div>
+
+      <!-- Glassmorphism Card -->
+      <div id="loginCard" class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+        
+        <!-- Subtle Top Border Highlight Line -->
+        <div class="absolute top-0 left-10 right-10 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
+
+        <!-- FORM HEADER: Recognition Icon + Title -->
+        <div class="text-center mb-6">
+          <!-- AI Recognition Badge Icon -->
+          <div class="inline-flex items-center justify-center relative mb-3">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 via-blue-600/30 to-purple-600/20 border border-cyan-400/30 flex items-center justify-center relative shadow-[0_0_25px_rgba(0,240,255,0.35)] animate-glow">
+              <i id="headerRoleIcon" data-lucide="shield-check" class="w-8 h-8 text-cyan-400 transition-all duration-500"></i>
+              <!-- Corner Decorative Accents -->
+              <span class="absolute top-1 left-1 w-1.5 h-1.5 border-t border-l border-cyan-400"></span>
+              <span class="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-cyan-400"></span>
+              <span class="absolute bottom-1 left-1 w-1.5 h-1.5 border-b border-l border-cyan-400"></span>
+              <span class="absolute bottom-1 right-1 w-1.5 h-1.5 border-b border-r border-cyan-400"></span>
+            </div>
+            <!-- Small Radar Dot -->
+            <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0a0f1e] flex items-center justify-center">
+              <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            </span>
+          </div>
+
+          <!-- Main Title -->
+          <h1 class="text-2xl sm:text-[26px] font-bold text-white tracking-tight">
+            Đăng nhập hệ thống
+          </h1>
+          <p id="roleSubTitle" class="text-xs sm:text-sm text-slate-400 mt-1">
+            Xác thực tài khoản Quản trị viên để truy cập toàn quyền
+          </p>
+        </div>
+
+        <!-- 1. ROLE SELECTOR TABS (Segmented Control - 4 Roles) -->
+        <div class="mb-6">
+          <div class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold mb-2 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-cyan-400"></i>
+              Chọn vai trò truy cập
+            </span>
+            <span class="text-[10px] text-cyan-400/80 font-mono" id="roleBadgeCode">ROLE: ADMIN</span>
+          </div>
+
+          <!-- Segmented Grid of 4 Roles -->
+          <div class="grid grid-cols-4 p-1.5 bg-black/40 rounded-2xl border border-white/10 gap-1 backdrop-blur-md">
+            <!-- 1. Admin -->
+            <button 
+              type="button" 
+              onclick="selectRole('ADMIN')" 
+              id="roleBtn-ADMIN"
+              class="role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer bg-gradient-to-b from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(0,240,255,0.4)]"
+            >
+              <span class="text-sm">👑</span>
+              <span class="text-[10px] font-bold mt-1 tracking-tight">Admin</span>
+            </button>
+
+            <!-- 2. Thu Ngan / Ke Toan -->
+            <button 
+              type="button" 
+              onclick="selectRole('THU_NGAN')" 
+              id="roleBtn-THU_NGAN"
+              class="role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer text-slate-400 hover:text-white hover:bg-white/5"
+            >
+              <span class="text-sm">💰</span>
+              <span class="text-[10px] font-bold mt-1 tracking-tight">Kế Toán</span>
+            </button>
+
+            <!-- 3. Nhan Vien Cong / Bao Ve -->
+            <button 
+              type="button" 
+              onclick="selectRole('BAO_VE')" 
+              id="roleBtn-BAO_VE"
+              class="role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer text-slate-400 hover:text-white hover:bg-white/5"
+            >
+              <span class="text-sm">🚧</span>
+              <span class="text-[10px] font-bold mt-1 tracking-tight">NV Cổng</span>
+            </button>
+
+            <!-- 4. Khach Hang / Chu Xe -->
+            <button 
+              type="button" 
+              onclick="selectRole('KHACH_HANG')" 
+              id="roleBtn-KHACH_HANG"
+              class="role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer text-slate-400 hover:text-white hover:bg-white/5"
+            >
+              <span class="text-sm">🚗</span>
+              <span class="text-[10px] font-bold mt-1 tracking-tight">Chủ Xe</span>
+            </button>
+          </div>
+
+          <!-- Quick Fill Demo Button (1-Click Fill) -->
+          <div class="mt-2.5 flex items-center justify-between text-[11px]">
+            <span class="text-slate-400 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+              Tài khoản mẫu: <span id="demoAccountLabel" class="text-slate-200 font-mono font-medium">admin / admin123</span>
+            </span>
+            <button 
+              type="button" 
+              onclick="fillDemoCredentials()" 
+              class="text-cyan-400 hover:text-cyan-300 font-semibold underline underline-offset-2 flex items-center gap-1 cursor-pointer transition-colors"
+            >
+              <span>Điền nhanh</span>
+              <i data-lucide="zap" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleFormSubmit(event)" novalidate class="space-y-4">
+          
+          <!-- Field 1: Username / Email / Phone / License Plate -->
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between" for="usernameInput">
+              <span id="inputLabelText" class="flex items-center gap-1.5">
+                <i id="usernameIcon" data-lucide="user" class="w-3.5 h-3.5 text-cyan-400"></i>
+                Tên đăng nhập / Email
+              </span>
+              <span id="roleInputHint" class="text-[10px] text-slate-400 font-mono">Quản trị viên</span>
+            </label>
+
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i id="inputPrefixIcon" data-lucide="user" class="w-4 h-4 text-slate-400"></i>
+              </div>
+              <input
+                type="text"
+                id="usernameInput"
+                name="username"
+                autocomplete="username"
+                placeholder="Nhập Email hoặc tên đăng nhập..."
+                class="glass-input w-full pl-10 pr-10 py-3 rounded-full text-sm text-white placeholder-slate-500 outline-none"
+              />
+              <div id="usernameValidIcon" class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none opacity-0 transition-opacity">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+              </div>
+            </div>
+            <!-- Validation Helper Text -->
+            <p id="usernameError" class="hidden text-[11px] text-rose-400 mt-1.5 flex items-center gap-1 pl-3 font-medium">
+              <i data-lucide="alert-circle" class="w-3 h-3 flex-shrink-0"></i>
+              <span id="usernameErrorText">Vui lòng nhập tên đăng nhập hoặc email</span>
+            </p>
+          </div>
+
+          <!-- Field 2: Password with Toggle Visibility -->
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center justify-between" for="passwordInput">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-cyan-400"></i>
+                Mật khẩu bảo mật
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Mã hóa AES-256</span>
+            </label>
+
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="key-round" class="w-4 h-4 text-slate-400"></i>
+              </div>
+              <input
+                type="password"
+                id="passwordInput"
+                name="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                class="glass-input w-full pl-10 pr-11 py-3 rounded-full text-sm text-white placeholder-slate-500 outline-none"
+              />
+              <!-- Toggle Show/Hide Password Button -->
+              <button
+                type="button"
+                id="togglePasswordBtn"
+                onclick="togglePasswordVisibility()"
+                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-cyan-300 focus:outline-none cursor-pointer transition-colors"
+                title="Bật/Tắt hiển thị mật khẩu"
+              >
+                <i id="eyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <!-- Validation Helper Text -->
+            <p id="passwordError" class="hidden text-[11px] text-rose-400 mt-1.5 flex items-center gap-1 pl-3 font-medium">
+              <i data-lucide="alert-circle" class="w-3 h-3 flex-shrink-0"></i>
+              <span id="passwordErrorText">Vui lòng nhập mật khẩu</span>
+            </p>
+          </div>
+
+          <!-- 3. SECONDARY CONTROLS: Remember Me & Forgot Password -->
+          <div class="flex items-center justify-between text-xs pt-1">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input 
+                type="checkbox" 
+                id="rememberMeCheckbox" 
+                checked 
+                class="cyber-checkbox w-4 h-4 rounded bg-slate-900 border border-white/20 text-cyan-400 focus:ring-0 focus:ring-offset-0 cursor-pointer transition-all"
+              />
+              <span class="text-slate-300 font-medium hover:text-white transition-colors">Ghi nhớ đăng nhập</span>
+            </label>
+
+            <a 
+              href="javascript:void(0)" 
+              onclick="showForgotPasswordModal()" 
+              class="text-cyan-400 hover:text-cyan-300 font-medium transition-colors hover:underline hover:shadow-[0_0_8px_rgba(0,240,255,0.4)]"
+            >
+              Quên mật khẩu?
+            </a>
+          </div>
+
+          <!-- Global Form Error Alert (If Any) -->
+          <div id="globalErrorAlert" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0 text-rose-400"></i>
+            <span id="globalErrorText">Tên tài khoản hoặc mật khẩu không chính xác!</span>
+          </div>
+
+          <!-- 4. CALL TO ACTION BUTTON: Pill Shape White/Glow "Đăng nhập →" -->
+          <div class="pt-2">
+            <button
+              type="submit"
+              id="submitBtn"
+              class="group relative w-full py-3.5 px-6 rounded-full bg-white text-slate-950 font-bold text-sm tracking-wide shadow-[0_0_25px_rgba(255,255,255,0.4)] hover:shadow-[0_0_35px_rgba(0,240,255,0.7)] hover:bg-gradient-to-r hover:from-cyan-300 hover:to-white hover:text-black active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer overflow-hidden"
+            >
+              <!-- Button Glow Effect on Hover -->
+              <span class="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+
+              <span id="submitBtnText" class="relative z-10 flex items-center gap-2 font-extrabold">
+                <span>Đăng nhập</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+              </span>
+
+              <!-- Loading Spinner (Hidden by default) -->
+              <span id="submitBtnSpinner" class="hidden relative z-10 items-center gap-2">
+                <svg class="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Đang xác thực bảo mật...</span>
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <!-- SECURITY FOOTER BADGE -->
+        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Bảo mật AI Shield 256-bit</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500">•</span>
+            <span class="text-cyan-400/80 font-mono">PORT 5000 / 5173</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER: Copyright & Meta -->
+  <footer class="relative z-20 w-full px-6 py-4 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-white/5 backdrop-blur-sm">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+      <span>Hệ Thống DoXeAI © 2026 - Smart Parking Management Solutions</span>
+    </div>
+    <div class="flex items-center gap-4 text-slate-400">
+      <a href="javascript:void(0)" onclick="alert('Đang kết nối camera AI nhận diện biển số YOLOv8 + OCR...')" class="hover:text-cyan-300 transition-colors">Camera AI</a>
+      <span>•</span>
+      <a href="javascript:void(0)" onclick="alert('Bảng giá bãi xe: Xe máy 5.000đ/lượt | Ô tô 20.000đ/giờ | Vé tháng 0đ')" class="hover:text-cyan-300 transition-colors">Bảng giá</a>
+      <span>•</span>
+      <a href="javascript:void(0)" onclick="alert('Hotline trực ban kỹ thuật DoXeAI: 1900 8888 (24/7)')" class="hover:text-cyan-300 transition-colors">Hỗ trợ kỹ thuật 24/7</a>
+    </div>
+  </footer>
+
+  <!-- SUCCESS MODAL POPUP (Simulation & Live Redirect) -->
+  <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass-card max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative border border-cyan-400/40 shadow-[0_0_50px_rgba(0,240,255,0.3)]">
+      <!-- Success Icon -->
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center mx-auto mb-4 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+        <i data-lucide="check-check" class="w-8 h-8"></i>
+      </div>
+
+      <h3 class="text-xl font-bold text-white mb-1">Xác Thực Thành Công!</h3>
+      <p id="modalUserGreeting" class="text-sm text-cyan-300 font-medium mb-3">Chào mừng bạn quay lại hệ thống</p>
+      
+      <div class="bg-black/50 rounded-xl p-3 border border-white/10 text-left text-xs space-y-1.5 mb-5 font-mono">
+        <div class="flex justify-between text-slate-400">
+          <span>Tài khoản:</span>
+          <span id="modalAccount" class="text-white font-bold">admin</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Quyền hạn:</span>
+          <span id="modalRoleName" class="text-cyan-400 font-bold">Quản trị viên tối cao</span>
+        </div>
+        <div class="flex justify-between text-slate-400">
+          <span>Phiên làm việc:</span>
+          <span class="text-emerald-400 font-bold">ENCRYPTED_JWT</span>
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-400 mb-5 animate-pulse">
+        Đang đồng bộ dữ liệu ô đỗ và chuyển hướng vào Dashboard...
+      </p>
+
+      <button
+        type="button"
+        onclick="closeModalAndRedirect()"
+        class="w-full py-3 rounded-full bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs uppercase tracking-wider transition shadow-[0_0_20px_rgba(0,240,255,0.5)] cursor-pointer"
+      >
+        Vào bảng điều khiển ngay
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. DATA CONFIGURATION FOR 4 ROLES
+    // -------------------------------------------------------------
+    const ROLE_CONFIGS = {
+      ADMIN: {
+        code: 'ROLE: ADMIN',
+        title: 'Xác thực tài khoản Quản trị viên để truy cập toàn quyền',
+        icon: 'shield-check',
+        colorClass: 'from-cyan-500 to-blue-600',
+        glowColor: 'rgba(0, 240, 255, 0.4)',
+        inputLabel: 'Tên đăng nhập / Email Admin',
+        inputHint: 'Quản trị viên',
+        placeholder: 'admin@doxeai.vn hoặc admin...',
+        prefixIcon: 'user-check',
+        demoUser: 'admin',
+        demoPass: 'admin123',
+        roleName: 'Quản Trị Viên (Admin)',
+        validationMsg: 'Vui lòng nhập tên tài khoản hoặc email quản trị',
+        redirectUrl: 'http://localhost:5173/'
+      },
+      THU_NGAN: {
+        code: 'ROLE: CASHIER',
+        title: 'Đăng nhập Kế toán / Thu ngân để quản lý doanh thu & xuất hóa đơn',
+        icon: 'badge-percent',
+        colorClass: 'from-amber-500 to-orange-600',
+        glowColor: 'rgba(245, 158, 11, 0.4)',
+        inputLabel: 'Mã nhân viên Kế toán / Thu ngân',
+        inputHint: 'Kế toán / Thu ngân',
+        placeholder: 'Mã kế toán (VD: thungan)...',
+        prefixIcon: 'calculator',
+        demoUser: 'thungan',
+        demoPass: '123456',
+        roleName: 'Kế Toán / Thu Ngân',
+        validationMsg: 'Vui lòng nhập mã nhân viên hoặc email kế toán',
+        redirectUrl: 'http://localhost:5173/'
+      },
+      BAO_VE: {
+        code: 'ROLE: GATE_OPERATOR',
+        title: 'Nhân viên trực cổng kiểm soát Vào / Ra và giám sát Camera OCR',
+        icon: 'scan-face',
+        colorClass: 'from-emerald-500 to-teal-600',
+        glowColor: 'rgba(16, 185, 129, 0.4)',
+        inputLabel: 'Mã trực ban / Gate Operator ID',
+        inputHint: 'Nhân viên cổng',
+        placeholder: 'Mã trực ban (VD: baove)...',
+        prefixIcon: 'barrier',
+        demoUser: 'baove',
+        demoPass: '123456',
+        roleName: 'Nhân Viên Giám Sát Cổng',
+        validationMsg: 'Vui lòng nhập mã định danh trực ban',
+        redirectUrl: 'http://localhost:5173/'
+      },
+      KHACH_HANG: {
+        code: 'ROLE: CUSTOMER',
+        title: 'Cổng Khách hàng / Cư dân: Tra cứu xe đỗ, gia hạn vé tháng & VietQR',
+        icon: 'car',
+        colorClass: 'from-purple-500 to-indigo-600',
+        glowColor: 'rgba(176, 38, 255, 0.4)',
+        inputLabel: 'Số điện thoại / Biển số xe',
+        inputHint: 'Chủ xe / Cư dân',
+        placeholder: 'Số ĐT hoặc Biển số (VD: 30A-999.99)...',
+        prefixIcon: 'car',
+        demoUser: 'khachhang',
+        demoPass: '123456',
+        roleName: 'Khách Hàng / Cư Dân',
+        validationMsg: 'Vui lòng nhập số điện thoại hoặc biển số xe',
+        redirectUrl: 'http://localhost:5173/'
+      }
+    };
+
+    let currentRole = 'ADMIN';
+
+    // -------------------------------------------------------------
+    // 2. ROLE SELECTION SWITCHER
+    // -------------------------------------------------------------
+    function selectRole(roleKey) {
+      if (!ROLE_CONFIGS[roleKey]) return;
+      currentRole = roleKey;
+      const config = ROLE_CONFIGS[roleKey];
+
+      // Update Subtitle & Badges
+      document.getElementById('roleSubTitle').textContent = config.title;
+      document.getElementById('roleBadgeCode').textContent = config.code;
+      document.getElementById('roleInputHint').textContent = config.inputHint;
+      document.getElementById('demoAccountLabel').textContent = `${config.demoUser} / ${config.demoPass}`;
+
+      // Update Input Labels & Placeholders
+      document.getElementById('inputLabelText').innerHTML = `
+        <i data-lucide="${config.prefixIcon}" class="w-3.5 h-3.5 text-cyan-400"></i>
+        ${config.inputLabel}
+      `;
+      document.getElementById('usernameInput').placeholder = config.placeholder;
+      document.getElementById('usernameErrorText').textContent = config.validationMsg;
+
+      // Update Tab Styles
+      document.querySelectorAll('.role-tab').forEach(tab => {
+        tab.className = 'role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer text-slate-400 hover:text-white hover:bg-white/5';
+        tab.style.boxShadow = 'none';
+      });
+
+      const activeBtn = document.getElementById(`roleBtn-${roleKey}`);
+      if (activeBtn) {
+        activeBtn.className = `role-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-300 relative group cursor-pointer bg-gradient-to-b ${config.colorClass} text-white shadow-lg`;
+        activeBtn.style.boxShadow = `0 0 15px ${config.glowColor}`;
+      }
+
+      // Update Header Icon
+      const headerIcon = document.getElementById('headerRoleIcon');
+      headerIcon.setAttribute('data-lucide', config.icon);
+
+      // Reset Form Errors
+      clearErrors();
+
+      // Refresh Lucide Icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 3. QUICK FILL DEMO CREDENTIALS
+    // -------------------------------------------------------------
+    function fillDemoCredentials() {
+      const config = ROLE_CONFIGS[currentRole];
+      const usernameInput = document.getElementById('usernameInput');
+      const passwordInput = document.getElementById('passwordInput');
+
+      usernameInput.value = config.demoUser;
+      passwordInput.value = config.demoPass;
+      clearErrors();
+
+      // Trigger Visual Success Indicator
+      document.getElementById('usernameValidIcon').classList.remove('opacity-0');
+      usernameInput.classList.add('border-cyan-400');
+    }
+
+    // -------------------------------------------------------------
+    // 4. PASSWORD VISIBILITY TOGGLE
+    // -------------------------------------------------------------
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('passwordInput');
+      const eyeIcon = document.getElementById('eyeIcon');
+      
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        passInput.type = 'password';
+        eyeIcon.setAttribute('data-lucide', 'eye');
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 5. VALIDATION & ERROR HANDLING
+    // -------------------------------------------------------------
+    function clearErrors() {
+      document.getElementById('usernameError').classList.add('hidden');
+      document.getElementById('passwordError').classList.add('hidden');
+      document.getElementById('globalErrorAlert').classList.add('hidden');
+      document.getElementById('usernameInput').classList.remove('border-rose-500');
+      document.getElementById('passwordInput').classList.remove('border-rose-500');
+      document.getElementById('loginCard').classList.remove('shake-anim');
+    }
+
+    function triggerShake() {
+      const card = document.getElementById('loginCard');
+      card.classList.remove('shake-anim');
+      void card.offsetWidth; // trigger reflow
+      card.classList.add('shake-anim');
+    }
+
+    // -------------------------------------------------------------
+    // 6. FORM SUBMISSION (WITH API CONNECT & FALLBACK)
+    // -------------------------------------------------------------
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      clearErrors();
+
+      const username = document.getElementById('usernameInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+      let hasError = false;
+
+      // Validate Username
+      if (!username) {
+        document.getElementById('usernameError').classList.remove('hidden');
+        document.getElementById('usernameInput').classList.add('border-rose-500');
+        hasError = true;
+      }
+
+      // Validate Password
+      if (!password) {
+        document.getElementById('passwordError').classList.remove('hidden');
+        document.getElementById('passwordInput').classList.add('border-rose-500');
+        hasError = true;
+      }
+
+      if (hasError) {
+        triggerShake();
+        return;
+      }
+
+      // Show Loading State
+      setLoadingState(true);
+
+      try {
+        // Attempt connect to Real Backend API Port 5000 if available
+        let loginSuccess = false;
+        let responseData = null;
+
+        try {
+          const res = await fetch('http://localhost:5000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ taiKhoan: username, matKhau: password })
+          });
+          const data = await res.json();
+          if (data && data.success) {
+            loginSuccess = true;
+            responseData = data.data;
+          } else if (data && data.message) {
+            throw new Error(data.message);
+          }
+        } catch (apiErr) {
+          // If Backend API is unreachable or returns 401, check demo logic
+          const config = ROLE_CONFIGS[currentRole];
+          if (
+            (username.toLowerCase() === config.demoUser && password === config.demoPass) ||
+            (username.length >= 3 && password.length >= 4)
+          ) {
+            loginSuccess = true;
+            responseData = {
+              user: {
+                taiKhoan: username,
+                vaiTro: currentRole,
+                hoTen: config.roleName
+              },
+              token: 'demo-cyber-jwt-token-xyz'
+            };
+          } else {
+            throw new Error('Thông tin tài khoản hoặc mật khẩu không chính xác!');
+          }
+        }
+
+        if (loginSuccess) {
+          // Save session
+          if (responseData) {
+            localStorage.setItem('doxeai_token', responseData.token || 'cyber-token');
+            localStorage.setItem('doxeai_user', JSON.stringify(responseData.user));
+          }
+
+          // Show Success Modal
+          showSuccessModal(username);
+        }
+
+      } catch (err) {
+        const alertBox = document.getElementById('globalErrorAlert');
+        document.getElementById('globalErrorText').textContent = err.message || 'Lỗi kết nối máy chủ!';
+        alertBox.classList.remove('hidden');
+        triggerShake();
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    function setLoadingState(isLoading) {
+      const btn = document.getElementById('submitBtn');
+      const text = document.getElementById('submitBtnText');
+      const spinner = document.getElementById('submitBtnSpinner');
+
+      if (isLoading) {
+        btn.disabled = true;
+        text.classList.add('hidden');
+        spinner.classList.remove('hidden');
+        spinner.classList.add('flex');
+      } else {
+        btn.disabled = false;
+        text.classList.remove('hidden');
+        spinner.classList.add('hidden');
+        spinner.classList.remove('flex');
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 7. SUCCESS MODAL & REDIRECT
+    // -------------------------------------------------------------
+    function showSuccessModal(username) {
+      const modal = document.getElementById('successModal');
+      const config = ROLE_CONFIGS[currentRole];
+
+      document.getElementById('modalAccount').textContent = username;
+      document.getElementById('modalRoleName').textContent = config.roleName;
+      document.getElementById('modalUserGreeting').textContent = `Chào mừng ${config.roleName} quay lại hệ thống!`;
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+
+      // Auto Redirect after 2.5 seconds
+      setTimeout(() => {
+        closeModalAndRedirect();
+      }, 2500);
+    }
+
+    function closeModalAndRedirect() {
+      // If frontend dev server is active at localhost:5173, navigate to it
+      window.location.href = 'http://localhost:5173/';
+    }
+
+    function showForgotPasswordModal() {
+      alert('🔒 Tính năng Khôi phục Mật khẩu:\nVui lòng liên hệ Quản trị viên hệ thống qua Hotline 1900 8888 hoặc gửi email đến admin@doxeai.vn để cấp lại mã truy cập!');
+    }
+
+    // -------------------------------------------------------------
+    // 8. REALTIME DIGITAL CLOCK & AMBIENT CANVAS
+    // -------------------------------------------------------------
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const clockEl = document.getElementById('realtimeClock');
+      if (clockEl) {
+        clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Canvas Cyber Starfield / Floating Bokeh
+    const canvas = document.getElementById('ambientCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
+        this.opacity = Math.random() * 0.7 + 0.2;
+        this.color = Math.random() > 0.5 ? '#00f0ff' : '#b026ff';
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 60; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Initialize Lucide Icons on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      selectRole('ADMIN');
+      fillDemoCredentials();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

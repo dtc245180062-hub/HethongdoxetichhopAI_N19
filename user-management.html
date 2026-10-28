@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DoXeAI - Quản Lý Người Dùng & Nhân Sự</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-shadow {
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex antialiased">
+
+  <!-- ========================================== -->
+  <!-- 1. SIDEBAR BÊN TRÁI (THEO CHUẨN MẪU GIAO DIỆN) -->
+  <!-- ========================================== -->
+  <aside class="w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between shrink-0 hidden md:flex min-h-screen">
+    <div>
+      <!-- Brand Logo Header -->
+      <div class="h-16 px-5 flex items-center justify-between border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-600/30">
+            <i data-lucide="scan-line" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <span class="font-extrabold text-sm tracking-wide text-slate-900 block leading-tight">SMART PARKING AI</span>
+            <span class="text-[10px] text-indigo-600 font-semibold uppercase tracking-wider block">DoXeAI Manager</span>
+          </div>
+        </div>
+        <button class="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Navigation Menu Groups -->
+      <div class="p-4 space-y-6 text-xs">
+        <!-- Nhóm 1: TỔNG QUAN & HỆ THỐNG -->
+        <div>
+          <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-2 px-3 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span>Tổng quan & Hệ thống</span>
+          </div>
+          <nav class="space-y-1">
+            <a href="http://localhost:5173/" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Bảng điều khiển tổng quan</span>
+            </a>
+            <!-- Tab Active: Quản lý người dùng -->
+            <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 font-bold transition border border-indigo-100 shadow-sm">
+              <div class="flex items-center gap-3">
+                <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+                <span>Quản lý người dùng</span>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-indigo-400"></i>
+            </a>
+            <a href="javascript:void(0)" onclick="alert('Nhật ký sự kiện AI và hệ thống bãi xe')" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+              <span>Nhật ký hệ thống</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Nhóm 2: VẬN HÀNH & BÃI ĐỖ XE -->
+        <div>
+          <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-2 px-3 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span>Vận hành & Bãi đỗ xe</span>
+          </div>
+          <nav class="space-y-1">
+            <a href="http://localhost:5173/" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+              <span>Kiểm soát trạm cổng</span>
+            </a>
+            <a href="http://localhost:5173/" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="parking-square" class="w-4 h-4"></i>
+              <span>Sơ đồ ô đỗ xe</span>
+            </a>
+            <a href="javascript:void(0)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="trending-up" class="w-4 h-4"></i>
+              <span>Báo cáo doanh số & vé</span>
+            </a>
+            <a href="http://localhost:5173/" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="badge-percent" class="w-4 h-4"></i>
+              <span>Bảng giá & Chiết khấu</span>
+            </a>
+          </nav>
+        </div>
+
+        <!-- Nhóm 3: THIẾT LẬP & ĐẠI LÝ -->
+        <div>
+          <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400 mb-2 px-3 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            <span>Kinh doanh & Đại lý B2B</span>
+          </div>
+          <nav class="space-y-1">
+            <a href="javascript:void(0)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="building-2" class="w-4 h-4"></i>
+              <span>Quản lý đại lý B2B</span>
+            </a>
+            <a href="javascript:void(0)" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium transition">
+              <i data-lucide="cpu" class="w-4 h-4"></i>
+              <span>Cấu hình Camera AI OCR</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Bottom System Info -->
+    <div class="p-4 border-t border-slate-100">
+      <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] space-y-1">
+        <div class="font-bold text-slate-800 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Hệ thống DoXeAI v4.8</span>
+        </div>
+        <p class="text-slate-500">Backend Port 5000: <span class="text-emerald-600 font-mono font-bold">ONLINE</span></p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN CONTENT AREA -->
+  <!-- ========================================== -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- Top Navigation Header -->
+    <header class="h-16 bg-white border-b border-slate-200/80 px-6 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <h1 class="text-lg sm:text-xl font-bold text-slate-900">Quản lý người dùng</h1>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Notification Bell -->
+        <button type="button" class="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 relative transition cursor-pointer">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500"></span>
+        </button>
+
+        <!-- Admin Profile Pill (như ảnh mẫu) -->
+        <div class="flex items-center gap-2.5 pl-2 py-1 pr-3 rounded-xl border border-slate-200 bg-slate-50/50 cursor-pointer">
+          <div class="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-xs shadow-sm">
+            N
+          </div>
+          <div class="text-left hidden sm:block">
+            <div class="text-xs font-bold text-slate-900 leading-tight">Trần Minh Quân</div>
+            <div class="text-[10px] font-medium text-indigo-600 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
+              <span>Quản trị hệ thống</span>
+            </div>
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="p-6 space-y-6 max-w-7xl w-full mx-auto">
+
+      <!-- ========================================== -->
+      <!-- 3 KPI STAT CARDS (Y HỆT ẢNH MẪU) -->
+      <!-- ========================================== -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <!-- Thẻ 1: Tổng nhân sự -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 custom-shadow flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <span class="text-xs font-semibold text-slate-500">Tổng nhân sự</span>
+          </div>
+          <div class="mt-4">
+            <span class="text-3xl font-extrabold text-slate-900" id="statTotalUsers">12</span>
+          </div>
+        </div>
+
+        <!-- Thẻ 2: Đang hoạt động -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 custom-shadow flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+              <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></span>
+            </div>
+            <span class="text-xs font-semibold text-slate-500">Đang hoạt động</span>
+          </div>
+          <div class="mt-4">
+            <span class="text-3xl font-extrabold text-slate-900" id="statActiveUsers">12</span>
+          </div>
+        </div>
+
+        <!-- Thẻ 3: Đang bị khóa -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 custom-shadow flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
+              <i data-lucide="lock" class="w-5 h-5"></i>
+            </div>
+            <span class="text-xs font-semibold text-slate-500">Đang bị khóa</span>
+          </div>
+          <div class="mt-4">
+            <span class="text-3xl font-extrabold text-slate-900" id="statLockedUsers">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- THANH CÔNG CỤ TÌM KIẾM & BỘ LỌC (ACTION ROW) -->
+      <!-- ========================================== -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 custom-shadow space-y-4">
+        <!-- Hàng 1: Search Input & Buttons -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+          <!-- Search Input -->
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </div>
+            <input
+              type="text"
+              id="searchInput"
+              oninput="handleSearch()"
+              placeholder="Tìm theo họ tên, username, email, SĐT..."
+              class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition"
+            />
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+            <!-- Nút Làm mới -->
+            <button
+              type="button"
+              onclick="reloadUsers()"
+              class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-2 transition cursor-pointer"
+            >
+              <i data-lucide="rotate-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
+              <span>Làm mới</span>
+            </button>
+
+            <!-- Nút Import Excel -->
+            <button
+              type="button"
+              onclick="openImportModal()"
+              class="px-4 py-2.5 rounded-xl border border-emerald-300 bg-emerald-50/70 hover:bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-2 transition cursor-pointer"
+            >
+              <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+              <span>Import Excel</span>
+            </button>
+
+            <!-- Nút Thêm nhân sự mới -->
+            <button
+              type="button"
+              onclick="openAddUserModal()"
+              class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-sm shadow-indigo-600/30 transition cursor-pointer"
+            >
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>Thêm nhân sự mới</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hàng 2: Bộ lọc (Dropdown Vai trò 7 mục & Trạng thái y hệt ảnh) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="font-semibold text-slate-600">Bộ lọc:</span>
+
+            <!-- Dropdown 1: Tất cả vai trò (7) -->
+            <div class="relative inline-block" id="roleDropdownContainer">
+              <button
+                type="button"
+                id="roleFilterBtn"
+                onclick="toggleRoleDropdown()"
+                class="px-3.5 py-2 rounded-xl border-2 border-indigo-500 ring-2 ring-indigo-500/20 bg-white text-slate-800 font-bold flex items-center justify-between gap-2.5 min-w-[175px] shadow-sm transition"
+              >
+                <span id="roleFilterLabel">Tất cả vai trò (7)</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-500"></i>
+              </button>
+
+              <!-- Dropdown Menu Danh Sách 7 Vai Trò -->
+              <div id="roleDropdownMenu" class="absolute top-full left-0 mt-1.5 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 py-1.5 z-40 hidden animate-fadeIn">
+                <button onclick="setRoleFilter('ALL')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-800 hover:bg-slate-50 font-bold">
+                  <span>Tất cả vai trò (7)</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">12</span>
+                </button>
+                <button onclick="setRoleFilter('ADMIN')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>👑 Quản trị hệ thống</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">2</span>
+                </button>
+                <button onclick="setRoleFilter('QUAN_LY_DIEU_HANH')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>🏢 Quản lý điều hành bãi</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">1</span>
+                </button>
+                <button onclick="setRoleFilter('BAO_VE')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>🚧 Nhân viên cổng</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">2</span>
+                </button>
+                <button onclick="setRoleFilter('THU_NGAN')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>💰 Kế toán / Thu ngân</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">2</span>
+                </button>
+                <button onclick="setRoleFilter('KY_THUAT_IOT')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>🛠️ Kỹ thuật viên IoT & AI</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">1</span>
+                </button>
+                <button onclick="setRoleFilter('DOI_TAC_B2B')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>🤝 Đại lý B2B đối tác</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">2</span>
+                </button>
+                <button onclick="setRoleFilter('KHACH_HANG')" class="w-full px-3.5 py-2 text-left flex items-center justify-between text-xs text-slate-700 hover:bg-slate-50">
+                  <span>🚗 Cư dân / Chủ xe</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600">2</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Dropdown 2: Tất cả trạng thái -->
+            <div class="relative inline-block" id="statusDropdownContainer">
+              <button
+                type="button"
+                id="statusFilterBtn"
+                onclick="toggleStatusDropdown()"
+                class="px-3.5 py-2 rounded-xl border border-slate-300 bg-white hover:border-indigo-400 text-slate-800 font-semibold flex items-center justify-between gap-2.5 min-w-[145px] shadow-sm transition"
+              >
+                <span id="statusFilterLabel">Tất cả trạng thái</span>
+                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-500"></i>
+              </button>
+
+              <div id="statusDropdownMenu" class="absolute top-full left-0 mt-1.5 w-44 bg-white rounded-xl shadow-2xl border border-slate-200 py-1.5 z-40 hidden animate-fadeIn">
+                <button onclick="setStatusFilter('ALL')" class="w-full px-3 py-1.5 text-left text-xs text-slate-800 hover:bg-slate-50 font-bold">
+                  Tất cả trạng thái
+                </button>
+                <button onclick="setStatusFilter('HOAT_DONG')" class="w-full px-3 py-1.5 text-left text-xs text-emerald-700 hover:bg-slate-50 font-medium">
+                  ● Đang hoạt động
+                </button>
+                <button onclick="setStatusFilter('KHOA')" class="w-full px-3 py-1.5 text-left text-xs text-rose-700 hover:bg-slate-50 font-medium">
+                  ● Đang bị khóa
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thông tin số lượng tìm thấy (như ảnh: "Tìm thấy : 12") -->
+          <div class="text-slate-500 font-medium flex items-center gap-1.5">
+            <span>Tìm thấy :</span>
+            <strong class="text-slate-900 font-bold text-sm" id="foundCount">12</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- BẢNG DANH SÁCH NHÂN SỰ (USER DATA TABLE) -->
+      <!-- ========================================== -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 custom-shadow overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <th class="py-3.5 px-6">Nhân sự</th>
+                <th class="py-3.5 px-6">Vai trò</th>
+                <th class="py-3.5 px-6">Trạng thái</th>
+                <th class="py-3.5 px-6 text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody" class="divide-y divide-slate-100 text-xs">
+              <!-- Rendered by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer Bảng dữ liệu -->
+        <div class="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+          <div>
+            Đang hiển thị <strong class="text-slate-900 font-bold" id="showingCount">12</strong> / 12 nhân sự hệ thống
+          </div>
+          <div class="flex items-center gap-3">
+            <button type="button" onclick="exportExcel()" class="font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Xuất danh sách Excel (CSV)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CHI TIẾT NGƯỜI DÙNG -->
+  <!-- ========================================== -->
+  <div id="detailModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-sm">Hồ sơ chi tiết nhân sự</h3>
+        <button onclick="closeModal('detailModal')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="mt-4 space-y-4 text-xs" id="detailModalBody">
+        <!-- Injected via JS -->
+      </div>
+      <div class="pt-4 border-t border-slate-100 flex justify-end">
+        <button onclick="closeModal('detailModal')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: THÊM NHÂN SỰ MỚI -->
+  <!-- ========================================== -->
+  <div id="addModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">Thêm nhân sự mới</h3>
+            <p class="text-[11px] text-slate-500">Tạo tài khoản và cấp quyền theo vai trò</p>
+          </div>
+        </div>
+        <button onclick="closeModal('addModal')" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="addUserForm" onsubmit="handleAddUserSubmit(event)" class="space-y-3.5 text-xs mt-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Tên tài khoản (Username) *</label>
+            <input type="text" id="addUsername" required placeholder="VD: annguyen..." class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Mật khẩu ban đầu *</label>
+            <input type="password" id="addPassword" required placeholder="Tối thiểu 6 ký tự..." class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none font-mono" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Họ và tên nhân sự *</label>
+          <input type="text" id="addFullName" required placeholder="VD: Nguyễn Văn An" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Vai trò hệ thống *</label>
+            <select id="addRole" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none font-medium">
+              <option value="ADMIN">Quản trị hệ thống</option>
+              <option value="QUAN_LY_DIEU_HANH">Quản lý điều hành bãi</option>
+              <option value="BAO_VE" selected>Nhân viên cổng</option>
+              <option value="THU_NGAN">Kế toán / Thu ngân</option>
+              <option value="KY_THUAT_IOT">Kỹ thuật viên IoT & AI</option>
+              <option value="DOI_TAC_B2B">Đại lý B2B</option>
+              <option value="KHACH_HANG">Cư dân / Chủ xe</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Chức danh / Vị trí</label>
+            <input type="text" id="addPosition" placeholder="VD: Nhân viên trực cổng..." class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Số điện thoại</label>
+            <input type="text" id="addPhone" placeholder="09xx..." class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Email</label>
+            <input type="email" id="addEmail" placeholder="user@doxeai.vn" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 outline-none" />
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('addModal')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold">
+            Hủy
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-md shadow-indigo-600/20">
+            Xác nhận tạo tài khoản
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Danh sách 12 người dùng chuẩn 7 vai trò như trong ảnh mẫu
+    let USERS = [
+      {
+        id: 'USR-001',
+        taiKhoan: 'admin',
+        hoTen: 'Lê Quốc Bảo',
+        vaiTro: 'ADMIN',
+        chucVu: 'Quản trị hệ thống',
+        soDienThoai: '0912888999',
+        email: 'bao.le@doxeai.vn',
+        trangThai: 'HOAT_DONG',
+        isCurrent: true
+      },
+      {
+        id: 'USR-002',
+        taiKhoan: 'vinhdq',
+        hoTen: 'Đặng Quốc Vinh',
+        vaiTro: 'ADMIN',
+        chucVu: 'Quản trị hệ thống & An toàn thông tin',
+        soDienThoai: '0988666777',
+        email: 'vinh.dang@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-003',
+        taiKhoan: 'thangpv',
+        hoTen: 'Phan Văn Thắng',
+        vaiTro: 'QUAN_LY_DIEU_HANH',
+        chucVu: 'Trưởng ban Quản lý điều hành bãi đỗ',
+        soDienThoai: '0913456789',
+        email: 'thang.phan@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-004',
+        taiKhoan: 'hungdv',
+        hoTen: 'Đỗ Văn Hùng',
+        vaiTro: 'BAO_VE',
+        chucVu: 'Tổ trưởng An ninh trực cổng Vào',
+        soDienThoai: '0978112233',
+        email: 'hung.do@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-005',
+        taiKhoan: 'dungbq',
+        hoTen: 'Bùi Quốc Dũng',
+        vaiTro: 'BAO_VE',
+        chucVu: 'Nhân viên kiểm soát barie cổng Ra',
+        soDienThoai: '0967445566',
+        email: 'dung.bui@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-006',
+        taiKhoan: 'phuongnm',
+        hoTen: 'Nguyễn Mai Phương',
+        vaiTro: 'THU_NGAN',
+        chucVu: 'Kế toán thu ngân quầy dịch vụ',
+        soDienThoai: '0918223344',
+        email: 'phuong.nguyen@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-007',
+        taiKhoan: 'tranght',
+        hoTen: 'Hoàng Thu Trang',
+        vaiTro: 'THU_NGAN',
+        chucVu: 'Kế toán đối soát & Doanh thu VietQR',
+        soDienThoai: '0945889900',
+        email: 'trang.hoang@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-008',
+        taiKhoan: 'tungvt',
+        hoTen: 'Võ Thanh Tùng',
+        vaiTro: 'KY_THUAT_IOT',
+        chucVu: 'Kỹ sư trưởng IoT, Sensor & ANPR AI',
+        soDienThoai: '0932778899',
+        email: 'tung.vo@doxeai.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-009',
+        taiKhoan: 'cuong.gsm',
+        hoTen: 'Hà Quốc Cường',
+        vaiTro: 'DOI_TAC_B2B',
+        chucVu: 'Đại diện Đội xe Taxi Xanh SM',
+        soDienThoai: '19002088',
+        email: 'cuong.ha@xanhsm.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-010',
+        taiKhoan: 'tri.grab',
+        hoTen: 'Lương Minh Trí',
+        vaiTro: 'DOI_TAC_B2B',
+        chucVu: 'Quản lý Đội xe Đối tác GrabCar',
+        soDienThoai: '02871087108',
+        email: 'tri.luong@grab.vn',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-011',
+        taiKhoan: 'baodg',
+        hoTen: 'Dương Gia Bảo',
+        vaiTro: 'KHACH_HANG',
+        chucVu: 'Cư dân Căn hộ A12 (30H-892.45)',
+        soDienThoai: '0938556677',
+        email: 'bao.duong@gmail.com',
+        trangThai: 'HOAT_DONG'
+      },
+      {
+        id: 'USR-012',
+        taiKhoan: 'bichtn',
+        hoTen: 'Trịnh Ngọc Bích',
+        vaiTro: 'KHACH_HANG',
+        chucVu: 'Khách gửi vé tháng (51K-345.67)',
+        soDienThoai: '0908334455',
+        email: 'ngocbich.trinh@gmail.com',
+        trangThai: 'HOAT_DONG'
+      }
+    ];
+
+    const ROLE_NAMES = {
+      ADMIN: 'Quản trị hệ thống',
+      QUAN_LY_DIEU_HANH: 'Quản lý điều hành',
+      BAO_VE: 'Nhân viên cổng',
+      THU_NGAN: 'Kế toán / Thu ngân',
+      KY_THUAT_IOT: 'Kỹ thuật viên IoT & AI',
+      DOI_TAC_B2B: 'Đại lý B2B',
+      KHACH_HANG: 'Cư dân / Chủ xe'
+    };
+
+    let currentRoleFilter = 'ALL';
+    let currentStatusFilter = 'ALL';
+
+    function renderTable() {
+      const term = document.getElementById('searchInput').value.toLowerCase().trim();
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = USERS.filter(u => {
+        const matchSearch = !term || 
+          u.hoTen.toLowerCase().includes(term) ||
+          u.taiKhoan.toLowerCase().includes(term) ||
+          u.email.toLowerCase().includes(term) ||
+          u.soDienThoai.includes(term);
+
+        const matchRole = currentRoleFilter === 'ALL' || u.vaiTro === currentRoleFilter;
+        const matchStatus = currentStatusFilter === 'ALL' || u.trangThai === currentStatusFilter;
+
+        return matchSearch && matchRole && matchStatus;
+      });
+
+      // Update KPI
+      const activeCount = USERS.filter(u => u.trangThai === 'HOAT_DONG').length;
+      const lockedCount = USERS.filter(u => u.trangThai === 'KHOA').length;
+      document.getElementById('statTotalUsers').textContent = USERS.length;
+      document.getElementById('statActiveUsers').textContent = activeCount;
+      document.getElementById('statLockedUsers').textContent = lockedCount;
+      document.getElementById('foundCount').textContent = filtered.length;
+      document.getElementById('showingCount').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" class="py-12 text-center text-slate-400">
+              <p class="font-bold text-slate-600">Không tìm thấy nhân sự phù hợp!</p>
+              <p class="text-xs text-slate-400 mt-1">Vui lòng kiểm tra lại từ khóa tìm kiếm hoặc bỏ bộ lọc</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(u => {
+        const firstLetter = u.hoTen.charAt(0).toUpperCase();
+        const isCurrent = !!u.isCurrent;
+        const isActive = u.trangThai === 'HOAT_DONG';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/70 transition';
+        tr.innerHTML = `
+          <td class="py-4 px-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-indigo-100 text-indigo-700">
+                ${firstLetter}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 text-sm">${u.hoTen}</span>
+                  ${isCurrent ? '<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">Bạn</span>' : ''}
+                </div>
+                <div class="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5">
+                  <span class="font-mono text-slate-600">@${u.taiKhoan}</span>
+                  <span>•</span>
+                  <span>${u.soDienThoai}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="py-4 px-6">
+            <div class="font-semibold text-slate-800">${ROLE_NAMES[u.vaiTro] || u.vaiTro}</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">${u.chucVu}</div>
+          </td>
+          <td class="py-4 px-6">
+            ${isActive 
+              ? '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Hoạt động</span>'
+              : '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Bị khóa</span>'
+            }
+          </td>
+          <td class="py-4 px-6 text-right">
+            <div class="inline-flex items-center gap-2">
+              <button onclick="viewDetail('${u.id}')" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span>Chi tiết</span>
+              </button>
+              <button onclick="toggleLock('${u.id}')" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs transition cursor-pointer" title="${isActive ? 'Khóa' : 'Mở khóa'}">
+                <i data-lucide="${isActive ? 'lock' : 'unlock'}" class="w-3.5 h-3.5 ${isActive ? 'text-rose-500' : 'text-emerald-500'}"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleRoleDropdown() {
+      const menu = document.getElementById('roleDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function setRoleFilter(roleKey) {
+      currentRoleFilter = roleKey;
+      const label = document.getElementById('roleFilterLabel');
+      if (roleKey === 'ALL') {
+        label.textContent = 'Tất cả vai trò (7)';
+      } else {
+        label.textContent = ROLE_NAMES[roleKey] || roleKey;
+      }
+      document.getElementById('roleDropdownMenu').classList.add('hidden');
+      renderTable();
+    }
+
+    function toggleStatusDropdown() {
+      const menu = document.getElementById('statusDropdownMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function setStatusFilter(statusKey) {
+      currentStatusFilter = statusKey;
+      const label = document.getElementById('statusFilterLabel');
+      if (statusKey === 'ALL') label.textContent = 'Tất cả trạng thái';
+      if (statusKey === 'HOAT_DONG') label.textContent = '● Đang hoạt động';
+      if (statusKey === 'KHOA') label.textContent = '● Đang bị khóa';
+      document.getElementById('statusDropdownMenu').classList.add('hidden');
+      renderTable();
+    }
+
+    function handleSearch() {
+      renderTable();
+    }
+
+    function reloadUsers() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => {
+        icon.classList.remove('animate-spin');
+        renderTable();
+      }, 500);
+    }
+
+    function toggleLock(userId) {
+      const u = USERS.find(x => x.id === userId);
+      if (!u) return;
+      if (u.isCurrent) {
+        alert('Không thể tự khóa tài khoản của chính mình!');
+        return;
+      }
+      u.trangThai = u.trangThai === 'HOAT_DONG' ? 'KHOA' : 'HOAT_DONG';
+      renderTable();
+    }
+
+    function viewDetail(userId) {
+      const u = USERS.find(x => x.id === userId);
+      if (!u) return;
+      const body = document.getElementById('detailModalBody');
+      body.innerHTML = `
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg bg-indigo-100 text-indigo-700">
+            ${u.hoTen.charAt(0)}
+          </div>
+          <div>
+            <div class="font-bold text-slate-900 text-sm">${u.hoTen}</div>
+            <div class="text-slate-500 font-mono">@${u.taiKhoan}</div>
+            <div class="text-[11px] font-semibold text-indigo-600">${ROLE_NAMES[u.vaiTro] || u.vaiTro}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+          <div><span class="text-slate-400">Trạng thái:</span><div class="font-semibold text-emerald-600">${u.trangThai === 'HOAT_DONG' ? '🟢 Hoạt động' : '🔴 Bị khóa'}</div></div>
+          <div><span class="text-slate-400">Số điện thoại:</span><div class="font-semibold text-slate-800">${u.soDienThoai}</div></div>
+          <div><span class="text-slate-400">Email:</span><div class="font-semibold text-slate-800 truncate">${u.email}</div></div>
+          <div><span class="text-slate-400">Chức vụ:</span><div class="font-semibold text-slate-800">${u.chucVu}</div></div>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openAddUserModal() {
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function handleAddUserSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('addUsername').value.trim();
+      const fullname = document.getElementById('addFullName').value.trim();
+      const role = document.getElementById('addRole').value;
+      const position = document.getElementById('addPosition').value.trim() || ROLE_NAMES[role];
+      const phone = document.getElementById('addPhone').value.trim();
+      const email = document.getElementById('addEmail').value.trim();
+
+      USERS.unshift({
+        id: 'USR-' + Date.now(),
+        taiKhoan: username,
+        hoTen: fullname,
+        vaiTro: role,
+        chucVu: position,
+        soDienThoai: phone || '0988000111',
+        email: email || `${username}@doxeai.vn`,
+        trangThai: 'HOAT_DONG'
+      });
+
+      closeModal('addModal');
+      document.getElementById('addUserForm').reset();
+      renderTable();
+      alert(`Đã thêm mới nhân sự "${fullname}" thành công!`);
+    }
+
+    function openImportModal() {
+      alert('📊 Tính năng Import Excel:\nHỗ trợ nhập danh sách nhân sự hàng loạt theo định dạng cột: TaiKhoan, HoTen, VaiTro, SoDienThoai, Email.');
+    }
+
+    function exportExcel() {
+      alert('📥 Đang xuất danh sách nhân sự ra file CSV/Excel...');
+    }
+
+    // Đóng dropdown khi click ngoài
+    document.addEventListener('click', (e) => {
+      const roleContainer = document.getElementById('roleDropdownContainer');
+      const statusContainer = document.getElementById('statusDropdownContainer');
+      if (roleContainer && !roleContainer.contains(e.target)) {
+        document.getElementById('roleDropdownMenu').classList.add('hidden');
+      }
+      if (statusContainer && !statusContainer.contains(e.target)) {
+        document.getElementById('statusDropdownMenu').classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderTable();
+    });
+  </script>
+</body>
+</html>
