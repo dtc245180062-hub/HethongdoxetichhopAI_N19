@@ -333,8 +333,17 @@ export default function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-[#5352d1] via-[#655ee1] to-[#806ff5] font-sans relative overflow-hidden select-none">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden select-none bg-slate-950">
       
+      {/* ẢNH NỀN BÃI ĐỖ XE THỰC TẾ (CHÍNH XÁC THEO HÌNH ẢNH YÊU CẦU) */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-100"
+        style={{ backgroundImage: `url('/parking_lot_bg.jpg')` }}
+      />
+
+      {/* LỚP PHỦ GRADIENT KÍNH MỜ: GIỮ HÌNH ẢNH BÃI XE RÕ RÀNG VÀ TÔN LÊN VẺ ĐẸP CỦA THẺ KÍNH TÍM */}
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/75 via-purple-950/65 to-slate-950/80 backdrop-blur-[2px]" />
+
       {/* 1. THÔNG BÁO PUSH NOTIFICATION / TIN NHẮN MÔ PHỎNG MÃ OTP VỀ MÁY */}
       {incomingOtpMock && (
         <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 max-w-sm w-full bg-slate-900/95 text-white p-4 rounded-2xl shadow-2xl border border-teal-500/40 backdrop-blur-xl animate-bounce-subtle">
