@@ -29,7 +29,6 @@ import PricingTable from './components/PricingTable';
 import UserManagement from './components/UserManagement';
 import AiAssistantWidget from './components/AiAssistantWidget';
 import CustomerPortal from './components/CustomerPortal';
-import CameraAiHub from './components/CameraAiHub';
 import BlacklistManagement from './components/BlacklistManagement';
 import UserProfile from './components/UserProfile';
 
@@ -343,7 +342,6 @@ export default function App() {
               {activeTab === 'history' && 'Nhật Ký Lịch Sử Xe Vào / Ra'}
               {activeTab === 'pricing' && 'Bảng Giá & Định Mức Dịch Vụ'}
               {activeTab === 'users' && 'Quản Lý Người Dùng & Phân Quyền'}
-              {activeTab === 'camera_ai' && 'Trung Tâm Camera AI & ANPR'}
               {activeTab === 'blacklist' && 'Quản Lý Danh Sách Đen Xe'}
             </h2>
           </div>
@@ -543,16 +541,6 @@ export default function App() {
           {activeTab === 'users' && (
             <UserManagement
               currentUser={currentUser}
-            />
-          )}
-
-          {activeTab === 'camera_ai' && (
-            <CameraAiHub
-              slots={slots}
-              zones={zones}
-              onSelectSlot={(slotId) => {
-                setActiveTab('map');
-              }}
             />
           )}
 

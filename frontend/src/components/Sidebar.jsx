@@ -15,7 +15,6 @@ import {
   LogOut,
   UserCheck,
   Key,
-  Cpu,
   ShieldAlert,
   Compass,
   AlertTriangle,
@@ -97,23 +96,8 @@ export default function Sidebar({
       ]
     },
     {
-      groupKey: 'CAMERA_AI',
-      groupTitle: '3. Camera AI & ANPR',
-      items: [
-        {
-          id: 'camera_ai',
-          label: 'Trung Tâm Camera AI',
-          subLabel: 'ANPR, gợi ý ô đỗ & dự báo 24h',
-          icon: Cpu,
-          badge: 'YOLOv8',
-          badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-          visible: isRole !== 'KHACH_HANG'
-        }
-      ]
-    },
-    {
       groupKey: 'ADMIN',
-      groupTitle: '4. Quản Trị Viên',
+      groupTitle: '3. Quản Trị Viên',
       items: [
         {
           id: 'dashboard',
