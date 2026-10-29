@@ -97,7 +97,7 @@ export default function App() {
         setActiveTab('customer');
       }
     } else if (role === 'BAO_VE') {
-      const allowed = ['gate', 'gate_in', 'gate_out', 'map', 'history', 'pricing', 'profile'];
+      const allowed = ['gate', 'gate_in', 'gate_out', 'map', 'history', 'pricing', 'blacklist', 'profile'];
       if (!allowed.includes(activeTab)) {
         setActiveTab('gate');
       }
@@ -341,7 +341,6 @@ export default function App() {
               {activeTab === 'history' && 'Nhật ký lịch sử xe vào / ra'}
               {activeTab === 'pricing' && 'Bảng giá & định mức dịch vụ'}
               {activeTab === 'users' && 'Quản lý người dùng & phân quyền'}
-              {activeTab === 'camera_ai' && 'Trung tâm Camera AI & ANPR'}
               {activeTab === 'blacklist' && 'Quản lý danh sách đen xe'}
             </h2>
           </div>

@@ -183,6 +183,6 @@ router.get('/khach-hang/ho-tro', parkingController.customerGetSupportList);
 // ==========================================
 router.get('/blacklist', parkingController.getBlacklist);
 router.post('/blacklist', requireRole(['ADMIN', 'BAO_VE']), parkingController.addBlacklist);
-router.delete('/blacklist/:id', requireRole(['ADMIN']), parkingController.deleteBlacklist);
+router.delete('/blacklist/:id', requireRole(['ADMIN', 'BAO_VE', 'QUAN_LY_DIEU_HANH']), parkingController.deleteBlacklist);
 
 module.exports = router;

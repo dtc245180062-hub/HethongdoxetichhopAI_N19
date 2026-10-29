@@ -490,17 +490,17 @@ export default function Login({ onLoginSuccess }) {
       <div className="w-full max-w-[400px] rounded-[32px] bg-white/[0.10] backdrop-blur-2xl border border-white/20 p-8 sm:p-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] relative z-10 transition-all duration-300">
         
         {/* TIÊU ĐỀ */}
-        <h1 className="text-[26px] font-bold text-white text-center tracking-tight leading-tight">
-          {authMode === 'OTP' ? 'Xác Thực OTP' : authMode === 'SIGNUP' ? 'Đăng Ký Tài Khoản' : 'Chào Mừng Trở Lại'}
+        <h1 className={`text-[28px] font-bold text-white text-center tracking-tight leading-tight ${authMode === 'PASSWORD' ? 'mb-7' : ''}`}>
+          {authMode === 'OTP' ? 'Xác Thực OTP' : authMode === 'SIGNUP' ? 'Đăng Ký Tài Khoản' : 'Đăng Nhập'}
         </h1>
         
-        <p className="text-white/70 text-xs sm:text-sm text-center mt-1.5 mb-7 font-normal">
-          {authMode === 'OTP'
-            ? 'Xác thực mã đăng nhập gửi về máy'
-            : authMode === 'SIGNUP'
-            ? 'Tạo tài khoản mới để trải nghiệm dịch vụ'
-            : 'Đăng nhập vào tài khoản của bạn'}
-        </p>
+        {authMode !== 'PASSWORD' && (
+          <p className="text-white/70 text-xs sm:text-sm text-center mt-1.5 mb-7 font-normal">
+            {authMode === 'OTP'
+              ? 'Xác thực mã đăng nhập gửi về máy'
+              : 'Tạo tài khoản mới để trải nghiệm dịch vụ'}
+          </p>
+        )}
 
         {/* THÔNG BÁO LỖI HOẶC HƯỚNG DẪN */}
         {errorMsg && (
