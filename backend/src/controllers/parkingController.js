@@ -1,3 +1,4 @@
+const { get24HourForecast } = require('../services/forecastService');
 const { readDb, writeDb, getTable } = require('../utils/db');
 const { nhanDienBienSo } = require('../services/aiService');
 
@@ -435,6 +436,18 @@ const getDashboard = (req, res) => {
         tyLeLapDay,
         doanhThuNgay,
         tongDoanhThu: doanhThuNgay,
+        duBao24h: get24HourForecast(),
+        canhBaoBatThuong: luotList
+          .filter(l => (l.trangThai === 'DANG_DO' || l.trangThai === 'Đang đỗ') && (new Date() - new Date(l.thoiGianVao)) > 24 * 60 * 60 * 1000)
+          .map(l => ({
+            id: l.id,
+            bienSo: l.bienSo,
+            maViTri: l.maViTri,
+            thoiGianVao: l.thoiGianVao,
+            soGioDaGui: Math.round((new Date() - new Date(l.thoiGianVao)) / (1000 * 60 * 60)),
+            loaiCanhBao: 'XE_GUI_QUA_24H',
+            thongDiep: `Xe ${l.bienSo} đã đỗ liên tục ${Math.round((new Date() - new Date(l.thoiGianVao)) / (1000 * 60 * 60))} giờ tại ô ${l.maViTri} (vượt quá 24h)!`
+          })),
         soKhuVuc: khuVucList.length,
         khuVucSummary,
         luotVaoRaGanNhat
@@ -581,7 +594,7 @@ const createXe = (req, res) => {
     const db = readDb();
     if (!db.Xe) db.Xe = [];
 
-    const { bienSo, loaiXe, chuXe, soDienThoai, loaiDangKy, hanVeThang, maTheRFID } = req.body;
+    const { bienSo, loaiXe, chuXe, soDienThoai, loaiDangKy, hanVeThang, maTheRFID, hangXe, mauSac } = req.body;
 
     if (!bienSo) {
       return res.status(400).json({
@@ -612,6 +625,8 @@ const createXe = (req, res) => {
       loaiDangKy: loaiDangKy || 'VANG_LAI',
       hanVeThang: loaiDangKy === 'THUONG_TRU' ? (hanVeThang || defaultExpiry) : null,
       maTheRFID: maTheRFID || `RFID-${Math.floor(100000 + Math.random() * 900000)}`,
+      hangXe: (hangXe || 'Khác').trim(),
+      mauSac: (mauSac || 'Tiêu chuẩn').trim(),
       ngayDangKy: now.toISOString().slice(0, 10)
     };
 
@@ -845,7 +860,7 @@ const customerBookSlot = (req, res) => {
     const db = readDb();
     if (!db.DatCho) db.DatCho = [];
 
-    const { bienSo, loaiXe, maKhuVuc, thoiGianDen, ghiChu, hoTen, soDienThoai } = req.body;
+    const { bienSo, loaiXe, maKhuVuc, thoiGianDen, ghiChu, hoTen, soDienThoai, maViTri } = req.body;
 
     if (!bienSo || !maKhuVuc) {
       return res.status(400).json({
@@ -855,43 +870,83 @@ const customerBookSlot = (req, res) => {
     }
 
     const cleanPlate = bienSo.trim().toUpperCase();
+
+    // RÀNG BUỘC 1 (Mục e): Xe chưa ở trong bãi
+    const isParking = (db.LuotVaoRa || []).some(
+      l => l.bienSo === cleanPlate && (l.trangThai === 'DANG_DO' || l.trangThai === 'Đang đỗ')
+    );
+    if (isParking) {
+      return res.status(400).json({
+        success: false,
+        message: `Phương tiện ${cleanPlate} hiện đang đỗ trong bãi xe! Không thể đặt chỗ trước.`
+      });
+    }
+
+    // RÀNG BUỘC 2 (Mục e): Chưa có lượt đặt chỗ khác đang có hiệu lực
+    const hasActiveBooking = (db.DatCho || []).some(
+      b => b.bienSo === cleanPlate && (b.trangThai === 'DA_XAC_NHAN' || b.trangThai === 'CHO_DEN')
+    );
+    if (hasActiveBooking) {
+      return res.status(400).json({
+        success: false,
+        message: `Phương tiện ${cleanPlate} đã có một lượt đặt trước đang chờ đến! Không thể đặt thêm.`
+      });
+    }
+
     const now = new Date();
     const bookingCode = `BK-${Date.now().toString().slice(-6)}`;
 
-    // Kiểm tra còn chỗ trống trong khu vực không
+    // Tìm vị trí đỗ phù hợp trong khu vực (hoặc AI chỉ định)
     const viTriList = db.ViTri || [];
-    const availableSlot = viTriList.find(
-      v => v.maKhuVuc === maKhuVuc && (v.trangThai === 'Trống' || v.trangThaiCode === 'TRONG')
-    );
+    let targetSlot = null;
 
-    if (!availableSlot) {
+    if (maViTri) {
+      targetSlot = viTriList.find(
+        v => v.id === maViTri && (v.trangThai === 'Trống' || v.trangThaiCode === 'TRONG' || v.trangThai === 'TRONG')
+      );
+    }
+
+    if (!targetSlot) {
+      targetSlot = viTriList.find(
+        v => v.maKhuVuc === maKhuVuc && (v.trangThai === 'Trống' || v.trangThaiCode === 'TRONG' || v.trangThai === 'TRONG')
+      );
+    }
+
+    if (!targetSlot) {
       return res.status(400).json({
         success: false,
-        message: `Phân khu [${maKhuVuc}] hiện không còn vị trí trống để giữ chỗ!`
+        message: `Phân khu [${maKhuVuc}] hiện không còn vị trí trống khả dụng để giữ chỗ!`
       });
     }
+
+    // Thời gian giữ chỗ: ĐÚNG 30 PHÚT THEO ĐẶC TẢ (Mục e)
+    const expiryTime = new Date(now.getTime() + 30 * 60 * 1000);
 
     const newBooking = {
       id: bookingCode,
       bienSo: cleanPlate,
       loaiXe: loaiXe || 'OTO',
       maKhuVuc,
-      maViTriGiuCho: availableSlot.id,
+      maViTriGiuCho: targetSlot.id,
       hoTen: (hoTen || 'Khách hàng').trim(),
       soDienThoai: (soDienThoai || '').trim(),
       thoiGianDat: now.toISOString(),
-      thoiGianDen: thoiGianDen || new Date(now.getTime() + 30 * 60 * 1000).toISOString(),
-      hanGiuCho: new Date(now.getTime() + 45 * 60 * 1000).toISOString(),
+      thoiGianDen: thoiGianDen || now.toISOString(),
+      hanGiuCho: expiryTime.toISOString(),
       trangThai: 'DA_XAC_NHAN',
-      ghiChu: ghiChu || 'Giữ chỗ trực tuyến qua Cổng Khách Hàng'
+      ghiChu: ghiChu || 'Giữ chỗ trực tuyến qua Cổng Khách Hàng (Hiệu lực 30 phút)'
     };
+
+    // Đánh dấu ô đỗ là ĐÃ ĐẶT để người khác không chiếm
+    targetSlot.trangThai = 'Đã đặt';
+    targetSlot.bienSoXe = cleanPlate;
 
     db.DatCho.unshift(newBooking);
     writeDb(db);
 
     res.status(201).json({
       success: true,
-      message: `Đặt chỗ thành công! Mã giữ chỗ: ${bookingCode}. Vị trí ưu tiên: ${availableSlot.id} (${maKhuVuc}). Hiệu lực trong 45 phút.`,
+      message: `Đặt chỗ thành công! Mã giữ chỗ: ${bookingCode}. Vị trí giữ chỗ: ${targetSlot.id} (${maKhuVuc}). Chỗ đỗ được giữ trong 30 phút tới ${expiryTime.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}.`,
       data: newBooking
     });
   } catch (error) {
@@ -1054,6 +1109,68 @@ const deleteBlacklist = (req, res) => {
     res.json({
       success: true,
       message: 'Đã gỡ phương tiện khỏi danh sách đen thành công!'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+/**
+ * POST /api/khu-vuc: Tạo phân khu mới và tự động sinh các ô đỗ tương ứng (Mục j)
+ */
+const createKhuVuc = (req, res) => {
+  try {
+    const db = readDb();
+    if (!db.KhuVuc) db.KhuVuc = [];
+    if (!db.ViTri) db.ViTri = [];
+
+    const { tenKhuVuc, tang, loaiXe, sucChua, moTa } = req.body;
+    if (!tenKhuVuc || !sucChua) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp Tên phân khu và Sức chứa tối thiểu!'
+      });
+    }
+
+    const numSlots = parseInt(sucChua) || 10;
+    const kvCode = 'KV-' + (tenKhuVuc.replace(/[^A-Za-z0-9]/g, '').slice(-1).toUpperCase() || Date.now().toString().slice(-2));
+    const prefix = tenKhuVuc.slice(-1).toUpperCase() || 'E';
+
+    const newKhuVuc = {
+      id: kvCode,
+      tenKhuVuc: tenKhuVuc.trim(),
+      tang: tang || 'Tầng 1 (Mặt đất)',
+      loaiXe: loaiXe || 'OTO',
+      sucChua: numSlots,
+      moTa: moTa || `Phân khu ${tenKhuVuc} dành cho ${loaiXe || 'Ô tô'}`
+    };
+
+    db.KhuVuc.push(newKhuVuc);
+
+    // Tự sinh danh sách các ô đỗ tương ứng
+    for (let i = 1; i <= numSlots; i++) {
+      const slotNum = i < 10 ? '0' + i : '' + i;
+      const slotId = `${prefix}-${slotNum}`;
+      db.ViTri.push({
+        id: slotId,
+        maKhuVuc: kvCode,
+        tenViTri: `Vị trí ${slotId}`,
+        loaiXe: loaiXe || 'OTO',
+        trangThai: 'Trống',
+        trangThaiCode: 'TRONG',
+        bienSoXe: null,
+        thoiGianVao: null
+      });
+    }
+
+    writeDb(db);
+
+    res.status(201).json({
+      success: true,
+      message: `Tạo phân khu [${tenKhuVuc}] thành công và đã tự động sinh ${numSlots} ô đỗ (${prefix}-01 đến ${prefix}-${numSlots < 10 ? '0' + numSlots : numSlots})!`,
+      data: newKhuVuc
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

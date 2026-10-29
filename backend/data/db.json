@@ -497,7 +497,6 @@
     },
     {
       "id": "LVR-1793283304348",
-
       "bienSo": "36MI-108.88",
       "loaiXe": "O to",
       "maViTri": "A-01",
@@ -1805,6 +1804,22 @@
       "answer": "Khung giờ đông xe nhất trong ngày là 17:30 - 20:30 (đạt mật độ 92% công suất). Ngoài ra có khung giờ cao điểm sáng lúc 07:30 - 09:00 (~75%). Hiện tại bãi đang có 2 xe đang đỗ (13% công suất).",
       "intent": "PEAK_HOURS",
       "created_at": "2026-10-29T16:39:59.509Z"
+    },
+    {
+      "id": "LOG-1793295059047-332",
+      "admin_id": "USR-001",
+      "question": "lưu lượng xe trong 24h tới",
+      "answer": "Khung giờ đông xe nhất trong ngày là 17:30 - 20:30 (đạt mật độ 92% công suất). Ngoài ra có khung giờ cao điểm sáng lúc 07:30 - 09:00 (~75%). Hiện tại bãi đang có 2 xe đang đỗ (13% công suất).",
+      "intent": "PEAK_HOURS",
+      "created_at": "2026-10-29T17:30:59.047Z"
+    },
+    {
+      "id": "LOG-1793296218259-729",
+      "admin_id": "USR-001",
+      "question": "chỗ nào còn trống",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T17:50:18.259Z"
     }
   ]
 }

@@ -76,5 +76,6 @@ const getOccupancyForecast = () => {
 };
 
 module.exports = {
-  getOccupancyForecast
+  getOccupancyForecast,
+  get24HourForecast: getOccupancyForecast
 };

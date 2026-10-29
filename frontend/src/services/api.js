@@ -118,6 +118,23 @@ export const api = {
     return res.json();
   },
 
+  async createXe(xeData) {
+    const res = await fetch(`${API_BASE}/xe`, {
+      method: 'POST',
+      headers: getAuthHeaders(true),
+      body: JSON.stringify(xeData)
+    });
+    return res.json();
+  },
+
+  async deleteXe(id) {
+    const res = await fetch(`${API_BASE}/xe/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(true)
+    });
+    return res.json();
+  },
+
   async getXe(search = '') {
     const res = await fetch(`${API_BASE}/xe?search=${encodeURIComponent(search)}`, {
       headers: getAuthHeaders(false)
