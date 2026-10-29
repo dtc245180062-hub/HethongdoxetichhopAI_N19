@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Sparkles,
   X,
   Send,
   Bot,
@@ -179,13 +178,7 @@ export default function AiAssistantWidget({ currentUser }) {
                 key={msg.id}
                 className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                {msg.sender === 'assistant' && (
-                  <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200 mt-0.5">
-                    <Sparkles className="w-3.5 h-3.5" />
-                  </div>
-                )}
-
-                <div className={`max-w-[85%] space-y-1.5 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`max-w-[90%] space-y-1.5 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                   {msg.sender === 'user' ? (
                     <div className="p-3 rounded-2xl rounded-tr-xs bg-gray-900 text-white text-xs font-medium shadow-sm">
                       {msg.text}
