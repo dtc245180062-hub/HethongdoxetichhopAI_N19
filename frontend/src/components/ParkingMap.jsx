@@ -102,7 +102,7 @@ export default function ParkingMap({
             onClick={() => setSelectedZone('ALL')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
               selectedZone === 'ALL'
-                ? 'bg-blue-600 text-slate-900 shadow-md shadow-blue-600/30'
+                ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                 : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
             }`}
           >
@@ -114,7 +114,7 @@ export default function ParkingMap({
               onClick={() => setSelectedZone(z.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 selectedZone === z.id
-                  ? 'bg-blue-600 text-slate-900 shadow-md shadow-blue-600/30'
+                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                   : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
               }`}
             >
@@ -140,7 +140,7 @@ export default function ParkingMap({
             onClick={() => setSelectedStatus('TRONG')}
             className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
               selectedStatus === 'TRONG'
-                ? 'bg-emerald-600 text-slate-900'
+                ? 'bg-emerald-600 text-white font-semibold'
                 : 'text-emerald-600 hover:bg-emerald-50/40'
             }`}
           >
@@ -150,7 +150,7 @@ export default function ParkingMap({
             onClick={() => setSelectedStatus('DA_DO')}
             className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
               selectedStatus === 'DA_DO'
-                ? 'bg-rose-600 text-slate-900'
+                ? 'bg-rose-600 text-white font-semibold'
                 : 'text-rose-600 hover:bg-rose-50/40'
             }`}
           >
@@ -318,7 +318,7 @@ export default function ParkingMap({
                         if (onQuickAction) onQuickAction('book_slot', selectedSlotDetail);
                         setSelectedSlotDetail(null);
                       }}
-                      className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition-all cursor-pointer"
+                      className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                     >
                       <Calendar className="w-4 h-4" /> Đặt Giữ Chỗ Vị Trí Này
                     </button>
@@ -332,7 +332,7 @@ export default function ParkingMap({
                           if (onQuickAction) onQuickAction('view_my_car');
                           setSelectedSlotDetail(null);
                         }}
-                        className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                        className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                       >
                         <Car className="w-4 h-4" /> Xem Trạng Thái Tại Cổng Cư Dân
                       </button>
@@ -356,7 +356,7 @@ export default function ParkingMap({
                         if (onQuickAction) onQuickAction('checkout', selectedSlotDetail.bienSoXe);
                         setSelectedSlotDetail(null);
                       }}
-                      className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                      className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                     >
                       <ArrowUpRight className="w-4 h-4" /> Thanh Toán & Cho Xe Ra (Cổng Ra)
                     </button>
@@ -367,7 +367,7 @@ export default function ParkingMap({
                           if (onQuickAction) onQuickAction('checkin', selectedSlotDetail.id);
                           setSelectedSlotDetail(null);
                         }}
-                        className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-bold text-xs flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+                        className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
                       >
                         <ArrowDownLeft className="w-4 h-4" /> Đặt Xe Vào Vị Trí Này (Cổng Vào)
                       </button>

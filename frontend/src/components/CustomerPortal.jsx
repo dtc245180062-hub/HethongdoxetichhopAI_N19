@@ -307,20 +307,20 @@ export default function CustomerPortal({
   return (
     <div className="space-y-6 pb-12">
       {/* 1. Header Banner & Quick Vehicle Switcher */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-white border border-purple-500/30 p-6 shadow-xl backdrop-blur-xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50/70 via-blue-50/40 to-white border border-indigo-100 rounded-2xl p-6 shadow-xs">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-blue-50 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs font-semibold shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
               <span>Cổng Trải Nghiệm Khách Hàng DoXeAI v2.0</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-normal">
               Xin chào, {currentUser?.hoTen || 'Quý Khách'}! 👋
             </h1>
-            <p className="text-sm text-slate-700 max-w-2xl">
+            <p className="text-sm text-slate-500 max-w-2xl">
               Hệ thống tự động đồng bộ biển số xe, định vị ô đỗ thời gian thực, đặt chỗ trước và thanh toán không chạm VietQR.
             </p>
           </div>
@@ -330,23 +330,23 @@ export default function CustomerPortal({
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="p-2.5 rounded-xl bg-slate-100/40 hover:bg-slate-200 text-slate-700 border border-slate-300 transition-all cursor-pointer"
+              className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 shadow-2xs transition-all cursor-pointer"
               title="Đồng bộ dữ liệu"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-purple-400' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-indigo-600' : ''}`} />
             </button>
           </div>
         </div>
 
         {/* Plate Quick Selector Bar */}
-        <div className="mt-5 pt-4 border-t border-purple-500/20 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="mt-5 pt-4 mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
             <span className="text-slate-600 font-medium flex items-center gap-1">
-              <Car className="w-4 h-4 text-purple-400" />
+              <Car className="w-4 h-4 text-indigo-600" />
               <span>Phương tiện đang chọn:</span>
             </span>
             <div className="flex items-center gap-1.5 font-mono">
-              <span className="px-2.5 py-1 rounded-lg bg-purple-950 border border-purple-400/40 text-amber-700 font-bold tracking-wider">
+              <span className="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-mono font-bold tracking-wider px-3 py-1 rounded-lg shadow-2xs">
                 {selectedPlate}
               </span>
               <span className="text-[11px] text-slate-600">
@@ -368,7 +368,7 @@ export default function CustomerPortal({
               value={searchPlateInput}
               onChange={(e) => setSearchPlateInput(e.target.value)}
               placeholder="Tra cứu biển số khác..."
-              className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs uppercase outline-none focus:border-purple-500"
+              className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xs uppercase outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
             />
             <button
               type="submit"
@@ -386,8 +386,7 @@ export default function CustomerPortal({
           onClick={() => setActiveCustomerTab('status')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeCustomerTab === 'status'
-              ? 'bg-purple-600 text-slate-900 shadow-lg shadow-purple-600/30'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+              ? 'bg-indigo-600 text-white font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
           }`}
         >
           <Car className="w-4 h-4" />
@@ -401,13 +400,12 @@ export default function CustomerPortal({
           onClick={() => setActiveCustomerTab('booking')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeCustomerTab === 'booking'
-              ? 'bg-purple-600 text-slate-900 shadow-lg shadow-purple-600/30'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+              ? 'bg-indigo-600 text-white font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
           }`}
         >
           <Calendar className="w-4 h-4" />
           <span>Đặt Chỗ Trước (Giữ Chỗ)</span>
-          <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-700 border border-amber-500/30 font-mono">
+          <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200 font-semibold font-mono">
             Ưu Tiên
           </span>
         </button>
@@ -416,8 +414,7 @@ export default function CustomerPortal({
           onClick={() => setActiveCustomerTab('history')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeCustomerTab === 'history'
-              ? 'bg-purple-600 text-slate-900 shadow-lg shadow-purple-600/30'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+              ? 'bg-indigo-600 text-white font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
           }`}
         >
           <History className="w-4 h-4" />
@@ -431,14 +428,13 @@ export default function CustomerPortal({
           onClick={() => setActiveCustomerTab('support')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
             activeCustomerTab === 'support'
-              ? 'bg-purple-600 text-slate-900 shadow-lg shadow-purple-600/30'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-white'
+              ? 'bg-indigo-600 text-white font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
           }`}
         >
-          <LifeBuoy className="w-4 h-4 text-cyan-600" />
+          <LifeBuoy className="w-4 h-4 text-indigo-600" />
           <span>Báo Cáo Sự Cố & Hỗ Trợ</span>
           {supportTickets.length > 0 && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-700 border border-cyan-200 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono">
               {supportTickets.length}
             </span>
           )}
@@ -451,10 +447,10 @@ export default function CustomerPortal({
           {/* Cột trái (2 Cols): Live Status */}
           <div className="lg:col-span-2 space-y-6">
             {/* Live Parking Status Card */}
-            <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-5 shadow-lg backdrop-blur-xl">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-5 shadow-xs">
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
                     <Car className="w-5 h-5" />
                   </div>
                   <div>
@@ -510,7 +506,7 @@ export default function CustomerPortal({
                           ? '0 VNĐ'
                           : `${parkingDetail?.estimatedFee.toLocaleString('vi-VN')} VNĐ`}
                       </div>
-                      <span className="text-[10px] text-purple-400 font-medium">
+                      <span className="text-[10px] text-indigo-600 font-medium">
                         {parkingDetail?.isResident ? '✨ Cư Dân Thường Trú' : 'Vé Khách Vãng Lai'}
                       </span>
                     </div>
@@ -536,7 +532,7 @@ export default function CustomerPortal({
                           `PHI GUI XE ${selectedPlate}`
                         )
                       }
-                      className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-slate-900 font-bold text-xs shadow-lg shadow-blue-600/30 flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+                      className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-xs flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
                     >
                       <QrCode className="w-4 h-4" />
                       <span>Tạo Mã VietQR</span>
@@ -545,9 +541,9 @@ export default function CustomerPortal({
                 </div>
               ) : (
                 /* Card khi xe CHƯA ĐỖ */
-                <div className="rounded-xl bg-slate-50/40 border-white/60 border border-slate-200 p-6 text-center space-y-3">
-                  <div className="inline-flex p-3 rounded-full bg-white text-slate-600 border border-slate-200">
-                    <Compass className="w-6 h-6 text-purple-400" />
+                <div className="rounded-xl bg-slate-50 border border-slate-200/80 p-8 text-center space-y-3">
+                  <div className="inline-flex p-3.5 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 mb-1">
+                    <Compass className="w-6 h-6 text-indigo-600" />
                   </div>
                   <h4 className="text-sm font-bold text-slate-900">
                     Phương tiện [{selectedPlate}] hiện không có lượt gửi tại bãi
@@ -558,7 +554,7 @@ export default function CustomerPortal({
                   <div className="pt-2 flex justify-center gap-3">
                     <button
                       onClick={() => setActiveCustomerTab('booking')}
-                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-slate-900 font-bold text-xs shadow-lg cursor-pointer transition-all"
+                      className="px-4 py-2 rounded-xl px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-all cursor-pointer"
                     >
                       Đặt Giữ Chỗ Trước Ngay
                     </button>
@@ -568,7 +564,7 @@ export default function CustomerPortal({
             </div>
 
             {/* Sơ đồ chỗ trống phân khu */}
-            <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <MapPin className="w-5 h-5 text-emerald-600" />
@@ -603,7 +599,7 @@ export default function CustomerPortal({
                   return (
                     <div
                       key={zone.id}
-                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-purple-500/40 transition-all space-y-3"
+                      className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-all space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <div className="font-bold text-sm text-slate-900">{zone.tenKhuVuc}</div>
@@ -636,10 +632,10 @@ export default function CustomerPortal({
           {/* Cột phải (1 Col): Resident Card & Calculator */}
           <div className="space-y-6">
             {/* Card: Thẻ Cư Dân 3D */}
-            <div className="bg-gradient-to-br from-white via-purple-50 to-white border border-purple-500/30 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-5 h-5 text-purple-400" />
+                  <ShieldCheck className="w-5 h-5 text-indigo-600" />
                   <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
                     Thẻ Cư Dân Điện Tử
                   </h3>
@@ -650,10 +646,10 @@ export default function CustomerPortal({
               </div>
 
               {/* RFID Card Simulation */}
-              <div className="rounded-2xl bg-gradient-to-tr from-purple-800 via-indigo-700 to-blue-600 p-5 text-slate-900 shadow-xl space-y-4 relative overflow-hidden ring-1 ring-white/20">
+              <div className="rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-blue-900 p-5 text-white shadow-md space-y-4 relative overflow-hidden border border-slate-800">
                 <div className="flex justify-between items-center text-xs font-mono opacity-85">
                   <span className="font-bold tracking-wider">DoXeAI RESIDENT PASS</span>
-                  <Sparkles className="w-4 h-4 text-cyan-700" />
+                  <Sparkles className="w-4 h-4 text-indigo-300" />
                 </div>
 
                 <div>
@@ -664,7 +660,7 @@ export default function CustomerPortal({
                 <div className="flex justify-between items-end border-t border-white/20 pt-3">
                   <div>
                     <div className="text-[10px] opacity-75">Biển Số Đăng Ký</div>
-                    <div className="font-mono font-black text-lg text-amber-700 tracking-wider">
+                    <div className="font-mono font-black text-lg text-amber-300 font-mono font-black text-xl tracking-wider">
                       {selectedPlate}
                     </div>
                   </div>
@@ -689,7 +685,7 @@ export default function CustomerPortal({
             </div>
 
             {/* Card: Bộ Tính Phí Tạm Tính */}
-            <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
               <div className="flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-amber-600" />
                 <h3 className="text-sm font-bold text-slate-900">Tính Phí Dự Kiến & VietQR</h3>
@@ -704,8 +700,7 @@ export default function CustomerPortal({
                       onClick={() => setCalcVehicleType('OTO')}
                       className={`py-2 px-1 rounded-xl font-semibold border text-center transition-all cursor-pointer ${
                         calcVehicleType === 'OTO'
-                          ? 'bg-purple-600 border-purple-500 text-slate-900'
-                          : 'bg-slate-50 border-slate-300 text-slate-600'
+                          ? 'bg-indigo-600 border-indigo-600 text-white font-semibold shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 font-medium'
                       }`}
                     >
                       🚗 Ô Tô
@@ -715,8 +710,7 @@ export default function CustomerPortal({
                       onClick={() => setCalcVehicleType('XE_MAY')}
                       className={`py-2 px-1 rounded-xl font-semibold border text-center transition-all cursor-pointer ${
                         calcVehicleType === 'XE_MAY'
-                          ? 'bg-purple-600 border-purple-500 text-slate-900'
-                          : 'bg-slate-50 border-slate-300 text-slate-600'
+                          ? 'bg-indigo-600 border-indigo-600 text-white font-semibold shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 font-medium'
                       }`}
                     >
                       🛵 Xe Máy
@@ -726,8 +720,7 @@ export default function CustomerPortal({
                       onClick={() => setCalcVehicleType('XE_TAI')}
                       className={`py-2 px-1 rounded-xl font-semibold border text-center transition-all cursor-pointer ${
                         calcVehicleType === 'XE_TAI'
-                          ? 'bg-purple-600 border-purple-500 text-slate-900'
-                          : 'bg-slate-50 border-slate-300 text-slate-600'
+                          ? 'bg-indigo-600 border-indigo-600 text-white font-semibold shadow-2xs' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 font-medium'
                       }`}
                     >
                       🚚 Bán Tải
@@ -738,7 +731,7 @@ export default function CustomerPortal({
                 <div>
                   <div className="flex justify-between text-slate-700 font-semibold mb-1">
                     <span>Thời gian gửi dự kiến:</span>
-                    <span className="text-purple-400 font-mono font-bold">{calcHours} Giờ</span>
+                    <span className="text-indigo-600 font-mono font-bold">{calcHours} Giờ</span>
                   </div>
                   <input
                     type="range"
@@ -746,7 +739,7 @@ export default function CustomerPortal({
                     max="24"
                     value={calcHours}
                     onChange={(e) => setCalcHours(e.target.value)}
-                    className="w-full accent-purple-500 bg-slate-100 rounded-lg h-1.5 cursor-pointer"
+                    className="w-full accent-indigo-600 bg-slate-200 rounded-lg h-1.5 cursor-pointer"
                   />
                 </div>
 
@@ -772,7 +765,7 @@ export default function CustomerPortal({
                       `NAP TIEN DO XE ${calculatedEstimate.total}`
                     )
                   }
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 font-bold text-slate-900 shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                  className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all"
                 >
                   <QrCode className="w-4 h-4" />
                   <span>Tạo Mã QR VietQR Thanh Toán</span>
@@ -786,9 +779,9 @@ export default function CustomerPortal({
       {/* 4. TAB CONTENT 2: ĐẶT CHỖ TRƯỚC (SLOT RESERVATION) */}
       {activeCustomerTab === 'booking' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-5 shadow-lg backdrop-blur-xl">
+          <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl p-6 space-y-5 shadow-xs">
             <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
-              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
@@ -816,7 +809,7 @@ export default function CustomerPortal({
 
             {bookingResult ? (
               /* Kết quả đặt chỗ */
-              <div className="rounded-xl bg-gradient-to-br from-white to-purple-50 border border-purple-500/40 p-5 space-y-4 text-center">
+              <div className="rounded-xl rounded-2xl bg-indigo-50/50 border border-indigo-200 p-6 space-y-4 text-center">
                 <div className="inline-flex p-3 rounded-full bg-emerald-500/20 text-emerald-600 border border-emerald-200">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
@@ -827,7 +820,7 @@ export default function CustomerPortal({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
                   <div className="bg-white border border-slate-200 rounded-xl p-3">
                     <span className="text-[10px] text-slate-600">Mã Đặt Chỗ</span>
-                    <div className="font-mono font-bold text-purple-400 text-sm mt-0.5">
+                    <div className="font-mono font-bold text-indigo-600 text-sm mt-0.5">
                       {bookingResult.id}
                     </div>
                   </div>
@@ -845,7 +838,7 @@ export default function CustomerPortal({
                   </div>
                   <div className="bg-white border border-slate-200 rounded-xl p-3">
                     <span className="text-[10px] text-slate-600">Thời Gian Giữ Chỗ</span>
-                    <div className="font-mono font-bold text-cyan-600 text-sm mt-0.5">
+                    <div className="font-mono font-bold text-indigo-600 text-sm mt-0.5">
                       45 Phút
                     </div>
                   </div>
@@ -882,7 +875,7 @@ export default function CustomerPortal({
                     <select
                       value={bookingForm.maKhuVuc}
                       onChange={(e) => setBookingForm({ ...bookingForm, maKhuVuc: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-purple-500"
+                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     >
                       {zones.map((z) => (
                         <option key={z.id} value={z.id}>
@@ -899,7 +892,7 @@ export default function CustomerPortal({
                     <select
                       value={bookingForm.loaiXe}
                       onChange={(e) => setBookingForm({ ...bookingForm, loaiXe: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-purple-500"
+                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     >
                       <option value="OTO">🚗 Xe Ô Tô (4 - 7 chỗ)</option>
                       <option value="XE_MAY">🛵 Xe Máy / Xe Tay Ga</option>
@@ -913,7 +906,7 @@ export default function CustomerPortal({
                       type="time"
                       value={bookingForm.thoiGianDen}
                       onChange={(e) => setBookingForm({ ...bookingForm, thoiGianDen: e.target.value })}
-                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-purple-500"
+                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     />
                   </div>
                 </div>
@@ -925,14 +918,14 @@ export default function CustomerPortal({
                     value={bookingForm.ghiChu}
                     onChange={(e) => setBookingForm({ ...bookingForm, ghiChu: e.target.value })}
                     placeholder="VD: Cần vị trí gần trạm sạc điện hoặc thang máy..."
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={bookingLoading}
-                  className="w-full py-3 rounded-xl font-bold text-xs text-slate-900 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                  className="w-full py-3 rounded-xl font-bold text-xs text-slate-900 bg-indigo-600 hover:bg-indigo-700 shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50 text-white font-semibold"
                 >
                   {bookingLoading ? 'Đang kiểm tra ô đỗ trống...' : 'Xác Nhận Giữ Chỗ Trực Tuyến'}
                 </button>
@@ -941,7 +934,7 @@ export default function CustomerPortal({
           </div>
 
           {/* Hướng dẫn quyền lợi đặt chỗ */}
-          <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-amber-600" />
               <h3 className="text-sm font-bold text-slate-900">Quyền Lợi Giữ Chỗ Online</h3>
@@ -967,10 +960,10 @@ export default function CustomerPortal({
 
       {/* 5. TAB CONTENT 3: LỊCH SỬ & HÓA ĐƠN ĐIỆN TỬ */}
       {activeCustomerTab === 'history' && (
-        <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-5 shadow-lg backdrop-blur-xl">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-5 shadow-xs">
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
                 <History className="w-5 h-5" />
               </div>
               <div>
@@ -985,7 +978,7 @@ export default function CustomerPortal({
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 cursor-pointer"
               title="Làm mới lịch sử"
             >
-              <RefreshCw className={`w-4 h-4 ${historyLoading ? 'animate-spin text-purple-400' : ''}`} />
+              <RefreshCw className={`w-4 h-4 ${historyLoading ? 'animate-spin text-indigo-600' : ''}`} />
             </button>
           </div>
 
@@ -1006,7 +999,7 @@ export default function CustomerPortal({
                 <tbody className="divide-y divide-slate-800/60 font-medium">
                   {customerHistory.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-100/40 transition-colors">
-                      <td className="py-3 px-3 font-mono font-bold text-purple-400">{item.id}</td>
+                      <td className="py-3 px-3 font-mono font-bold text-indigo-600">{item.id}</td>
                       <td className="py-3 px-3 text-slate-700">
                         {item.thoiGianVao ? new Date(item.thoiGianVao).toLocaleString('vi-VN') : '—'}
                       </td>
@@ -1033,7 +1026,7 @@ export default function CustomerPortal({
                           onClick={() => handleViewReceipt(item)}
                           className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
                         >
-                          <FileText className="w-3.5 h-3.5 text-purple-400" />
+                          <FileText className="w-3.5 h-3.5 text-indigo-600" />
                           <span>Xem Hóa Đơn</span>
                         </button>
                       </td>
@@ -1055,9 +1048,9 @@ export default function CustomerPortal({
       {activeCustomerTab === 'support' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Form Gửi hỗ trợ */}
-          <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
             <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-600 border border-cyan-500/20">
+              <div className="p-2.5 rounded-xl bg-blue-50 text-indigo-600 border border-cyan-500/20">
                 <MessageSquare className="w-5 h-5" />
               </div>
               <div>
@@ -1089,7 +1082,7 @@ export default function CustomerPortal({
                 <select
                   value={supportForm.loaiSuCo}
                   onChange={(e) => setSupportForm({ ...supportForm, loaiSuCo: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-cyan-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 >
                   <option value="HO_TRO_CHUNG">💬 Hỗ trợ thông tin chung / Tìm xe</option>
                   <option value="SU_CO_BARRIER">🚧 Sự cố mở Barrier / Nhận diện thẻ RFID</option>
@@ -1107,7 +1100,7 @@ export default function CustomerPortal({
                   value={supportForm.tieuDe}
                   onChange={(e) => setSupportForm({ ...supportForm, tieuDe: e.target.value })}
                   placeholder="VD: Cần hỗ trợ tìm vị trí đỗ xe ô tô..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-cyan-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
@@ -1119,14 +1112,14 @@ export default function CustomerPortal({
                   value={supportForm.noiDung}
                   onChange={(e) => setSupportForm({ ...supportForm, noiDung: e.target.value })}
                   placeholder="Mô tả cụ thể vị trí đỗ, biển số hoặc thời gian xảy ra sự việc..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-cyan-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={supportSubmitting}
-                className="w-full py-2.5 rounded-xl font-bold text-xs text-slate-900 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-lg shadow-cyan-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl font-bold text-xs text-slate-900 bg-indigo-600 hover:bg-indigo-700 shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50 text-white font-semibold"
               >
                 <Send className="w-4 h-4" />
                 <span>{supportSubmitting ? 'Đang gửi...' : 'Gửi Phiếu Hỗ Trợ Tới Ban Quản Lý'}</span>
@@ -1135,7 +1128,7 @@ export default function CustomerPortal({
           </div>
 
           {/* Danh sách các phiếu đã gửi */}
-          <div className="bg-white/40 border-white/60 border border-slate-200 rounded-2xl p-6 space-y-4 shadow-lg backdrop-blur-xl">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <h3 className="text-base font-bold text-slate-900">Yêu Cầu Hỗ Trợ Của Bạn</h3>
               <span className="text-xs text-slate-600 font-mono">{supportTickets.length} phiếu</span>
@@ -1146,7 +1139,7 @@ export default function CustomerPortal({
                 supportTickets.map((t) => (
                   <div key={t.id} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-cyan-600">#{t.id}</span>
+                      <span className="font-mono font-bold text-indigo-600">#{t.id}</span>
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
                           t.trangThai === 'DA_GIAI_QUYET'
@@ -1185,7 +1178,7 @@ export default function CustomerPortal({
           <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-6 space-y-5 shadow-xl animate-scaleUp text-center">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div className="flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-purple-400" />
+                <QrCode className="w-5 h-5 text-indigo-600" />
                 <h3 className="text-base font-bold text-slate-900">Thanh Toán VietQR</h3>
               </div>
               <button
@@ -1197,7 +1190,7 @@ export default function CustomerPortal({
             </div>
 
             {/* QR code box */}
-            <div className="bg-white p-4 rounded-2xl inline-block mx-auto shadow-lg border-4 border-purple-500/30">
+            <div className="bg-white p-4 rounded-2xl inline-block mx-auto shadow-lg border border-slate-200 shadow-xs">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
                   `2|99|0988111222|${paymentData.amount}|${paymentData.note}|0|0`
@@ -1223,7 +1216,7 @@ export default function CustomerPortal({
                 alert('Hệ thống đã xác nhận thanh toán thành công qua cổng liên ngân hàng!');
                 setShowPaymentModal(false);
               }}
-              className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold text-slate-900 transition-all cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs transition-all cursor-pointer"
             >
               Xác Nhận Đã Hoàn Tất Chuyển Khoản
             </button>
@@ -1253,7 +1246,7 @@ export default function CustomerPortal({
               <div className="text-center border-b border-slate-200 pb-3 space-y-1">
                 <div className="font-bold text-sm text-slate-900">HỆ THỐNG QUẢN LÝ BÃI XE DOXEAI</div>
                 <div className="text-[10px] text-slate-600">Mã số thuế: 0109988776 • Hotline: 1900 6868</div>
-                <div className="text-[11px] text-purple-400 font-bold">PHIẾU THU TIỀN GỬI XE ĐIỆN TỬ</div>
+                <div className="text-[11px] text-indigo-600 font-bold">PHIẾU THU TIỀN GỬI XE ĐIỆN TỬ</div>
               </div>
 
               <div className="space-y-1.5 text-xs">
@@ -1301,7 +1294,7 @@ export default function CustomerPortal({
               </button>
               <button
                 onClick={() => setShowReceiptModal(false)}
-                className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-slate-900 text-xs font-bold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
               >
                 Đóng
               </button>

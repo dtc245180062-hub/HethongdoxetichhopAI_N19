@@ -50,7 +50,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => onNavigate('gate')}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 text-xs font-bold shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
             >
               <ArrowDownLeft className="w-4 h-4" /> Mở Cổng Xe Vào/Ra
             </button>

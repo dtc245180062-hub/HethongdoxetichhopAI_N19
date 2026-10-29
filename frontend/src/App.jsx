@@ -302,8 +302,8 @@ export default function App() {
         );
       case 'KHACH_HANG':
         return (
-          <span className="hidden sm:inline-flex items-center gap-1 text-xs text-purple-400 bg-purple-950/40 px-2.5 py-1 rounded-lg border border-purple-500/30 font-medium">
-            <Car className="w-3 h-3 text-purple-400" />
+          <span className="hidden sm:inline-flex items-center gap-1 text-xs text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-200 font-medium">
+            <Car className="w-3 h-3 text-indigo-600" />
             Khách Hàng / Cư Dân
           </span>
         );
@@ -313,7 +313,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-blue-600 selection:text-slate-900 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-indigo-600 selection:text-white overflow-hidden">
       {/* 1. Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}

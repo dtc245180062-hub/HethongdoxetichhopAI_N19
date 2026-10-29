@@ -84,7 +84,7 @@ export default function HistoryLog({ history = [], loading = false, onRefresh })
           <button
             onClick={exportCSV}
             title="Xuất dữ liệu lịch sử ra file CSV/Excel"
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-500 text-slate-900 font-bold text-xs shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-all cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>Xuất Báo Cáo CSV</span>
@@ -119,7 +119,7 @@ export default function HistoryLog({ history = [], loading = false, onRefresh })
             onClick={() => setStatusFilter('ALL')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               statusFilter === 'ALL'
-                ? 'bg-blue-600 text-slate-900 shadow'
+                ? 'bg-indigo-600 text-white shadow-xs font-semibold'
                 : 'bg-white text-slate-600 hover:text-slate-800 border border-slate-200'
             }`}
           >
@@ -129,7 +129,7 @@ export default function HistoryLog({ history = [], loading = false, onRefresh })
             onClick={() => setStatusFilter('DANG_DO')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               statusFilter === 'DANG_DO'
-                ? 'bg-amber-600 text-slate-900 shadow'
+                ? 'bg-amber-600 text-white shadow-xs font-semibold'
                 : 'bg-white text-amber-600 hover:bg-amber-50/40 border border-slate-200'
             }`}
           >
@@ -139,7 +139,7 @@ export default function HistoryLog({ history = [], loading = false, onRefresh })
             onClick={() => setStatusFilter('DA_RA')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               statusFilter === 'DA_RA'
-                ? 'bg-emerald-600 text-slate-900 shadow'
+                ? 'bg-emerald-600 text-white font-semibold shadow'
                 : 'bg-white text-emerald-600 hover:bg-emerald-50/40 border border-slate-200'
             }`}
           >

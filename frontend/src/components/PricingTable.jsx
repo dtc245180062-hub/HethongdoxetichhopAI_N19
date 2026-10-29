@@ -107,7 +107,7 @@ export default function PricingTable({ pricing = [], onRefresh, currentUser }) {
                   <button
                     onClick={() => handleOpenEdit(p)}
                     title="Chỉnh sửa mức giá này"
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-slate-900 transition-all text-xs font-semibold cursor-pointer"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-indigo-600 text-slate-700 hover:text-white transition-all text-xs font-semibold cursor-pointer"
                   >
                     <Edit3 className="w-3 h-3" />
                     <span>Sửa giá</span>
@@ -253,7 +253,7 @@ export default function PricingTable({ pricing = [], onRefresh, currentUser }) {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-slate-900 shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
                   <span>{saving ? 'Đang lưu...' : 'Lưu Thay Đổi'}</span>

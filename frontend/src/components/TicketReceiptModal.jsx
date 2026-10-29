@@ -137,7 +137,7 @@ export default function TicketReceiptModal({ ticketData, onClose }) {
           </button>
           <button
             onClick={handlePrint}
-            className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-xs text-slate-900 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+            className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-xs text-white shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
           >
             <Printer className="w-4 h-4" /> In Phiếu / Hóa Đơn
           </button>

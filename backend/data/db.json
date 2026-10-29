@@ -52,9 +52,9 @@
       "id": "A-03",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-03",
-      "trangThai": "Trống",
+      "trangThai": "Đã đặt",
       "loaiXe": "OTO",
-      "bienSoXe": null,
+      "bienSoXe": "30A-999.98",
       "thoiGianVao": null
     },
     {
@@ -1680,9 +1680,36 @@
       "bienSoXe": "",
       "trangThai": "HOAT_DONG",
       "ngayTao": "2026-10-29"
+    },
+    {
+      "id": "USR-KH-1793299601312",
+      "taiKhoan": "khai78752",
+      "matKhau": "12345678",
+      "hoTen": "Nguyễn Khải",
+      "vaiTro": "KHACH_HANG",
+      "chucVu": "Khách hàng",
+      "soDienThoai": "0345678999",
+      "email": "khai78752@gmail.com",
+      "bienSoXe": "",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-29"
     }
   ],
   "DatCho": [
+    {
+      "id": "BK-295706",
+      "bienSo": "30A-999.98",
+      "loaiXe": "OTO",
+      "maKhuVuc": "KV-A",
+      "maViTriGiuCho": "A-03",
+      "hoTen": "Nguyễn Khải",
+      "soDienThoai": "0345678999",
+      "thoiGianDat": "2026-10-29T18:58:15.706Z",
+      "thoiGianDen": "12:00",
+      "hanGiuCho": "2026-10-29T19:28:15.706Z",
+      "trangThai": "DA_XAC_NHAN",
+      "ghiChu": "cẩn thận"
+    },
     {
       "id": "BK-359646",
       "bienSo": "30H-892.45",
