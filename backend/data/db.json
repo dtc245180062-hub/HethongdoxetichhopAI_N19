@@ -1634,5 +1634,39 @@
       "ngayTao": "2026-06-01",
       "ghiChu": "Kiểm tra kỹ đăng ký xe và CMND/CCCD"
     }
+  ],
+  "admin_assistant_logs": [
+    {
+      "id": "LOG-1793283150880-461",
+      "admin_id": "USR-001",
+      "question": "alo",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T14:12:30.880Z"
+    },
+    {
+      "id": "LOG-1793283188072-828",
+      "admin_id": "USR-001",
+      "question": "Khung giờ nào đông xe nhất?",
+      "answer": "Khung giờ đông xe nhất trong ngày là 17:30 - 20:30 (đạt mật độ 92% công suất). Ngoài ra có khung giờ cao điểm sáng lúc 07:30 - 09:00 (~75%). Hiện tại bãi đang có 0 xe đang đỗ (0% công suất).",
+      "intent": "PEAK_HOURS",
+      "created_at": "2026-10-29T14:13:08.072Z"
+    },
+    {
+      "id": "LOG-1793284403578-416",
+      "admin_id": "USR-001",
+      "question": "alo",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T14:33:23.578Z"
+    },
+    {
+      "id": "LOG-1793284427378-983",
+      "admin_id": "USR-001",
+      "question": "Khung giờ nào đông xe nhất?",
+      "answer": "Khung giờ đông xe nhất trong ngày là 17:30 - 20:30 (đạt mật độ 92% công suất). Ngoài ra có khung giờ cao điểm sáng lúc 07:30 - 09:00 (~75%). Hiện tại bãi đang có 0 xe đang đỗ (0% công suất).",
+      "intent": "PEAK_HOURS",
+      "created_at": "2026-10-29T14:33:47.378Z"
+    }
   ]
 }

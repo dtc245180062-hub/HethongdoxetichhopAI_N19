@@ -67,9 +67,6 @@ const xeVao = async (req, res) => {
 
     bienSo = bienSo.trim().toUpperCase();
 
-    // Kiểm tra xe có nằm trong Danh Sách Đen (Blacklist) hay không
-    const blacklisted = (db.DanhSachDen || []).find(b => b.bienSo.toUpperCase() === bienSo);
-
     // Kiểm tra xe có đang đỗ trong bãi hay không
     const xeDangDo = (db.LuotVaoRa || []).find(
       l => l.bienSo === bienSo && (l.trangThai === 'DANG_DO' || l.trangThai === 'Đang đỗ')
@@ -170,14 +167,9 @@ const xeVao = async (req, res) => {
           tenViTri: targetSlot.tenViTri,
           trangThai: targetSlot.trangThai
         },
-        canh_bao_blacklist: Boolean(blacklisted),
-        thong_tin_blacklist: blacklisted || null,
         ai_info: {
           do_tin_cay: doTinCay,
-          thoi_gian_xu_ly_ms: aiResult.thoi_gian_xu_ly_ms,
-          box: aiResult.box,
-          plateCropBase64: aiResult.plate_crop_base64,
-          engine: aiResult.engine
+          thoi_gian_xu_ly_ms: aiResult.thoi_gian_xu_ly_ms
         }
       }
     });
@@ -506,10 +498,7 @@ const mockAiDetectEndpoint = async (req, res) => {
         bienSoNhanDien: result.bien_so,
         doTinCay: parseFloat((result.do_tin_cay * 100).toFixed(1)),
         loaiPhuongTien: result.loai_xe === 'Xe may' ? 'XE_MAY' : 'OTO',
-        thoiGianXuLyMs: result.thoi_gian_xu_ly_ms,
-        box: result.box,
-        plateCropBase64: result.plate_crop_base64,
-        engine: result.engine
+        thoiGianXuLyMs: result.thoi_gian_xu_ly_ms
       }
     });
   } catch (error) {
@@ -519,22 +508,26 @@ const mockAiDetectEndpoint = async (req, res) => {
 
 const { processAdminQuery } = require('../services/aiAssistantService');
 
-const handleAiAssistant = (req, res) => {
+const handleAiAssistant = async (req, res) => {
   try {
-    const { message, prompt } = req.body;
-    const userQuery = message || prompt || '';
-    if (!userQuery) {
+    const { message, prompt, question, cauHoi } = req.body || {};
+    const userQuery = question || message || prompt || cauHoi || '';
+    if (!userQuery || !userQuery.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Vui lòng cung cấp nội dung câu hỏi cho AI Assistant!'
       });
     }
 
-    const result = processAdminQuery(userQuery);
+    const result = await processAdminQuery(userQuery.trim(), req.user);
 
     res.json({
       success: true,
-      query: userQuery,
+      question: userQuery.trim(),
+      answer: result.answer || result.summary,
+      topic: result.topic,
+      intent: result.intent,
+      summary: result.summary,
       data: result,
       timestamp: new Date().toISOString()
     });
@@ -543,6 +536,8 @@ const handleAiAssistant = (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+const handleAdminAssistantAsk = handleAiAssistant;
 
 // ==========================================
 // 5. CRUD Quản lý Phương tiện & Vé tháng (Xe)
@@ -773,9 +768,8 @@ const customerBookSlot = (req, res) => {
     if (!db.DatCho) db.DatCho = [];
 
     const { bienSo, loaiXe, maKhuVuc, thoiGianDen, ghiChu, hoTen, soDienThoai } = req.body;
-    const khuVucTarget = (maKhuVuc || req.body.khuVuc || '').trim();
 
-    if (!bienSo || !khuVucTarget) {
+    if (!bienSo || !maKhuVuc) {
       return res.status(400).json({
         success: false,
         message: 'Vui lòng cung cấp đầy đủ biển số xe và phân khu mong muốn!'
@@ -789,14 +783,13 @@ const customerBookSlot = (req, res) => {
     // Kiểm tra còn chỗ trống trong khu vực không
     const viTriList = db.ViTri || [];
     const availableSlot = viTriList.find(
-      v => (v.maKhuVuc === khuVucTarget || v.maKhuVuc === `KV-${khuVucTarget}` || v.id.startsWith(khuVucTarget)) &&
-           (v.trangThai === 'Trống' || v.trangThaiCode === 'TRONG')
+      v => v.maKhuVuc === maKhuVuc && (v.trangThai === 'Trống' || v.trangThaiCode === 'TRONG')
     );
 
     if (!availableSlot) {
       return res.status(400).json({
         success: false,
-        message: `Phân khu [${khuVucTarget}] hiện không còn vị trí trống để giữ chỗ!`
+        message: `Phân khu [${maKhuVuc}] hiện không còn vị trí trống để giữ chỗ!`
       });
     }
 
@@ -804,7 +797,7 @@ const customerBookSlot = (req, res) => {
       id: bookingCode,
       bienSo: cleanPlate,
       loaiXe: loaiXe || 'OTO',
-      maKhuVuc: availableSlot.maKhuVuc || khuVucTarget,
+      maKhuVuc,
       maViTriGiuCho: availableSlot.id,
       hoTen: (hoTen || 'Khách hàng').trim(),
       soDienThoai: (soDienThoai || '').trim(),
@@ -894,99 +887,6 @@ const customerGetSupportList = (req, res) => {
   }
 };
 
-/**
- * GET /api/blacklist
- */
-const getBlacklist = (req, res) => {
-  try {
-    const list = getTable('DanhSachDen') || [];
-    res.json({
-      success: true,
-      total: list.length,
-      data: list
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-/**
- * POST /api/blacklist
- */
-const addBlacklist = (req, res) => {
-  try {
-    const db = readDb();
-    if (!db.DanhSachDen) db.DanhSachDen = [];
-
-    const { bienSo, loaiXe, lyDo, mucDo, ghiChu } = req.body;
-    if (!bienSo || !lyDo) {
-      return res.status(400).json({
-        success: false,
-        message: 'Vui lòng cung cấp Biển số xe và Lý do đưa vào danh sách đen!'
-      });
-    }
-
-    const cleanPlate = bienSo.trim().toUpperCase();
-    const existed = db.DanhSachDen.find(b => b.bienSo.toUpperCase() === cleanPlate);
-    if (existed) {
-      return res.status(400).json({
-        success: false,
-        message: `Biển số ${cleanPlate} đã có trong Danh sách đen!`
-      });
-    }
-
-    const newRecord = {
-      id: `BL-${Date.now()}`,
-      bienSo: cleanPlate,
-      loaiXe: loaiXe || 'OTO',
-      lyDo: lyDo.trim(),
-      mucDo: mucDo || 'CANH_BAO',
-      nguoiTao: req.user?.taiKhoan || 'admin',
-      ngayTao: new Date().toISOString().slice(0, 10),
-      ghiChu: ghiChu || ''
-    };
-
-    db.DanhSachDen.unshift(newRecord);
-    writeDb(db);
-
-    res.status(201).json({
-      success: true,
-      message: `Đã thêm biển số ${cleanPlate} vào danh sách đen thành công!`,
-      data: newRecord
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-/**
- * DELETE /api/blacklist/:id
- */
-const deleteBlacklist = (req, res) => {
-  try {
-    const db = readDb();
-    const { id } = req.params;
-
-    const before = (db.DanhSachDen || []).length;
-    db.DanhSachDen = (db.DanhSachDen || []).filter(b => b.id !== id && b.bienSo !== id);
-
-    if (db.DanhSachDen.length === before) {
-      return res.status(404).json({
-        success: false,
-        message: 'Không tìm thấy bản ghi trong danh sách đen!'
-      });
-    }
-
-    writeDb(db);
-    res.json({
-      success: true,
-      message: 'Đã gỡ phương tiện khỏi danh sách đen thành công!'
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 module.exports = {
   xeVao,
   xeRa,
@@ -1003,12 +903,10 @@ module.exports = {
   updateBangGia,
   mockAiDetectEndpoint,
   handleAiAssistant,
+  handleAdminAssistantAsk,
   customerGetHistory,
   customerBookSlot,
   customerSendSupport,
-  customerGetSupportList,
-  getBlacklist,
-  addBlacklist,
-  deleteBlacklist
+  customerGetSupportList
 };
 

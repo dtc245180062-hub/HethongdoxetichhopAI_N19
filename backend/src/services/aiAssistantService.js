@@ -1,272 +1,284 @@
-const { readDb } = require('../utils/db');
+const { getRevenueReport } = require('./revenueService');
+const { getOccupancyForecast } = require('./forecastService');
+const { getStaffingRecommendation } = require('./staffingService');
+const { readDb, writeDb } = require('../utils/db');
+
+// Nạp Google GenAI SDK an toàn (nếu đã cài đặt)
+let GoogleGenAI = null;
+try {
+  GoogleGenAI = require('@google/genai').GoogleGenAI;
+} catch (e) {
+  // @google/genai chưa được cài đặt, hệ thống sẽ sử dụng Local Rule-based Engine
+}
 
 /**
- * Phân tích dữ liệu thực tế từ db.json để trả lời các câu hỏi quản trị
- * Mô phỏng các Use Case:
- * - UC-12: Phân tích khung giờ cao điểm (Peak Hours Analysis)
- * - UC-13: Báo cáo doanh thu & hiệu suất khai thác bãi xe (Revenue & Utilization Analytics)
- * - UC-14: Đề xuất điều phối & bố trí nhân sự (Smart Staffing Recommendations)
+ * Ghi log câu hỏi và phản hồi của Trợ lý AI Quản trị
+ * Lưu vào bảng admin_assistant_logs trong CSDL
  */
-const processAdminQuery = (prompt) => {
-  const db = readDb();
-  const viTriList = db.ViTri || [];
-  const luotList = db.LuotVaoRa || [];
-  const khuVucList = db.KhuVuc || [];
-  const bangGiaList = db.BangGia || [];
+const logAssistantInteraction = (adminId, question, answer, intent) => {
+  try {
+    const db = readDb();
+    if (!db.admin_assistant_logs) {
+      db.admin_assistant_logs = [];
+    }
 
+    const logEntry = {
+      id: `LOG-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      admin_id: adminId || 'ADMIN',
+      question: question || '',
+      answer: typeof answer === 'string' ? answer : (answer?.summary || ''),
+      intent: intent || 'GENERAL',
+      created_at: new Date().toISOString()
+    };
+
+    db.admin_assistant_logs.push(logEntry);
+    if (db.admin_assistant_logs.length > 500) {
+      db.admin_assistant_logs = db.admin_assistant_logs.slice(-500);
+    }
+    writeDb(db);
+  } catch (err) {
+    console.error('Không thể ghi log admin_assistant_logs:', err.message);
+  }
+};
+
+/**
+ * Gọi Google Gemini 2.5 Flash để sinh câu trả lời tự nhiên (RAG)
+ * Dựa trên số liệu Ground Truth từ hệ thống bãi xe thực tế
+ */
+const callGeminiLLM = async (prompt, groundTruth) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE' || !GoogleGenAI) {
+    return null;
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    const systemPrompt = `Bạn là Trợ lý AI Quản trị (Admin AI Assistant) chuyên nghiệp của hệ thống Quản lý Bãi đỗ xe thông minh DoXeAI.
+DƯỚI ĐÂY LÀ DỮ LIỆU THỰC TẾ (GROUND TRUTH) ĐƯỢC TRUY XUẤT TỪ CƠ SỞ DỮ LIỆU BÃI XE HIỆN TẠI:
+- Báo cáo doanh thu: ${JSON.stringify(groundTruth.revenue || {})}
+- Dự báo mật độ & Khung giờ cao điểm: ${JSON.stringify(groundTruth.forecast?.peakSummary || {})}
+- Đề xuất nhân sự ca trực: ${JSON.stringify(groundTruth.staffing?.shifts || [])}
+- Thời điểm hiện tại: ${new Date().toLocaleString('vi-VN')}
+
+QUY TẮC RÀNG BUỘC NGHIÊM NGẶT:
+1. Luôn sử dụng đúng các con số thực tế ở trên (doanh thu, số xe, tỷ lệ lấp đầy, khung giờ cao điểm), tuyệt đối không tự bịa đặt số liệu tài chính hay lưu lượng.
+2. Trả lời bằng tiếng Việt chuyên nghiệp, súc tích, văn phong tự nhiên và đưa ra các đề xuất điều hành sắc bén cho Quản trị viên.
+3. Luôn trả về định dạng JSON thuần túy (không kèm markdown code fence) theo đúng cấu trúc:
+{
+  "topic": "Tiêu đề ngắn gọn về Use Case",
+  "intent": "PEAK_HOURS" | "REVENUE" | "STAFFING" | "GENERAL",
+  "answer": "Câu trả lời tóm tắt ngắn dạng văn bản (2-3 câu)",
+  "summary": "Tóm tắt điểm nhấn chính",
+  "details": ["Chi tiết 1", "Chi tiết 2", ...],
+  "recommendations": ["Đề xuất điều hành 1", "Đề xuất điều hành 2", ...],
+  "stats": { "key": "value" }
+}`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        systemInstruction: systemPrompt,
+        responseMimeType: 'application/json'
+      }
+    });
+
+    const text = response.text ? response.text.trim() : '';
+    const cleanJson = text.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
+    return JSON.parse(cleanJson);
+  } catch (err) {
+    console.warn('⚠️ [Gemini API Warning]:', err.message, '-> Tự động fallback sang Local Rule-based Engine.');
+    return null;
+  }
+};
+
+/**
+ * Xử lý câu hỏi của Quản trị viên (Admin AI Assistant)
+ * Kiến trúc Hybrid RAG:
+ * 1. Ưu tiên Google Gemini 2.5 Flash nếu đã cấu hình GEMINI_API_KEY
+ * 2. Tự động fallback 100% sang Local Service Engine nếu offline hoặc chưa có API key
+ */
+const processAdminQuery = async (prompt, user = null) => {
   const q = (prompt || '').toLowerCase().trim();
+  const adminId = user?.id || user?.taiKhoan || 'ADMIN';
 
-  // Thống kê cơ bản
-  const tongSoCho = viTriList.length;
-  const soChoDangDo = viTriList.filter(v => v.trangThai === 'DA_DO' || v.trangThai === 'Đã đỗ').length;
-  const soChoTrong = viTriList.filter(v => v.trangThai === 'TRONG' || v.trangThai === 'Trống').length;
-  const tyLeLapDay = tongSoCho > 0 ? Math.round((soChoDangDo / tongSoCho) * 100) : 0;
+  // Lấy dữ liệu thực tế từ 3 service chuyên biệt
+  const revenueReport = getRevenueReport();
+  const occupancyForecast = getOccupancyForecast();
+  const staffingRecommendation = getStaffingRecommendation();
 
-  const tongDoanhThu = luotList
-    .filter(l => l.trangThai === 'DA_RA' || l.trangThai === 'Đã ra')
-    .reduce((sum, item) => sum + (item.tongTien || 0), 0);
+  // 1. Thử gọi Gemini AI trước
+  const geminiResult = await callGeminiLLM(prompt, {
+    revenue: revenueReport,
+    forecast: occupancyForecast,
+    staffing: staffingRecommendation
+  });
 
-  const xeOtoDangDo = viTriList.filter(
-    v => (v.trangThai === 'DA_DO' || v.trangThai === 'Đã đỗ') && v.loaiXe === 'OTO'
-  ).length;
+  if (geminiResult && geminiResult.answer) {
+    logAssistantInteraction(adminId, prompt, geminiResult.answer, geminiResult.intent || 'GEMINI_AI');
+    return {
+      ...geminiResult,
+      source: 'Google Gemini 2.5 Flash (RAG Live)'
+    };
+  }
 
-  const xeMayDangDo = viTriList.filter(
-    v => (v.trangThai === 'DA_DO' || v.trangThai === 'Đã đỗ') && v.loaiXe === 'XE_MAY'
-  ).length;
+  // ========================================================
+  // 2. Fallback sang Local Service Engine (Zero-Latency / Offline)
+  // ========================================================
 
-  // 1. Phân tích khung giờ cao điểm (UC-12)
+  // Phân tích khung giờ cao điểm (Peak Hours Analysis)
   if (
     q.includes('khung giờ') ||
     q.includes('giờ nào') ||
     q.includes('cao điểm') ||
     q.includes('đông xe') ||
     q.includes('thời gian đông') ||
-    q.includes('lưu lượng')
+    q.includes('lưu lượng') ||
+    q.includes('mật độ')
   ) {
-    // Phân tích giờ từ lịch sử vào ra
-    const hourMap = {};
-    luotList.forEach(l => {
-      if (l.thoiGianVao) {
-        const hour = new Date(l.thoiGianVao).getHours();
-        hourMap[hour] = (hourMap[hour] || 0) + 1;
-      }
-    });
+    const forecast = occupancyForecast;
+    const { peakSummary, tyLeLapDayHienTai, soChoDangDo, soChoTrong } = forecast;
 
-    return {
-      topic: 'UC-12: Phân Tích Khung Giờ Cao Điểm',
-      intent: 'PEAK_HOURS_ANALYSIS',
-      summary: 'Khung giờ từ 17:30 - 20:30 là thời điểm bãi đỗ xe đạt mật độ phương tiện cao nhất.',
+    const answerText = `Khung giờ đông xe nhất trong ngày là ${peakSummary.peakHourString} (đạt mật độ ${peakSummary.peakRate}% công suất). Ngoài ra có khung giờ cao điểm sáng lúc ${peakSummary.secondaryPeakHourString} (~${peakSummary.secondaryPeakRate}%). Hiện tại bãi đang có ${soChoDangDo} xe đang đỗ (${tyLeLapDayHienTai}% công suất).`;
+
+    const result = {
+      topic: 'Phân Tích Khung Giờ Cao Điểm',
+      intent: 'PEAK_HOURS',
+      answer: answerText,
+      summary: peakSummary.summaryText,
       details: [
-        `🕒 **Khung giờ cao điểm tối (17:30 - 20:30)**: Tập trung nhiều phương tiện ô tô và xe máy về bãi (chiếm ~65% tổng lượt xe trong ngày).`,
-        `🕒 **Khung giờ cao điểm sáng (07:30 - 09:00)**: Lượng xe máy và ô tô công sở vào gửi nhanh.`,
-        `📊 **Tình hình hiện tại**: Bãi đang có **${soChoDangDo} xe đang đỗ** (${tyLeLapDay}% công suất), còn trống **${soChoTrong} vị trí**.`
+        `🕒 **Khung giờ cao điểm tối (${peakSummary.peakHourString})**: Mật độ xe đạt **${peakSummary.peakRate}%**, tập trung phương tiện ô tô và xe máy về bãi (chiếm ~65% tổng lượt vào trong ngày).`,
+        `🕒 **Khung giờ cao điểm sáng (${peakSummary.secondaryPeakHourString})**: Mật độ xe đạt **${peakSummary.secondaryPeakRate}%**, chủ yếu là xe công sở và học sinh/sinh viên.`,
+        `📊 **Tình trạng thực tế hiện tại**: Bãi đang đỗ **${soChoDangDo} xe** (${tyLeLapDayHienTai}% công suất), còn trống **${soChoTrong} vị trí**.`
       ],
       recommendations: [
-        'Mở đồng thời cả 2 làn Barrier Cổng Vào trong khung giờ 17:30 - 19:30 để tránh ùn ứ lối rẽ.',
-        'Bật chế độ AI Auto-Gate với độ tin cậy >= 70% để phương tiện lưu thông không cần dừng chạm.',
+        'Mở đồng thời cả 2 làn Barrier Cổng Vào trong khung giờ 17:30 - 19:30 để tránh ùn ứ.',
+        'Bật chế độ AI Auto-Gate với độ tin cậy >= 70% để phương tiện lưu thông tự động không cần dừng chạm.',
         'Dành riêng luồng Khu B cho xe ô tô điện và khách VIP.'
       ],
       stats: {
-        tyLeLapDay: `${tyLeLapDay}%`,
-        soChoDangDo,
+        khungGioCaoDiem: peakSummary.peakHourString,
+        matDoDinhDiem: `${peakSummary.peakRate}%`,
+        tyLeLapDayHienTai: `${tyLeLapDayHienTai}%`,
         soChoTrong
-      }
+      },
+      source: 'Local BI Analytics Engine'
     };
+
+    logAssistantInteraction(adminId, prompt, answerText, 'PEAK_HOURS');
+    return result;
   }
 
-  // 2. Báo cáo doanh thu & hiệu suất (UC-13)
+  // Báo cáo doanh thu & Hiệu suất (Revenue & Payments)
   if (
     q.includes('doanh thu') ||
     q.includes('tiền') ||
     q.includes('báo cáo') ||
     q.includes('thu nhập') ||
     q.includes('tài chính') ||
-    q.includes('thanh toán')
+    q.includes('thanh toán') ||
+    q.includes('phương thức')
   ) {
-    const daRaCount = luotList.filter(l => l.trangThai === 'DA_RA' || l.trangThai === 'Đã ra').length;
+    const revenueData = revenueReport;
+    const { tongDoanhThu, soLuotDaRa, breakdown, xeOtoDangDo, xeMayDangDo, tyLeThanhToanKhongTienMat } = revenueData;
 
-    return {
-      topic: 'UC-13: Báo Cáo Doanh Thu & Hiệu Suất Vận Hành',
-      intent: 'REVENUE_ANALYSIS',
-      summary: `Tổng doanh thu thực nhận hôm nay đạt ${tongDoanhThu.toLocaleString('vi-VN')} VNĐ từ ${daRaCount} lượt thanh toán hoàn tất.`,
+    const answerText = `Tổng doanh thu thực nhận hôm nay đạt ${tongDoanhThu.toLocaleString('vi-VN')} VNĐ từ ${soLuotDaRa} lượt thanh toán. Phân bổ phương thức thanh toán: Chuyển khoản QR đạt ${breakdown.QR_CODE.tyLe}% (${breakdown.QR_CODE.soTien.toLocaleString('vi-VN')} VNĐ), Tiền mặt chiếm ${breakdown.TIEN_MAT.tyLe}%, Thẻ tháng/cư dân chiếm ${breakdown.THE_THANG.tyLe}%. Tỷ lệ thanh toán không tiền mặt đạt ${tyLeThanhToanKhongTienMat}.`;
+
+    const result = {
+      topic: 'Báo Cáo Doanh Thu & Hiệu Suất Vận Hành',
+      intent: 'REVENUE',
+      answer: answerText,
+      summary: `Tổng doanh thu thực nhận hôm nay đạt ${tongDoanhThu.toLocaleString('vi-VN')} VNĐ từ ${soLuotDaRa} lượt thanh toán hoàn tất.`,
       details: [
-        `💰 **Tổng doanh thu hôm nay**: **${tongDoanhThu.toLocaleString('vi-VN')} VNĐ**.`,
-        `🚗 **Ô tô đang đỗ**: ${xeOtoDangDo} xe (tạm tính doanh thu lũy kế: ${(xeOtoDangDo * 20000).toLocaleString('vi-VN')} VNĐ/h).`,
-        `🛵 **Xe máy đang đỗ**: ${xeMayDangDo} xe.`,
-        `💳 **Phương thức thanh toán**: ~80% giao dịch thực hiện qua mã QR tự động (VietQR/Napas), giảm 90% thời gian chờ tại bốt thu phí.`
+        `💰 **Tổng doanh thu hôm nay**: **${tongDoanhThu.toLocaleString('vi-VN')} VNĐ** (từ ${soLuotDaRa} lượt xe đã ra).`,
+        `📱 **Thanh toán chuyển khoản QR (VietQR / Napas)**: **${breakdown.QR_CODE.soTien.toLocaleString('vi-VN')} VNĐ** (${breakdown.QR_CODE.soLuot} lượt, chiếm **${breakdown.QR_CODE.tyLe}%**).`,
+        `💵 **Tiền mặt bốt thu phí**: **${breakdown.TIEN_MAT.soTien.toLocaleString('vi-VN')} VNĐ** (${breakdown.TIEN_MAT.soLuot} lượt, chiếm **${breakdown.TIEN_MAT.tyLe}%**).`,
+        `🎫 **Thẻ tháng / Thuê bao cư dân**: **${breakdown.THE_THANG.soTien.toLocaleString('vi-VN')} VNĐ** (${breakdown.THE_THANG.soLuot} lượt, chiếm **${breakdown.THE_THANG.tyLe}%**).`,
+        `🚗 **Xe đang đỗ trong bãi**: ${xeOtoDangDo} ô tô, ${xeMayDangDo} xe máy.`
       ],
       recommendations: [
-        'Khuyến khích khách hàng quét mã QR động tại cổng ra để tối ưu thời gian mở Barrier < 3 giây.',
-        'Đề xuất tối ưu hóa điều phối phân làn giờ cao điểm để nâng cao năng lực lưu thông bãi xe.'
+        'Khuyến khích khách hàng quét mã VietQR động tại cổng ra để tối ưu thời gian mở Barrier < 3 giây.',
+        'Đề xuất phát hành thêm gói thuê bao tháng cho cư dân Khu A và Khu C để ổn định dòng tiền định kỳ.'
       ],
       stats: {
         tongDoanhThu: `${tongDoanhThu.toLocaleString('vi-VN')} VNĐ`,
-        soLuotDaRa: daRaCount,
-        tyLeLapDay: `${tyLeLapDay}%`
-      }
+        soLuotDaRa,
+        tyLeKhongTienMat: tyLeThanhToanKhongTienMat,
+        doanhThuQR: `${breakdown.QR_CODE.soTien.toLocaleString('vi-VN')} VNĐ`
+      },
+      paymentBreakdown: breakdown,
+      source: 'Local BI Analytics Engine'
     };
+
+    logAssistantInteraction(adminId, prompt, answerText, 'REVENUE');
+    return result;
   }
 
-  // 3. Đề xuất bố trí nhân sự (UC-14)
+  // Đề xuất bố trí nhân sự (Smart Staffing)
   if (
     q.includes('nhân sự') ||
     q.includes('nhân viên') ||
     q.includes('ca trực') ||
     q.includes('ca chiều') ||
     q.includes('ca tối') ||
+    q.includes('ca sáng') ||
+    q.includes('ca đêm') ||
     q.includes('bố trí') ||
     q.includes('bao nhiêu người')
   ) {
-    return {
-      topic: 'UC-14: Đề Xuất Điều Phối & Phân Bổ Nhân Sự',
-      intent: 'STAFFING_RECOMMENDATION',
-      summary: 'Đề xuất bố trí 2 nhân viên cho Ca Chiều/Tối (14h - 22h) và 1 nhân viên cho Ca Đêm (22h - 06h).',
-      details: [
-        `👨‍💼 **Ca Sáng (06:00 - 14:00)**: Bố trí **1 nhân viên** giám sát hệ thống tự động và hỗ trợ khách vãng lai.`,
-        `👨‍💼 **Ca Chiều - Tối (14:00 - 22:00)**: Bố trí **2 nhân viên** (1 nhân viên trực bốt điều phối camera khi có sự cố nhận diện UC-15, 1 nhân viên hướng dẫn xe vào Khu A & Khu B).`,
-        `🌙 **Ca Đêm (22:00 - 06:00)**: Bố trí **1 nhân viên an ninh** tuần tra khu vực hầm B1 và kiểm tra an toàn PCCC.`
-      ],
-      recommendations: [
-        'Nhờ hệ thống AI OCR tự động hóa 98% lượt xe vào/ra, chỉ cần duy trì 1 nhân sự trực màn hình dashboard tại trung tâm.',
-        'Khi bãi xe đạt tỷ lệ lấp đầy trên 85%, hệ thống sẽ tự động kích hoạt còi báo hiệu để nhân viên điều hướng phương tiện sang bãi đỗ phụ.'
-      ],
+    const staffing = staffingRecommendation;
+
+    const answerText = `${staffing.summary} Tổng định mức nhân sự trong ngày là ${staffing.tongNhanSuNgay} người, nhờ hệ thống AI OCR tự động hóa 98.5% lượt xe vào/ra.`;
+
+    const result = {
+      topic: 'Đề Xuất Điều Phối & Bố Trí Nhân Sự',
+      intent: 'STAFFING',
+      answer: answerText,
+      summary: staffing.summary,
+      details: staffing.shifts.map(s => `👨‍💼 **${s.caTrực}** (${s.matDoDuBao}): Bố trí **${s.soLuongNhanVien} nhân viên** — ${s.nhiemVuChinh}`),
+      recommendations: staffing.recommendations,
       stats: {
-        caChieuDeXuat: '2 Nhân viên',
-        caDemDeXuat: '1 Nhân viên',
-        mucDoTuDongHoa: '98.5%'
-      }
+        tongNhanSu: `${staffing.tongNhanSuNgay} Nhân sự/ngày`,
+        caChieuToi: '2 Nhân viên',
+        mucDoTuDongHoa: staffing.mucDoTuDongHoa
+      },
+      shifts: staffing.shifts,
+      source: 'Local BI Analytics Engine'
     };
+
+    logAssistantInteraction(adminId, prompt, answerText, 'STAFFING');
+    return result;
   }
 
-  // 4. Kiểm tra phân khu & chỗ trống
-  if (
-    q.includes('khu vực') ||
-    q.includes('vị trí') ||
-    q.includes('chỗ trống') ||
-    q.includes('khu nào') ||
-    q.includes('đầy')
-  ) {
-    const khuVucSummary = khuVucList.map(kv => {
-      const slots = viTriList.filter(v => v.maKhuVuc === kv.id);
-      const daDo = slots.filter(v => v.trangThai === 'DA_DO' || v.trangThai === 'Đã đỗ').length;
-      return `${kv.tenKhuVuc}: ${daDo}/${slots.length} (${slots.length > 0 ? Math.round((daDo / slots.length) * 100) : 0}%)`;
-    });
+  // Phản hồi ngoại lệ / ngoài phạm vi nghiệp vụ (Theo tài liệu đặc tả)
+  const defaultAnswer = 'Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.';
 
-    return {
-      topic: 'Tình Trạng Sức Chứa Từng Phân Khu',
-      intent: 'ZONE_CAPACITY',
-      summary: `Hiện tại toàn bãi còn ${soChoTrong} chỗ trống trên tổng số ${tongSoCho} vị trí.`,
-      details: [
-        `📊 **Tổng quan**: Đang đỗ **${soChoDangDo}/${tongSoCho} chỗ** (Tỷ lệ lấp đầy: **${tyLeLapDay}%**).`,
-        ...khuVucSummary.map(k => `📍 ${k}`)
-      ],
-      recommendations: [
-        'Khu vực ô tô A và B vẫn còn nhiều vị trí trống, ưu tiên hướng dẫn phương tiện vào tầng 1.',
-        'Khu C xe máy cần duy trì lối thoát hiểm thông thoáng tại sảnh hầm B1.'
-      ],
-      stats: {
-        soChoTrong,
-        soChoDangDo,
-        tyLeLapDay: `${tyLeLapDay}%`
-      }
-    };
-  }
-
-  // 5. Trợ lý Khách hàng: Giá vé / Bảng giá
-  if (
-    q.includes('giá vé') ||
-    q.includes('bao nhiêu') ||
-    q.includes('phí gửi') ||
-    q.includes('giá tiền') ||
-    q.includes('bảng giá') ||
-    q.includes('giá')
-  ) {
-    return {
-      topic: 'Bảng Giá Dịch Vụ - DoXeAI',
-      intent: 'PRICING_INFO',
-      summary: 'Bãi đỗ xe áp dụng mức giá linh hoạt và minh bạch theo giờ và loại phương tiện (Ô tô, Xe máy, Xe tải).',
-      details: [
-        '🛵 **Xe Máy**: 5.000 VNĐ / lượt (gửi qua đêm: 30.000 VNĐ).',
-        '🚗 **Ô tô (4-7 chỗ)**: 20.000 VNĐ / giờ đầu tiên (10.000 VNĐ / giờ tiếp theo, qua đêm: 120.000 VNĐ).',
-        '🚙 **Ô tô Tải/Bán tải**: 35.000 VNĐ / giờ đầu tiên (20.000 VNĐ / giờ tiếp theo, qua đêm: 220.000 VNĐ).',
-        '♻️ **Lưu ý**: Xe ra vào được nhận diện biển số tự động qua camera AI và tính phí chính xác theo thời gian thực.'
-      ],
-      recommendations: [
-        'Quý khách có thể thanh toán không chạm nhanh chóng bằng mã VietQR tự động tại Cổng Ra.',
-        'Có thể đặt chỗ trước qua Cổng Khách Hàng để giữ vị trí đỗ thuận tiện.'
-      ]
-    };
-  }
-
-  // 6. Trợ lý Khách hàng: Thanh toán
-  if (
-    q.includes('thanh toán') ||
-    q.includes('trả tiền') ||
-    q.includes('chuyển khoản') ||
-    q.includes('quét mã') ||
-    q.includes('vietqr') ||
-    q.includes('cách trả')
-  ) {
-    return {
-      topic: 'Hướng Dẫn Thanh Toán - DoXeAI',
-      intent: 'PAYMENT_GUIDE',
-      summary: 'Để tạo sự tiện lợi, DoXeAI hỗ trợ thanh toán 100% không chạm thông qua VietQR/Napas247.',
-      details: [
-        '📱 **Cách 1 (Khuyên dùng)**: Mở tab "Trạng Thái Đỗ Xe", nhấn "Tạo Mã VietQR", và quét mã QR bằng ứng dụng ngân hàng. Barrier sẽ tự động mở khi bạn ra tới bốt.',
-        '💳 **Cách 2**: Quét mã QR trực tiếp trên màn hình LED tại Cổng Ra lúc lấy xe.',
-        '💵 **Cách 3**: Thanh toán bằng tiền mặt trực tiếp cho Nhân viên trực cổng tại bốt.'
-      ],
-      recommendations: [
-        'Thanh toán trực tuyến trước 5 phút khi ra xe giúp bạn đi qua cổng nhanh hơn.',
-        'Mã QR đã tích hợp sẵn số tiền tương ứng thời gian đỗ xe thực tế.'
-      ]
-    };
-  }
-
-  // 7. Trợ lý Khách hàng: Giờ mở cửa / Giờ hoạt động
-  if (
-    q.includes('mở cửa') ||
-    q.includes('đóng cửa') ||
-    q.includes('hoạt động') ||
-    q.includes('giờ làm việc')
-  ) {
-    return {
-      topic: 'Giờ Hoạt Động Bãi Đỗ Xe',
-      intent: 'OPERATION_HOURS',
-      summary: 'Bãi đỗ xe thông minh DoXeAI hoạt động 24/7, phục vụ không gián đoạn.',
-      details: [
-        '⏰ **Thời gian mở cửa**: Xuyên suốt 24 giờ mỗi ngày, bao gồm cả Lễ/Tết.',
-        '👨‍💼 **Bảo vệ và hỗ trợ**: Luôn có nhân viên túc trực tại Cổng Kiểm Soát 24/24.',
-        '🌙 **Lưu ý an ninh**: Ban đêm (22:00 - 06:00), hệ thống Camera AI và cảm biến nhiệt sẽ tự động bật chế độ cảnh báo an ninh nâng cao.'
-      ],
-      recommendations: [
-        'Bạn hoàn toàn có thể lấy hoặc gửi xe bất cứ lúc nào.',
-        'Nếu có sự cố, vui lòng gửi yêu cầu từ phần "Báo Cáo Sự Cố & Hỗ Trợ".'
-      ]
-    };
-  }
-
-  // 8. Câu trả lời tổng quát thông minh
-  return {
-    topic: 'Trợ Lý Điều Hành Bãi Đỗ Xe Thông Minh DoXeAI',
-    intent: 'GENERAL_ASSISTANCE',
-    summary: `Hệ thống đang vận hành ổn định. Tỷ lệ lấp đầy hiện tại là ${tyLeLapDay}% (${soChoDangDo}/${tongSoCho} xe), doanh thu hôm nay đạt ${tongDoanhThu.toLocaleString('vi-VN')} VNĐ.`,
+  const generalResult = {
+    topic: 'Trợ Lý AI Hỗ Trợ Quản Trị - DoXeAI',
+    intent: 'GENERAL',
+    answer: defaultAnswer,
+    summary: 'Hệ thống gợi ý Quản trị viên tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, hoặc Bố trí ca trực.',
     details: [
-      `🚗 **Trạng thái bãi xe**: ${soChoDangDo} xe đang đỗ • ${soChoTrong} chỗ còn trống • ${viTriList.filter(v => v.trangThai === 'DANG_BAO_TRI' || v.trangThai === 'Bảo trì').length} vị trí bảo trì.`,
-      `💰 **Doanh thu tích lũy trong ngày**: ${tongDoanhThu.toLocaleString('vi-VN')} VNĐ.`,
-      `🤖 **Độ chính xác AI OCR**: Đạt 98.6% trên các dòng xe ô tô và xe máy tiêu chuẩn.`
+      '🕒 **Dự báo giờ cao điểm**: Phân tích các khung giờ bãi xe đạt mật độ cao nhất trong ngày.',
+      '💰 **Báo cáo doanh thu & dòng tiền**: Thống kê tổng tiền và phân bổ phương thức thanh toán (QR, tiền mặt, thẻ tháng).',
+      '👥 **Đề xuất điều phối nhân sự**: Gợi ý định mức nhân sự ca sáng, ca chiều/tối và ca đêm theo rule-based.'
     ],
     recommendations: [
-      'Bạn có thể hỏi tôi về: "Khung giờ nào đông xe nhất?", "Báo cáo doanh thu hôm nay", hoặc "Bố trí nhân sự ca chiều thế nào?".'
+      'Chọn các nút gợi ý câu hỏi nhanh bên trên hoặc nhập nội dung câu hỏi về doanh thu, mật độ xe, ca trực!'
     ],
     stats: {
-      soChoDangDo,
-      soChoTrong,
-      tongDoanhThu: `${tongDoanhThu.toLocaleString('vi-VN')} VNĐ`
-    }
+      trangThai: 'Hoạt động ổn định',
+      vaiTroHoTro: 'Dành riêng cho Quản trị viên'
+    },
+    source: 'Local BI Analytics Engine'
   };
+
+  logAssistantInteraction(adminId, prompt, defaultAnswer, 'GENERAL');
+  return generalResult;
 };
 
 module.exports = {
-  processAdminQuery
+  processAdminQuery,
+  logAssistantInteraction,
+  callGeminiLLM
 };

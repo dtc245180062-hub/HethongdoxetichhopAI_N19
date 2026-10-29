@@ -25,33 +25,6 @@ export const api = {
     return res.json();
   },
 
-  async sendOtp(emailOrPhone) {
-    const res = await fetch(`${API_BASE}/auth/send-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ emailOrPhone })
-    });
-    return res.json();
-  },
-
-  async verifyOtp(emailOrPhone, otp) {
-    const res = await fetch(`${API_BASE}/auth/verify-otp`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ emailOrPhone, otp })
-    });
-    return res.json();
-  },
-
-  async loginGoogle(payload = {}) {
-    const res = await fetch(`${API_BASE}/auth/google`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    return res.json();
-  },
-
   async register(userData) {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
@@ -167,24 +140,6 @@ export const api = {
     return res.json();
   },
 
-  async updateBangGia(id, data) {
-    const res = await fetch(`${API_BASE}/bang-gia/${encodeURIComponent(id)}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(true),
-      body: JSON.stringify(data)
-    });
-    return res.json();
-  },
-
-  async updateViTriStatus(id, data) {
-    const res = await fetch(`${API_BASE}/vi-tri/${encodeURIComponent(id)}/status`, {
-      method: 'PATCH',
-      headers: getAuthHeaders(true),
-      body: JSON.stringify(data)
-    });
-    return res.json();
-  },
-
   // ==========================================
   // CỔNG XE VÀO / RA & AI OCR
   // ==========================================
@@ -254,15 +209,29 @@ export const api = {
   },
 
   // ==========================================
-  // TRỢ LÝ AI QUẢN TRỊ VIÊN
   // ==========================================
+  // TRỢ LÝ AI QUẢN TRỊ VIÊN (ADMIN AI ASSISTANT)
+  // ==========================================
+  async askAdminAssistant(question) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/assistant/ask`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({ question, message: question })
+      });
+      return await res.json();
+    } catch (err) {
+      const fallbackRes = await fetch(`${API_BASE}/ai-assistant`, {
+        method: 'POST',
+        headers: getAuthHeaders(true),
+        body: JSON.stringify({ message: question })
+      });
+      return await fallbackRes.json();
+    }
+  },
+
   async askAssistant(message) {
-    const res = await fetch(`${API_BASE}/ai-assistant`, {
-      method: 'POST',
-      headers: getAuthHeaders(true),
-      body: JSON.stringify({ message })
-    });
-    return res.json();
+    return this.askAdminAssistant(message);
   },
 
   // ==========================================
@@ -296,33 +265,6 @@ export const api = {
   async getSupportTickets(params = {}) {
     const query = new URLSearchParams(params).toString();
     const res = await fetch(`${API_BASE}/khach-hang/ho-tro?${query}`, {
-      headers: getAuthHeaders(false)
-    });
-    return res.json();
-  },
-
-  // ==========================================
-  // QUẢN LÝ DANH SÁCH ĐEN (BLACKLIST)
-  // ==========================================
-  async getBlacklist() {
-    const res = await fetch(`${API_BASE}/blacklist`, {
-      headers: getAuthHeaders(false)
-    });
-    return res.json();
-  },
-
-  async addBlacklist(payload) {
-    const res = await fetch(`${API_BASE}/blacklist`, {
-      method: 'POST',
-      headers: getAuthHeaders(true),
-      body: JSON.stringify(payload)
-    });
-    return res.json();
-  },
-
-  async deleteBlacklist(id) {
-    const res = await fetch(`${API_BASE}/blacklist/${id}`, {
-      method: 'DELETE',
       headers: getAuthHeaders(false)
     });
     return res.json();

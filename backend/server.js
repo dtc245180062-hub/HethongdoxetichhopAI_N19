@@ -22,15 +22,6 @@ app.use(express.urlencoded({ extended: true }));
 // Phục vụ tĩnh ảnh đã upload
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({
-    name: 'DoXeAI Smart Parking Management System',
-    status: 'running',
-    version: '4.0.0'
-  });
-});
-
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({
@@ -43,6 +34,7 @@ app.get('/api/health', (req, res) => {
 
 // Main API Routes
 app.use('/api', parkingRoutes);
+app.use('/admin', parkingRoutes); // Hỗ trợ endpoint trực tiếp /admin/assistant/ask
 
 // Error handling middleware
 app.use((err, req, res, next) => {
