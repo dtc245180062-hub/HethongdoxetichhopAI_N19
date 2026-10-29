@@ -24,7 +24,6 @@ import {
   Building2,
   Car,
   Radio,
-  Wrench,
   Download,
   Upload,
   Check
@@ -37,7 +36,6 @@ export const ROLES_CONFIG = [
   { id: 'ADMIN', name: 'Quản trị hệ thống', shortName: 'Quản trị', icon: ShieldCheck, color: 'text-indigo-600 bg-indigo-50 border-indigo-200' },
   { id: 'QUAN_LY_DIEU_HANH', name: 'Quản lý điều hành', shortName: 'Quản lý bãi', icon: Building2, color: 'text-blue-600 bg-blue-50 border-blue-200' },
   { id: 'BAO_VE', name: 'Nhân viên cổng', shortName: 'NV Cổng', icon: Radio, color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-  { id: 'KY_THUAT_IOT', name: 'Kỹ thuật viên IoT & AI', shortName: 'Kỹ thuật', icon: Wrench, color: 'text-cyan-600 bg-cyan-50 border-cyan-200' },
   { id: 'KHACH_HANG', name: 'Cư dân / Chủ xe', shortName: 'Chủ xe', icon: Car, color: 'text-slate-600 bg-slate-50 border-slate-200' }
 ];
 
@@ -1234,7 +1232,7 @@ export default function UserManagement({ currentUser }) {
               <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 space-y-1">
                 <div className="font-bold text-slate-800">Quy chuẩn cột file Excel:</div>
                 <p>1. <code>TaiKhoan</code> | 2. <code>MatKhau</code> | 3. <code>HoTen</code></p>
-                <p>4. <code>VaiTro</code> (ADMIN, BAO_VE, KY_THUAT_IOT, v.v.) | 5. <code>SoDienThoai</code></p>
+                <p>4. <code>VaiTro</code> (ADMIN, BAO_VE, QUAN_LY_DIEU_HANH, v.v.) | 5. <code>SoDienThoai</code></p>
               </div>
 
               <div className="pt-2 flex items-center justify-between">

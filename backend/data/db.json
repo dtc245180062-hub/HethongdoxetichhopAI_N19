@@ -34,16 +34,16 @@
       "id": "A-01",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-01",
-      "trangThai": "Trống",
+      "trangThai": "Đã đỗ",
       "loaiXe": "OTO",
-      "bienSoXe": null,
-      "thoiGianVao": null
+      "bienSoXe": "36MI-108.88",
+      "thoiGianVao": "2026-10-29T14:15:04.348Z"
     },
     {
       "id": "A-02",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-02",
-      "trangThai": "Bảo trì",
+      "trangThai": "Trống",
       "loaiXe": "OTO",
       "bienSoXe": null,
       "thoiGianVao": null
@@ -458,9 +458,65 @@
       "loaiDangKy": "VANG_LAI",
       "maTheRFID": "RFID-276009",
       "ngayDangKy": "2026-10-27"
+    },
+    {
+      "id": "XE-1793282666454",
+      "bienSo": "36MI-108.88",
+      "loaiXe": "OTO",
+      "chuXe": "Khách vãng lai",
+      "soDienThoai": "",
+      "loaiDangKy": "VANG_LAI",
+      "maTheRFID": "RFID-706678",
+      "ngayDangKy": "2026-10-29"
     }
   ],
   "LuotVaoRa": [
+    {
+      "id": "LVR-1793283304348",
+      "bienSo": "36MI-108.88",
+      "loaiXe": "O to",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-29T14:15:04.348Z",
+      "thoiGianRa": null,
+      "anhVao": "/uploads/plate-1793283304346-834339467.jfif",
+      "anhRa": null,
+      "trangThai": "Đang đỗ",
+      "tongTien": 0,
+      "phuongThucThanhToan": null,
+      "doTinCayAI": 0.88
+    },
+    {
+      "id": "LVR-1793282984821",
+      "bienSo": "30E-777.96",
+      "loaiXe": "O to",
+      "maViTri": "A-03",
+      "thoiGianVao": "2026-10-29T14:09:44.821Z",
+      "thoiGianRa": "2026-10-29T14:10:01.457Z",
+      "anhVao": "/uploads/plate-1793282984819-519234632.jfif",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 20000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.88,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
+    {
+      "id": "LVR-1793282666454",
+      "bienSo": "36MI-108.88",
+      "loaiXe": "O to",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-29T14:04:26.454Z",
+      "thoiGianRa": "2026-10-29T14:11:56.118Z",
+      "anhVao": "/uploads/plate-1793282666451-929076330.jfif",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 20000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.88,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
     {
       "id": "LVR-1793201086699",
       "bienSo": "29A-688.99",
@@ -1493,18 +1549,6 @@
       "email": "dung.bui@doxeai.vn",
       "trangThai": "HOAT_DONG",
       "ngayTao": "2026-03-01"
-    },
-    {
-      "id": "USR-008",
-      "taiKhoan": "tungvt",
-      "matKhau": "123456",
-      "hoTen": "Võ Thanh Tùng",
-      "vaiTro": "KY_THUAT_IOT",
-      "chucVu": "Kỹ sư trưởng IoT, Sensor & ANPR AI",
-      "soDienThoai": "0932778899",
-      "email": "tung.vo@doxeai.vn",
-      "trangThai": "HOAT_DONG",
-      "ngayTao": "2026-04-01"
     },
     {
       "id": "USR-011",
