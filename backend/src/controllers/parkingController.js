@@ -519,7 +519,7 @@ const mockAiDetectEndpoint = async (req, res) => {
 
 const { processAdminQuery } = require('../services/aiAssistantService');
 
-const handleAiAssistant = (req, res) => {
+const handleAiAssistant = async (req, res) => {
   try {
     const { message, prompt } = req.body;
     const userQuery = message || prompt || '';
@@ -530,7 +530,7 @@ const handleAiAssistant = (req, res) => {
       });
     }
 
-    const result = processAdminQuery(userQuery);
+    const result = await processAdminQuery(userQuery, req.body.user);
 
     res.json({
       success: true,
