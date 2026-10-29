@@ -1081,6 +1081,9 @@ module.exports = {
   customerGetHistory,
   customerBookSlot,
   customerSendSupport,
-  customerGetSupportList
+  customerGetSupportList,
+  getBlacklist,
+  addBlacklist,
+  deleteBlacklist
 };
 

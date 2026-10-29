@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const parkingController = require('../controllers/parkingController');
 const authController = require('../controllers/authController');
+const { authenticate, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
