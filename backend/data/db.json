@@ -133,10 +133,10 @@
       "id": "C-01",
       "maKhuVuc": "KV-C",
       "tenViTri": "Vị trí Xe máy C-01",
-      "trangThai": "Đã đỗ",
+      "trangThai": "Trống",
       "loaiXe": "XE_MAY",
-      "bienSoXe": "36-N1 108.88",
-      "thoiGianVao": "2026-10-29T23:08:30.558Z"
+      "bienSoXe": null,
+      "thoiGianVao": null
     },
     {
       "id": "C-02",
@@ -517,13 +517,15 @@
       "loaiXe": "Xe may",
       "maViTri": "C-01",
       "thoiGianVao": "2026-10-29T23:08:30.558Z",
-      "thoiGianRa": null,
+      "thoiGianRa": "2026-10-29T23:24:32.406Z",
       "anhVao": "/uploads/plate-1793315310550-584957777.jpg",
-      "anhRa": null,
-      "trangThai": "Đang đỗ",
-      "tongTien": 0,
-      "phuongThucThanhToan": null,
-      "doTinCayAI": 0.95
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "TIEN_MAT",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
     },
     {
       "id": "LVR-1793305097676",
