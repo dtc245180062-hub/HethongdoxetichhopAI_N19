@@ -1,4 +1,5 @@
 const { get24HourForecast } = require('../services/forecastService');
+const { getRevenueReport } = require('../services/revenueService');
 const { readDb, writeDb, getTable } = require('../utils/db');
 const { nhanDienBienSo } = require('../services/aiService');
 
@@ -402,10 +403,10 @@ const getDashboard = (req, res) => {
     const soChoBaoTri = viTriList.filter(v => normalizeTrangThaiCode(v.trangThai) === 'DANG_BAO_TRI').length;
     const tyLeLapDay = tongSoCho > 0 ? Math.round((soXeDangDo / tongSoCho) * 100) : 0;
 
-    // Doanh thu trong ngày từ các lượt đã hoàn tất
-    const doanhThuNgay = luotList
-      .filter(l => l.trangThai === 'DA_RA' || l.trangThai === 'Đã ra')
-      .reduce((sum, item) => sum + (item.tongTien || 0), 0);
+    // Doanh thu hôm nay (thời gian thực) và tổng doanh thu tích lũy từ revenueService
+    const revReport = getRevenueReport();
+    const doanhThuNgay = revReport.doanhThuHomNay;
+    const tongDoanhThu = revReport.tongDoanhThuLuyKe;
 
     const luotVaoRaGanNhat = [...luotList]
       .sort((a, b) => new Date(b.thoiGianVao) - new Date(a.thoiGianVao))
