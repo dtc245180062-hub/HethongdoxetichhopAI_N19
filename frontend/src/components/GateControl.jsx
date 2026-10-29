@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   RefreshCw,
+  RotateCcw,
   Clock,
   ShieldAlert,
   ShieldCheck,
@@ -923,15 +924,6 @@ export default function GateControl({
                       <FileEdit className="w-3.5 h-3.5 text-slate-600" />
                       Biển số xe vào (Làn 01):
                     </label>
-                    <button
-                      type="button"
-                      onClick={handleResetInGate}
-                      className="text-[11px] text-slate-500 hover:text-emerald-600 flex items-center gap-1 font-medium transition cursor-pointer"
-                      title="Xóa và làm mới ô nhập"
-                    >
-                      <RotateCcw className="w-3 h-3 text-emerald-500" />
-                      Làm mới
-                    </button>
                     <span className="text-[10px] text-slate-500 font-mono">Tự động viết hoa</span>
                   </div>
 
