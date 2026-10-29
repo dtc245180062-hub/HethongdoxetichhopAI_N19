@@ -5,13 +5,7 @@ import {
   Send,
   Bot,
   User,
-  Clock,
-  DollarSign,
-  Users,
-  RefreshCw,
-  Car,
-  HelpCircle,
-  MessageSquare
+  RefreshCw
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -22,43 +16,6 @@ export default function AiAssistantWidget({ currentUser }) {
   }
 
   const isKhachHang = currentUser?.vaiTro === 'KHACH_HANG';
-
-  // Danh mục câu hỏi gợi ý nhanh theo vai trò
-  const SAMPLE_PROMPTS = isKhachHang
-    ? [
-        {
-          icon: Car,
-          label: 'Bãi xe còn bao nhiêu chỗ trống?',
-          prompt: 'Bãi xe còn bao nhiêu chỗ trống các khu vực?'
-        },
-        {
-          icon: DollarSign,
-          label: 'Bảng giá gửi xe chi tiết?',
-          prompt: 'Bảng giá gửi xe ô tô và xe máy tính như thế nào?'
-        },
-        {
-          icon: HelpCircle,
-          label: 'Hướng dẫn thủ tục đặt chỗ trước?',
-          prompt: 'Hướng dẫn quy trình đặt chỗ đỗ xe trước và quản lý phương tiện'
-        }
-      ]
-    : [
-        {
-          icon: Clock,
-          label: 'Khung giờ nào đông xe nhất?',
-          prompt: 'Khung giờ nào đông xe nhất trong ngày?'
-        },
-        {
-          icon: DollarSign,
-          label: 'Báo cáo doanh thu hôm nay',
-          prompt: 'Báo cáo doanh thu và phương thức thanh toán hôm nay'
-        },
-        {
-          icon: Users,
-          label: 'Bố trí nhân sự ca trực thế nào?',
-          prompt: 'Đề xuất phân bổ và bố trí nhân sự các ca trực hôm nay'
-        }
-      ];
 
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
@@ -85,7 +42,7 @@ export default function AiAssistantWidget({ currentUser }) {
               '👥 **Đề xuất bố trí nhân sự**: Gợi ý phân bổ số lượng nhân sự các ca trực hợp lý theo lưu lượng xe dự kiến.'
             ],
         recommendations: [
-          'Bạn có thể bấm vào các câu hỏi gợi ý nhanh bên trên hoặc nhập nội dung câu hỏi vào ô chat bên dưới.'
+          'Bạn có thể nhập nội dung câu hỏi vào ô chat bên dưới để được hỗ trợ tức thì.'
         ]
       }
     }
@@ -160,57 +117,40 @@ export default function AiAssistantWidget({ currentUser }) {
 
   return (
     <>
-      {/* 1. NÚT BONG BÓNG CHAT MÀU XANH GỌN GÀNG (FAB - KHÔNG BỊ VƯỚNG) */}
+      {/* 1. NÚT BONG BÓNG CHAT MÀU XANH TRÒN GỌN GÀNG (KHÔNG HIỆN TOOLTIP KHI RÊ CHUỘT) */}
       {!isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center group">
-          {/* Tooltip chỉ hiển thị khi rê chuột vào để không che các nút chức năng khác */}
-          <div className="mr-3 px-3 py-1.5 rounded-xl bg-gray-900/90 backdrop-blur-md text-white text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block">
-            {isKhachHang ? 'Trợ lý AI Khách hàng' : 'Trợ lý AI Quản trị'}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 border-4 border-transparent border-l-gray-900/90"></div>
-          </div>
+        <button
+          onClick={() => setIsOpen(true)}
+          aria-label="Mở Trợ lý AI"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/35 border-2 border-white transition-all duration-200 transform hover:scale-110 active:scale-95 cursor-pointer"
+        >
+          <Bot className="w-7 h-7 drop-shadow-xs" />
 
-          {/* Bong bóng chat hình tròn màu xanh hiện đại */}
-          <button
-            onClick={() => setIsOpen(true)}
-            aria-label="Mở Trợ lý AI"
-            title={isKhachHang ? 'Trợ lý AI Khách hàng' : 'Trợ lý AI Quản trị'}
-            className="relative w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/35 border-2 border-white transition-all duration-200 transform hover:scale-110 active:scale-95 cursor-pointer"
-          >
-            <Bot className="w-7 h-7 drop-shadow-xs" />
-
-            {/* Chấm trạng thái Online xanh lá cây */}
-            <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
-            </span>
-          </button>
-        </div>
+          {/* Chấm trạng thái Online xanh lá cây */}
+          <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+          </span>
+        </button>
       )}
 
-      {/* 2. CỬA SỔ CHAT TRỢ LÝ AI (NỀN TRẮNG CHỮ ĐEN HIỆN ĐẠI, 0% CHỮ UC) */}
+      {/* 2. CỬA SỔ CHAT TRỢ LÝ AI (NỀN TRẮNG CHỮ ĐEN, BỎ SUBTITLE VÀ BỎ THANH GỢI Ý) */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[95vw] sm:w-[480px] h-[640px] max-h-[85vh] rounded-2xl bg-white border border-gray-200 shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
-          {/* Header */}
+          {/* Header gọn gàng */}
           <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-xs">
                 <Bot className="w-5 h-5" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm text-gray-900">
-                    {isKhachHang ? 'Trợ lý AI Dịch vụ Khách hàng' : 'Trợ lý AI hỗ trợ quản trị'}
-                  </h3>
-                  <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Online
-                  </span>
-                </div>
-                <p className="text-[11px] text-gray-500 mt-0.5">
-                  {isKhachHang
-                    ? 'Chỗ trống thời gian thực • Bảng giá • Đặt chỗ'
-                    : 'Tra cứu doanh thu • Giờ cao điểm • Bố trí ca trực'}
-                </p>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-sm text-gray-900">
+                  {isKhachHang ? 'Trợ lý AI Dịch vụ Khách hàng' : 'Trợ lý AI hỗ trợ quản trị'}
+                </h3>
+                <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Online
+                </span>
               </div>
             </div>
 
@@ -232,25 +172,7 @@ export default function AiAssistantWidget({ currentUser }) {
             </div>
           </div>
 
-          {/* Dải câu hỏi gợi ý nhanh */}
-          <div className="p-2.5 bg-gray-50/80 border-b border-gray-200 overflow-x-auto flex items-center gap-2 no-scrollbar shrink-0">
-            {SAMPLE_PROMPTS.map((p, idx) => {
-              const Icon = p.icon;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleSendMessage(p.prompt)}
-                  disabled={loading}
-                  className="whitespace-nowrap px-3 py-1.5 rounded-lg bg-white hover:bg-blue-50 text-gray-800 hover:text-blue-700 text-[11px] font-medium border border-gray-200 hover:border-blue-200 flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-2xs disabled:opacity-50"
-                >
-                  <Icon className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{p.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Khung nội dung tin nhắn */}
+          {/* Khung nội dung tin nhắn rộng rãi (đã bỏ dải câu hỏi gợi ý) */}
           <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-50/40">
             {messages.map((msg) => (
               <div
