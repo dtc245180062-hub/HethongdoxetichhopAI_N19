@@ -491,15 +491,15 @@ export default function Login({ onLoginSuccess }) {
         
         {/* TIÊU ĐỀ */}
         <h1 className="text-[26px] font-bold text-white text-center tracking-tight leading-tight">
-          {authMode === 'OTP' ? 'OTP Verification' : authMode === 'SIGNUP' ? 'Create Account' : 'Welcome Back'}
+          {authMode === 'OTP' ? 'Xác Thực OTP' : authMode === 'SIGNUP' ? 'Đăng Ký Tài Khoản' : 'Chào Mừng Trở Lại'}
         </h1>
         
         <p className="text-white/70 text-xs sm:text-sm text-center mt-1.5 mb-7 font-normal">
           {authMode === 'OTP'
             ? 'Xác thực mã đăng nhập gửi về máy'
             : authMode === 'SIGNUP'
-            ? 'Sign up for a new account'
-            : 'Sign in to your account'}
+            ? 'Tạo tài khoản mới để trải nghiệm dịch vụ'
+            : 'Đăng nhập vào tài khoản của bạn'}
         </p>
 
         {/* THÔNG BÁO LỖI HOẶC HƯỚNG DẪN */}
@@ -526,7 +526,7 @@ export default function Login({ onLoginSuccess }) {
                 type="text"
                 value={taiKhoan}
                 onChange={(e) => setTaiKhoan(e.target.value)}
-                placeholder="Email Address"
+                placeholder="Địa chỉ Email hoặc Tên tài khoản"
                 autoComplete="username"
                 className="w-full px-4 py-3 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
@@ -538,7 +538,7 @@ export default function Login({ onLoginSuccess }) {
                 type={showPassword ? 'text' : 'password'}
                 value={matKhau}
                 onChange={(e) => setMatKhau(e.target.value)}
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 autoComplete="current-password"
                 className="w-full px-4 py-3 pr-11 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
@@ -553,7 +553,7 @@ export default function Login({ onLoginSuccess }) {
               </button>
             </div>
 
-            {/* Dòng Remember me & Forgot password */}
+            {/* Dòng Ghi nhớ đăng nhập & Forgot password */}
             <div className="flex items-center justify-between text-xs pt-0.5 pb-1">
               <label className="flex items-center gap-2 cursor-pointer group select-none">
                 <input
@@ -562,7 +562,7 @@ export default function Login({ onLoginSuccess }) {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 rounded bg-white/20 border-white/30 text-[#38d8d2] focus:ring-0 cursor-pointer accent-[#38d8d2]"
                 />
-                <span className="text-white/80 group-hover:text-white transition">Remember me</span>
+                <span className="text-white/80 group-hover:text-white transition">Ghi nhớ đăng nhập</span>
               </label>
 
               <button
@@ -573,7 +573,7 @@ export default function Login({ onLoginSuccess }) {
                 }}
                 className="text-[#38d8d2] hover:text-[#5eead4] font-medium transition cursor-pointer"
               >
-                Forgot password?
+                Quên mật khẩu?
               </button>
             </div>
 
@@ -589,10 +589,10 @@ export default function Login({ onLoginSuccess }) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
-                  Signing In...
+                  Đang đăng nhập...
                 </span>
               ) : (
-                'Sign In'
+                'Đăng Nhập'
               )}
             </button>
 
@@ -612,13 +612,13 @@ export default function Login({ onLoginSuccess }) {
               </button>
             </div>
 
-            {/* Đường ngăn cách "or continue with" */}
+            {/* Đường ngăn cách "hoặc tiếp tục với" */}
             <div className="relative my-5 flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/15"></div>
               </div>
               <span className="relative px-3 text-white/50 text-xs font-normal">
-                or continue with
+                hoặc tiếp tục với
               </span>
             </div>
 
@@ -668,9 +668,9 @@ export default function Login({ onLoginSuccess }) {
               </button>
             </div>
 
-            {/* Dòng chữ dưới cùng "Don't have an account? Sign up" */}
+            {/* Dòng chữ dưới cùng "Chưa có tài khoản? Sign up" */}
             <p className="text-center text-xs text-white/70 mt-6 pt-1">
-              Don't have an account?{' '}
+              Chưa có tài khoản?{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -679,9 +679,7 @@ export default function Login({ onLoginSuccess }) {
                   setInfoMsg('');
                 }}
                 className="text-[#38d8d2] hover:text-[#5eead4] font-medium transition cursor-pointer"
-              >
-                Sign up
-              </button>
+              >Đăng ký ngay</button>
             </p>
           </form>
         )}
@@ -799,7 +797,7 @@ export default function Login({ onLoginSuccess }) {
                 type="text"
                 value={regForm.hoTen}
                 onChange={(e) => setRegForm({ ...regForm, hoTen: e.target.value })}
-                placeholder="Full Name"
+                placeholder="Họ và tên"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
             </div>
@@ -809,7 +807,7 @@ export default function Login({ onLoginSuccess }) {
                 type="text"
                 value={regForm.taiKhoan}
                 onChange={(e) => setRegForm({ ...regForm, taiKhoan: e.target.value })}
-                placeholder="Username"
+                placeholder="Tên tài khoản"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
             </div>
@@ -819,7 +817,7 @@ export default function Login({ onLoginSuccess }) {
                 type="email"
                 value={regForm.email}
                 onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                placeholder="Email Address"
+                placeholder="Địa chỉ Email"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
             </div>
@@ -829,7 +827,7 @@ export default function Login({ onLoginSuccess }) {
                 type="text"
                 value={regForm.bienSoXe}
                 onChange={(e) => setRegForm({ ...regForm, bienSoXe: e.target.value })}
-                placeholder="License Plate (e.g. 30A-123.45)"
+                placeholder="Biển số xe (Ví dụ: 30A-123.45)"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200 uppercase"
               />
             </div>
@@ -839,7 +837,7 @@ export default function Login({ onLoginSuccess }) {
                 type={showPassword ? 'text' : 'password'}
                 value={regForm.matKhau}
                 onChange={(e) => setRegForm({ ...regForm, matKhau: e.target.value })}
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 className="w-full px-4 py-2.5 pr-11 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
               <button
@@ -857,11 +855,11 @@ export default function Login({ onLoginSuccess }) {
               disabled={loading}
               className="w-full py-3 mt-2 rounded-xl font-semibold text-white text-sm bg-gradient-to-r from-[#4168fa] via-[#3590f6] to-[#2dd4bf] hover:opacity-95 shadow-md shadow-blue-500/20 active:scale-[0.99] transition-all duration-200 flex items-center justify-center cursor-pointer disabled:opacity-60"
             >
-              {loading ? 'Creating Account...' : 'Sign Up'}
+              {loading ? 'Đang tạo tài khoản...' : 'Đăng Ký'}
             </button>
 
             <p className="text-center text-xs text-white/70 mt-4">
-              Already have an account?{' '}
+              Đã có tài khoản?{' '}
               <button
                 type="button"
                 onClick={() => {
@@ -870,9 +868,7 @@ export default function Login({ onLoginSuccess }) {
                   setInfoMsg('');
                 }}
                 className="text-[#38d8d2] hover:text-[#5eead4] font-medium transition cursor-pointer"
-              >
-                Sign in
-              </button>
+              >Đăng nhập</button>
             </p>
           </form>
         )}

@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Car,
-  Bell,
   ChevronDown,
   ChevronUp,
   ChevronRight,
@@ -348,19 +347,6 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Chuông thông báo đỏ y như mẫu LOHA SALES */}
-            <div className="relative">
-              <button
-                type="button"
-                title="Thông báo mới (3)"
-                className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-50 flex items-center justify-center text-slate-600 hover:text-slate-900 transition shadow-2xs cursor-pointer"
-              >
-                <Bell className="w-4 h-4" />
-              </button>
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-xs">
-                3
-              </span>
-            </div>
 
             {/* Profile Dropdown Pop-up chuẩn thiết kế LOHA SALES */}
             <div className="relative" ref={profileDropdownRef}>

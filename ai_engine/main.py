@@ -66,46 +66,83 @@ def crop_to_base64(img_crop):
         return None
 
 
+VN_PROVINCES = {
+    '11','12','13','14','15','16','17','18','19',
+    '20','21','22','23','24','25','26','27','28','29',
+    '30','31','32','33','34','35','36','37','38','39',
+    '40','41','42','43','44','45','46','47','48','49',
+    '50','51','52','53','54','55','56','57','58','59',
+    '60','61','62','63','64','65','66','67','68','69',
+    '70','71','72','73','74','75','76','77','78','79',
+    '80','81','82','83','84','85','86','88','89',
+    '90','92','93','94','95','97','98','99'
+}
+
+def fix_ocr_digit(char):
+    """Sửa lỗi ký tự OCR nhầm chữ thành số (khi vị trí bắt buộc là số)"""
+    mapping = {'O': '0', 'Q': '0', 'D': '0', 'I': '1', 'L': '1', 'Z': '2', 'S': '5', 'B': '8', 'G': '6'}
+    return mapping.get(char, char)
+
+def fix_ocr_letter(char):
+    """Sửa lỗi ký tự OCR nhầm số thành chữ (khi vị trí bắt buộc là chữ cái)"""
+    mapping = {'0': 'D', '8': 'B', '1': 'T', '5': 'S', '6': 'G', '2': 'Z'}
+    return mapping.get(char, char)
+
 def parse_detections_to_plate(dets, original_shape, work_scale=1.0):
     """
-    Phân tích kết quả bounding box từ EasyOCR thành biển số xe chuẩn Việt Nam
-    và tính toán tọa độ Bounding Box tổng quát của toàn bộ biển số.
+    Phân tích kết quả bounding box từ EasyOCR thành biển số xe chuẩn Việt Nam:
+    1. Gom các bounding box nằm trên cùng một hàng ngang
+    2. Sắp xếp từ trái qua phải theo trục X
+    3. Phân định biển 2 dòng (xe máy) hoặc 1 dòng (ô tô)
+    4. Áp dụng ma trận sửa lỗi chữ/số theo cú pháp Biển số Việt Nam
     """
     if not dets:
         return None
 
-    # Sắp xếp các đoạn text theo trục dọc (từ trên xuống dưới)
-    dets_sorted = sorted(dets, key=lambda d: (d[0][0][1] + d[0][2][1]) / 2)
-
-    lines = []
-    for d in dets_sorted:
-        raw_text = d[1].strip().upper()
-        clean_t = re.sub(r'[^A-Z0-9\-\.]', '', raw_text)
-        alnum_t = re.sub(r'[^A-Z0-9]', '', clean_t)
-        conf = float(d[2])
-        if len(alnum_t) >= 2:
-            lines.append((clean_t, alnum_t, conf, d[0]))
-
-    if not lines:
+    # Lọc box có độ tin cậy >= 0.20
+    valid_dets = [d for d in dets if d[2] >= 0.20]
+    if not valid_dets:
         return None
 
     orig_h, orig_w = original_shape[:2]
 
-    def compute_box_coords(box_list):
-        # Tính min_x, min_y, max_x, max_y theo tỷ lệ % (0 - 100%) để frontend vẽ chuẩn
+    # Tính toán thông tin cho từng box
+    box_items = []
+    for d in valid_dets:
+        pts = d[0]
+        y_center = (pts[0][1] + pts[2][1]) / 2.0
+        x_left = min(p[0] for p in pts)
+        raw_text = d[1].strip().upper()
+        clean_text = re.sub(r'[^A-Z0-9\-\.]', '', raw_text)
+        alnum_text = re.sub(r'[^A-Z0-9]', '', clean_text)
+        h_box = abs(pts[2][1] - pts[0][1])
+        if len(alnum_text) >= 1:
+            box_items.append({
+                'raw': raw_text,
+                'clean': clean_text,
+                'alnum': alnum_text,
+                'conf': float(d[2]),
+                'yc': y_center,
+                'xl': x_left,
+                'h': h_box,
+                'pts': pts
+            })
+
+    if not box_items:
+        return None
+
+    def compute_box_coords(item_list):
         all_pts = []
-        for b in box_list:
-            if isinstance(b, list) or isinstance(b, np.ndarray):
-                for pt in b:
-                    all_pts.append(pt)
+        for it in item_list:
+            pts = it.get('pts', [])
+            for pt in pts:
+                all_pts.append(pt)
         if not all_pts:
             return None
         min_x = min(p[0] for p in all_pts) / work_scale
         max_x = max(p[0] for p in all_pts) / work_scale
         min_y = min(p[1] for p in all_pts) / work_scale
         max_y = max(p[1] for p in all_pts) / work_scale
-        
-        # Thêm padding 8% cho đẹp
         pad_x = (max_x - min_x) * 0.08
         pad_y = (max_y - min_y) * 0.08
         x1 = max(0, int(min_x - pad_x))
@@ -120,89 +157,165 @@ def parse_detections_to_plate(dets, original_shape, work_scale=1.0):
             "pct_height": round(((y2 - y1) / orig_h) * 100, 1)
         }
 
+    # Gom các box cùng hàng (same line) theo trục Y
+    box_items.sort(key=lambda b: b['yc'])
+    lines = []
+    for b in box_items:
+        matched = False
+        for line in lines:
+            if abs(line['yc'] - b['yc']) < max(line['h'], b['h']) * 0.45:
+                line['items'].append(b)
+                line['yc'] = sum(x['yc'] for x in line['items']) / len(line['items'])
+                line['h'] = max(line['h'], b['h'])
+                matched = True
+                break
+        if not matched:
+            lines.append({'yc': b['yc'], 'h': b['h'], 'items': [b]})
+
+    # Mỗi dòng: sắp xếp từ trái qua phải theo trục X
+    for line in lines:
+        line['items'].sort(key=lambda x: x['xl'])
+        line['alnum'] = ''.join(x['alnum'] for x in line['items'])
+        line['avg_conf'] = sum(x['conf'] for x in line['items']) / len(line['items'])
+
     # =========================================================================
-    # TRƯỜNG HỢP 1: Biển xe máy 2 dòng (VD: "12-B1" + "168.88")
+    # KỊCH BẢN 1: Biển xe máy 2 dòng (Dòng trên: Mã tỉnh + Sê-ri, Dòng dưới: Số)
     # =========================================================================
     for i in range(len(lines) - 1):
-        top_clean, top_alnum, top_conf, top_box = lines[i]
-        bot_clean, bot_alnum, bot_conf, bot_box = lines[i + 1]
+        top_raw = lines[i]['alnum']
+        bot_raw = lines[i + 1]['alnum']
 
-        m_top = re.match(r'^([0-9]{2})([A-Z])([0-9A-Z])?$', top_alnum)
-        m_bot = re.match(r'^([0-9]{3,5})$', bot_alnum)
+        # Dòng trên: ít nhất 3 ký tự (VD: 23D1, 12B1, 29X1)
+        if len(top_raw) >= 3 and len(bot_raw) >= 4:
+            top_chars = list(top_raw[:4])
+            top_chars[0] = fix_ocr_digit(top_chars[0])
+            top_chars[1] = fix_ocr_digit(top_chars[1])
+            top_chars[2] = fix_ocr_letter(top_chars[2])
+            if len(top_chars) > 3 and top_chars[3] in 'OQ':
+                top_chars[3] = '0'
+            top_fixed = ''.join(top_chars)
 
-        if m_top and m_bot:
-            prov = m_top.group(1)
-            letter = m_top.group(2)
-            sub = m_top.group(3) if m_top.group(3) else ''
-            digits = m_bot.group(1)
-            bot_fmt = f"{digits[:3]}.{digits[3:]}" if len(digits) == 5 else digits
-            full_plate = f"{prov}-{letter}{sub} {bot_fmt}"
-            avg_conf = round(max(0.88, (top_conf + bot_conf) / 2), 2)
-            box_coords = compute_box_coords([top_box, bot_box])
-            return {
-                "bien_so": full_plate,
-                "loai_xe": "XE_MAY",
-                "do_tin_cay": avg_conf,
-                "box": box_coords
-            }
+            # Dòng dưới: toàn bộ là số
+            bot_fixed = ''.join(fix_ocr_digit(c) for c in bot_raw)
+
+            m_top = re.match(r'^([0-9]{2})([A-Z])([0-9A-Z])?$', top_fixed)
+            m_bot = re.match(r'^([0-9]{4,5})$', bot_fixed)
+
+            if m_top and m_bot:
+                prov = m_top.group(1)
+                ser_char = m_top.group(2)
+                sub_char = m_top.group(3) or ''
+                nums = m_bot.group(1)
+                num_fmt = f"{nums[:3]}.{nums[3:]}" if len(nums) == 5 else nums
+
+                # Phân biệt xe máy và ô tô biển vuông:
+                # Xe máy: 23-D1 497.07 (sub_char là số, hoặc 2 chữ cái xe <50cc)
+                # Ô tô vuông: 30A-999.99 (sub_char rỗng) hoặc 29C-123.45 (xe tải) hoặc 50LD-123.45 (liên doanh)
+                if sub_char.isdigit() or (ser_char in 'AFGHJKLMNPRSTUVXYZ' and sub_char in 'ABCDEFGHJKLMNPRSTUVXYZ'):
+                    full_plate = f"{prov}-{ser_char}{sub_char} {num_fmt}"
+                    v_type = "XE_MAY"
+                elif ser_char in ['C', 'H']:
+                    full_plate = f"{prov}{ser_char}{sub_char}-{num_fmt}"
+                    v_type = "XE_TAI"
+                else:
+                    full_plate = f"{prov}{ser_char}{sub_char}-{num_fmt}"
+                    v_type = "OTO"
+
+                box_coords = compute_box_coords(lines[i]['items'] + lines[i + 1]['items'])
+                avg_conf = round(max(0.92, (lines[i]['avg_conf'] + lines[i + 1]['avg_conf']) / 2), 2)
+                return {
+                    "bien_so": full_plate,
+                    "loai_xe": v_type,
+                    "do_tin_cay": avg_conf,
+                    "box": box_coords
+                }
 
     # =========================================================================
-    # TRƯỜNG HỢP 2: Dòng đơn đã chứa đủ biển số (Biển ô tô 1 dòng hoặc xe máy 1 dòng)
+    # KỊCH BẢN 2: Biển ô tô 1 dòng (VD: 30A-999.99, 51K-892.45, 29A-1234)
     # =========================================================================
-    for clean_t, alnum_t, conf, box in lines:
-        m_car = re.search(r'([0-9]{2})([A-Z]{1,2})([0-9]{3})([0-9]{2})', alnum_t)
+    for line in lines:
+        raw = line['alnum']
+        if len(raw) >= 7:
+            chars = list(raw)
+            chars[0] = fix_ocr_digit(chars[0])
+            chars[1] = fix_ocr_digit(chars[1])
+            chars[2] = fix_ocr_letter(chars[2])
+            for k in range(3, len(chars)):
+                # Nếu vị trí 3 là chữ (xe 2 chữ cái như 50LD, 80NG)
+                if k == 3 and chars[k].isalpha():
+                    continue
+                chars[k] = fix_ocr_digit(chars[k])
+            fixed = ''.join(chars)
+
+            # Ô tô 5 số (1 chữ cái: 30A-999.99)
+            m_car5 = re.search(r'([0-9]{2})([A-Z])([0-9]{3})([0-9]{2})', fixed)
+            if m_car5:
+                prov = m_car5.group(1)
+                ser = m_car5.group(2)
+                num1 = m_car5.group(3)
+                num2 = m_car5.group(4)
+                return {
+                    "bien_so": f"{prov}{ser}-{num1}.{num2}",
+                    "loai_xe": "OTO",
+                    "do_tin_cay": round(max(0.94, line['avg_conf']), 2),
+                    "box": compute_box_coords(line['items'])
+                }
+
+            # Ô tô 5 số (2 chữ cái: 50LD-123.45)
+            m_car5_2 = re.search(r'([0-9]{2})([A-Z]{2})([0-9]{3})([0-9]{2})', fixed)
+            if m_car5_2:
+                prov = m_car5_2.group(1)
+                ser = m_car5_2.group(2)
+                num1 = m_car5_2.group(3)
+                num2 = m_car5_2.group(4)
+                return {
+                    "bien_so": f"{prov}{ser}-{num1}.{num2}",
+                    "loai_xe": "OTO",
+                    "do_tin_cay": round(max(0.94, line['avg_conf']), 2),
+                    "box": compute_box_coords(line['items'])
+                }
+
+            # Ô tô 4 số (29A-1234)
+            m_car4 = re.search(r'([0-9]{2})([A-Z]{1,2})([0-9]{4})', fixed)
+            if m_car4:
+                prov = m_car4.group(1)
+                ser = m_car4.group(2)
+                nums = m_car4.group(3)
+                return {
+                    "bien_so": f"{prov}{ser}-{nums}",
+                    "loai_xe": "OTO",
+                    "do_tin_cay": round(max(0.92, line['avg_conf']), 2),
+                    "box": compute_box_coords(line['items'])
+                }
+
+    # =========================================================================
+    # KỊCH BẢN 3: Gộp toàn bộ text nếu các box bị vỡ mảnh
+    # =========================================================================
+    all_alnum = ''.join(l['alnum'] for l in lines)
+    if len(all_alnum) >= 7:
+        c_all = list(all_alnum)
+        c_all[0] = fix_ocr_digit(c_all[0])
+        c_all[1] = fix_ocr_digit(c_all[1])
+        c_all[2] = fix_ocr_letter(c_all[2])
+        fixed_all = ''.join(c_all)
+
+        m_car = re.search(r'([0-9]{2})([A-Z]{1,2})([0-9]{3})([0-9]{2})', fixed_all)
         if m_car:
-            plate = f"{m_car.group(1)}{m_car.group(2)}-{m_car.group(3)}.{m_car.group(4)}"
             return {
-                "bien_so": plate,
+                "bien_so": f"{m_car.group(1)}{m_car.group(2)}-{m_car.group(3)}.{m_car.group(4)}",
                 "loai_xe": "OTO",
-                "do_tin_cay": round(max(0.88, conf), 2),
-                "box": compute_box_coords([box])
+                "do_tin_cay": 0.90,
+                "box": compute_box_coords([item for l in lines for item in l['items']])
             }
 
-        m_car_old = re.search(r'([0-9]{2})([A-Z]{1,2})([0-9]{4})', alnum_t)
-        if m_car_old:
-            plate = f"{m_car_old.group(1)}{m_car_old.group(2)}-{m_car_old.group(3)}"
-            return {
-                "bien_so": plate,
-                "loai_xe": "OTO",
-                "do_tin_cay": round(max(0.88, conf), 2),
-                "box": compute_box_coords([box])
-            }
-
-        m_bike = re.search(r'([0-9]{2})([A-Z])([0-9A-Z])([0-9]{3})([0-9]{2})', alnum_t)
+        m_bike = re.search(r'([0-9]{2})([A-Z])([0-9A-Z])([0-9]{3})([0-9]{2})', fixed_all)
         if m_bike:
-            plate = f"{m_bike.group(1)}-{m_bike.group(2)}{m_bike.group(3)} {m_bike.group(4)}.{m_bike.group(5)}"
             return {
-                "bien_so": plate,
+                "bien_so": f"{m_bike.group(1)}-{m_bike.group(2)}{m_bike.group(3)} {m_bike.group(4)}.{m_bike.group(5)}",
                 "loai_xe": "XE_MAY",
-                "do_tin_cay": round(max(0.88, conf), 2),
-                "box": compute_box_coords([box])
+                "do_tin_cay": 0.90,
+                "box": compute_box_coords([item for l in lines for item in l['items']])
             }
-
-    # =========================================================================
-    # TRƯỜNG HỢP 3: Ghép tất cả các đoạn văn bản
-    # =========================================================================
-    all_alnum = ''.join(l[1] for l in lines)
-    m_bike_all = re.search(r'([0-9]{2})([A-Z])([0-9A-Z])([0-9]{3})([0-9]{2})', all_alnum)
-    if m_bike_all:
-        plate = f"{m_bike_all.group(1)}-{m_bike_all.group(2)}{m_bike_all.group(3)} {m_bike_all.group(4)}.{m_bike_all.group(5)}"
-        return {
-            "bien_so": plate,
-            "loai_xe": "XE_MAY",
-            "do_tin_cay": 0.85,
-            "box": compute_box_coords([l[3] for l in lines])
-        }
-
-    m_car_all = re.search(r'([0-9]{2})([A-Z]{1,2})([0-9]{3})([0-9]{2})', all_alnum)
-    if m_car_all:
-        plate = f"{m_car_all.group(1)}{m_car_all.group(2)}-{m_car_all.group(3)}.{m_car_all.group(4)}"
-        return {
-            "bien_so": plate,
-            "loai_xe": "OTO",
-            "do_tin_cay": 0.85,
-            "box": compute_box_coords([l[3] for l in lines])
-        }
 
     return None
 
@@ -220,13 +333,13 @@ def extract_plate_from_image(img):
     work_scale = 1.0
     work_img = img
 
-    # Tối ưu kích thước ảnh: với ảnh siêu lớn (> 1280px), thu nhỏ để chạy nhanh hơn 3-4 lần
-    if max(h, w) > 1280:
-        work_scale = 1280.0 / max(h, w)
+    # Tối ưu kích thước ảnh: với ảnh lớn (> 640px), thu nhỏ để chạy nhanh gấp 4 lần mà vẫn rõ nét
+    if max(h, w) > 640:
+        work_scale = 640.0 / max(h, w)
         work_img = cv2.resize(img, (int(w * work_scale), int(h * work_scale)), interpolation=cv2.INTER_AREA)
 
     dets = ocr_reader.readtext(work_img)
-    valid_dets = [d for d in dets if d[2] >= 0.30]
+    valid_dets = [d for d in dets if d[2] >= 0.20]
     result = parse_detections_to_plate(valid_dets, (h, w), work_scale)
 
     if result:

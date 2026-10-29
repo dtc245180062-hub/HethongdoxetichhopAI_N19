@@ -519,7 +519,7 @@ const handleAiAssistant = async (req, res) => {
       });
     }
 
-    const result = await processAdminQuery(userQuery.trim(), req.user);
+    const result = await processAdminQuery(userQuery.trim(), req.user || req.body?.user);
 
     res.json({
       success: true,
