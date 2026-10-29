@@ -53,14 +53,12 @@ export default function Login({ onLoginSuccess }) {
     }
   ];
 
-  // Form Đăng ký tài khoản mới (Sign up)
+  // Form Đăng ký tài khoản mới (Sign up - Chuẩn đặc tả 2.2.3.a)
   const [regForm, setRegForm] = useState({
     hoTen: '',
-    taiKhoan: '',
     email: '',
-    matKhau: '',
-    bienSoXe: '',
-    loaiXe: 'OTO'
+    soDienThoai: '',
+    matKhau: ''
   });
 
   // Đếm ngược gửi lại mã OTP
@@ -291,31 +289,68 @@ export default function Login({ onLoginSuccess }) {
   };
 
   // =========================================================================
-  // 4. XỬ LÝ ĐĂNG KÝ MỚI
+  // 4. XỬ LÝ ĐĂNG KÝ MỚI (CHỨC NĂNG 2.2.3.a)
   // =========================================================================
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setInfoMsg('');
 
-    if (!regForm.hoTen.trim() || !regForm.taiKhoan.trim() || !regForm.matKhau.trim()) {
-      setErrorMsg('Vui lòng điền đầy đủ Họ tên, Tên đăng nhập và Mật khẩu!');
+    const hoTen = regForm.hoTen.trim();
+    const email = regForm.email.trim();
+    const soDienThoai = regForm.soDienThoai.trim().replace(/[\s.-]/g, '');
+    const matKhau = regForm.matKhau.trim();
+
+    // 1. Kiểm tra Họ và tên
+    if (!hoTen) {
+      setErrorMsg('Vui lòng nhập Họ và tên!');
+      return;
+    }
+
+    // 2. Kiểm tra Địa chỉ Email hợp lệ
+    if (!email) {
+      setErrorMsg('Vui lòng nhập Địa chỉ Email!');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMsg('Định dạng email không hợp lệ (Ví dụ: user@domain.com)!');
+      return;
+    }
+
+    // 3. Kiểm tra Số điện thoại hợp lệ (chuẩn 10 số di động VN)
+    if (!soDienThoai) {
+      setErrorMsg('Vui lòng nhập Số điện thoại!');
+      return;
+    }
+    const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
+    if (!phoneRegex.test(soDienThoai)) {
+      setErrorMsg('Số điện thoại không hợp lệ (phải gồm 10 chữ số, VD: 0912345678)!');
+      return;
+    }
+
+    // 4. Kiểm tra Mật khẩu & Độ dài tối thiểu 8 ký tự
+    if (!matKhau) {
+      setErrorMsg('Vui lòng nhập Mật khẩu!');
+      return;
+    }
+    if (matKhau.length < 8) {
+      setErrorMsg('Mật khẩu phải có độ dài tối thiểu 8 ký tự theo quy định bảo mật!');
       return;
     }
 
     try {
       setLoading(true);
       const res = await api.register({
-        hoTen: regForm.hoTen.trim(),
-        taiKhoan: regForm.taiKhoan.trim(),
-        email: regForm.email.trim() || `${regForm.taiKhoan.trim()}@doxeai.vn`,
-        matKhau: regForm.matKhau.trim(),
-        bienSoXe: regForm.bienSoXe.trim().toUpperCase(),
-        loaiXe: regForm.loaiXe || 'OTO'
+        hoTen,
+        email,
+        soDienThoai,
+        matKhau,
+        taiKhoan: email.split('@')[0] || soDienThoai
       });
 
       if (res && res.success && res.data) {
-        setInfoMsg('Đăng ký tài khoản thành công! Đang tự động đăng nhập...');
+        setInfoMsg('Đăng ký tài khoản Khách hàng thành công! Đang chuyển hướng...');
         const { user, token } = res.data;
         localStorage.setItem('doxeai_token', token);
         localStorage.setItem('doxeai_user', JSON.stringify(user));
@@ -675,6 +710,12 @@ export default function Login({ onLoginSuccess }) {
                 type="button"
                 onClick={() => {
                   setAuthMode('SIGNUP');
+                  setRegForm({
+                    hoTen: '',
+                    email: '',
+                    soDienThoai: '',
+                    matKhau: ''
+                  });
                   setErrorMsg('');
                   setInfoMsg('');
                 }}
@@ -791,10 +832,14 @@ export default function Login({ onLoginSuccess }) {
         {/* CHẾ ĐỘ 3: ĐĂNG KÝ TÀI KHOẢN MỚI (SIGN UP) */}
         {/* =================================================================== */}
         {authMode === 'SIGNUP' && (
-          <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
+          <form onSubmit={handleRegisterSubmit} autoComplete="off" className="space-y-3.5">
+            {/* Họ và tên */}
             <div>
               <input
                 type="text"
+                name="reg_hoTen"
+                id="reg_hoTen"
+                autoComplete="off"
                 value={regForm.hoTen}
                 onChange={(e) => setRegForm({ ...regForm, hoTen: e.target.value })}
                 placeholder="Họ và tên"
@@ -802,42 +847,44 @@ export default function Login({ onLoginSuccess }) {
               />
             </div>
 
-            <div>
-              <input
-                type="text"
-                value={regForm.taiKhoan}
-                onChange={(e) => setRegForm({ ...regForm, taiKhoan: e.target.value })}
-                placeholder="Tên tài khoản"
-                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
-              />
-            </div>
-
+            {/* Địa chỉ Email */}
             <div>
               <input
                 type="email"
+                name="reg_email"
+                id="reg_email"
+                autoComplete="off"
                 value={regForm.email}
                 onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                placeholder="Địa chỉ Email"
+                placeholder="Địa chỉ Email (VD: user@domain.com)"
                 className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
             </div>
 
+            {/* Số điện thoại */}
             <div>
               <input
-                type="text"
-                value={regForm.bienSoXe}
-                onChange={(e) => setRegForm({ ...regForm, bienSoXe: e.target.value })}
-                placeholder="Biển số xe (Ví dụ: 30A-123.45)"
-                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200 uppercase"
+                type="tel"
+                name="reg_soDienThoai"
+                id="reg_soDienThoai"
+                autoComplete="off"
+                value={regForm.soDienThoai}
+                onChange={(e) => setRegForm({ ...regForm, soDienThoai: e.target.value })}
+                placeholder="Số điện thoại (10 chữ số)"
+                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
             </div>
 
+            {/* Mật khẩu */}
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
+                name="reg_matKhau"
+                id="reg_matKhau"
+                autoComplete="new-password"
                 value={regForm.matKhau}
                 onChange={(e) => setRegForm({ ...regForm, matKhau: e.target.value })}
-                placeholder="Mật khẩu"
+                placeholder="Mật khẩu (tối thiểu 8 ký tự)"
                 className="w-full px-4 py-2.5 pr-11 rounded-xl bg-white/[0.12] hover:bg-white/[0.16] focus:bg-white/[0.20] border border-white/10 focus:border-white/30 text-white placeholder-white/50 text-sm outline-none transition-all duration-200"
               />
               <button
@@ -845,11 +892,13 @@ export default function Login({ onLoginSuccess }) {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition cursor-pointer p-0.5"
                 tabIndex={-1}
+                title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
 
+            {/* Nút Đăng ký */}
             <button
               type="submit"
               disabled={loading}
@@ -858,6 +907,7 @@ export default function Login({ onLoginSuccess }) {
               {loading ? 'Đang tạo tài khoản...' : 'Đăng Ký'}
             </button>
 
+            {/* Chuyển sang Đăng nhập */}
             <p className="text-center text-xs text-white/70 mt-4">
               Đã có tài khoản?{' '}
               <button

@@ -1628,6 +1628,58 @@
       "bienSoXe": "",
       "trangThai": "HOAT_DONG",
       "ngayTao": "2026-10-29"
+    },
+    {
+      "id": "USR-KH-DEMO",
+      "taiKhoan": "khachhang",
+      "matKhau": "123456",
+      "hoTen": "Khách Hàng Mẫu",
+      "vaiTro": "KHACH_HANG",
+      "chucVu": "Khách hàng / Cư dân",
+      "soDienThoai": "0988112233",
+      "email": "khachhang@doxeai.vn",
+      "bienSoXe": "30A-999.99",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-30"
+    },
+    {
+      "id": "USR-BV-DEMO",
+      "taiKhoan": "baove",
+      "matKhau": "123456",
+      "hoTen": "Nguyễn Văn B",
+      "vaiTro": "BAO_VE",
+      "chucVu": "Nhân viên giám sát trạm cổng",
+      "soDienThoai": "0977223344",
+      "email": "baove@doxeai.vn",
+      "bienSoXe": "",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-30"
+    },
+    {
+      "id": "USR-KH-1793299346532",
+      "taiKhoan": "khach_1793299346534",
+      "matKhau": "MatKhau123",
+      "hoTen": "Nguyễn Văn Khách",
+      "vaiTro": "KHACH_HANG",
+      "chucVu": "Khách hàng",
+      "soDienThoai": "0981103347",
+      "email": "khach_1793299346534@gmail.com",
+      "bienSoXe": "",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-29"
+    },
+    {
+      "id": "USR-KH-1793299374709",
+      "taiKhoan": "customer_1793299374684",
+      "matKhau": "Customer@123",
+      "hoTen": "Lê Khách Hàng",
+      "vaiTro": "KHACH_HANG",
+      "chucVu": "Khách hàng",
+      "soDienThoai": "0986700965",
+      "email": "customer_1793299374684@gmail.com",
+      "bienSoXe": "",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-29"
     }
   ],
   "DatCho": [
@@ -1820,6 +1872,14 @@
       "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
       "intent": "GENERAL",
       "created_at": "2026-10-29T17:50:18.259Z"
+    },
+    {
+      "id": "LOG-1793297971752-671",
+      "admin_id": "USR-001",
+      "question": "thống kê số tiền hôm nay thu được",
+      "answer": "Tổng doanh thu thực nhận hôm nay đạt 49.785.000 VNĐ từ 62 lượt thanh toán. Phân bổ phương thức thanh toán: Chuyển khoản QR đạt 38% (19.020.000 VNĐ), Tiền mặt chiếm 62%, Thẻ tháng/cư dân chiếm 0%. Tỷ lệ thanh toán không tiền mặt đạt 38%.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T18:19:31.752Z"
     }
   ]
 }

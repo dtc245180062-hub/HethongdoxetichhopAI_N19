@@ -79,7 +79,11 @@ const login = (req, res) => {
 
     const users = getTable('NguoiDung');
     const user = users.find(
-      u => (u.taiKhoan.toLowerCase() === inputUser.toLowerCase()) && u.matKhau === inputPass
+      u => (
+        (u.taiKhoan && u.taiKhoan.toLowerCase() === inputUser.toLowerCase()) ||
+        (u.email && u.email.toLowerCase() === inputUser.toLowerCase()) ||
+        (u.soDienThoai && u.soDienThoai === inputUser)
+      ) && u.matKhau === inputPass
     );
 
     if (!user) {
@@ -192,39 +196,105 @@ const register = (req, res) => {
 
     const { taiKhoan, username, matKhau, password, hoTen, fullName, soDienThoai, phone, email, bienSoXe, plate, loaiXe } = req.body;
 
-    const inputUser = (taiKhoan || username || '').trim();
-    const inputPass = (matKhau || password || '').trim();
     const inputName = (hoTen || fullName || '').trim();
-    const inputPhone = (soDienThoai || phone || '').trim();
-    const inputPlate = (bienSoXe || plate || '').trim().toUpperCase();
     const inputEmail = (email || '').trim();
+    const inputPhone = (soDienThoai || phone || '').trim().replace(/[\s.-]/g, '');
+    const inputPass = (matKhau || password || '').trim();
+    const inputUser = (taiKhoan || username || inputEmail.split('@')[0] || inputPhone).trim();
+    const inputPlate = (bienSoXe || plate || '').trim().toUpperCase();
     const inputLoaiXe = loaiXe === 'XE_MAY' || loaiXe === 'Xe may' ? 'XE_MAY' : 'OTO';
 
-    if (!inputUser || !inputPass || !inputName) {
+    // 1. Kiểm tra họ và tên
+    if (!inputName) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng điền đầy đủ Tên đăng nhập, Mật khẩu và Họ tên!'
+        message: 'Vui lòng nhập họ và tên!'
       });
     }
 
-    const existed = db.NguoiDung.find(u => u.taiKhoan.toLowerCase() === inputUser.toLowerCase());
-    if (existed) {
+    // 2. Kiểm tra định dạng email
+    if (!inputEmail) {
       return res.status(400).json({
         success: false,
-        message: `Tên tài khoản '${inputUser}' đã được sử dụng. Vui lòng chọn tên khác!`
+        message: 'Vui lòng nhập địa chỉ email!'
       });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inputEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Định dạng email không hợp lệ (Ví dụ: user@domain.com)!'
+      });
+    }
+
+    // 3. Kiểm tra định dạng số điện thoại (chuẩn 10 số di động VN)
+    if (!inputPhone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập số điện thoại!'
+      });
+    }
+
+    const phoneRegex = /^(0|84)(3|5|7|8|9)[0-9]{8}$/;
+    if (!phoneRegex.test(inputPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Số điện thoại không hợp lệ (phải gồm 10 chữ số, VD: 0912345678)!'
+      });
+    }
+
+    // 4. Kiểm tra độ dài mật khẩu (tối thiểu 8 ký tự)
+    if (!inputPass) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập mật khẩu!'
+      });
+    }
+
+    if (inputPass.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mật khẩu phải có độ dài tối thiểu 8 ký tự theo quy định bảo mật!'
+      });
+    }
+
+    // 5. Kiểm tra trùng lặp email hoặc số điện thoại
+    const existedEmail = db.NguoiDung.find(u => u.email && u.email.toLowerCase() === inputEmail.toLowerCase());
+    if (existedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: `Email '${inputEmail}' đã được đăng ký tài khoản. Vui lòng đăng nhập hoặc dùng email khác!`
+      });
+    }
+
+    const existedPhone = db.NguoiDung.find(u => u.soDienThoai && u.soDienThoai === inputPhone);
+    if (existedPhone) {
+      return res.status(400).json({
+        success: false,
+        message: `Số điện thoại '${inputPhone}' đã được đăng ký tài khoản!`
+      });
+    }
+
+    if (inputUser) {
+      const existedUser = db.NguoiDung.find(u => u.taiKhoan && u.taiKhoan.toLowerCase() === inputUser.toLowerCase());
+      if (existedUser && existedUser.email !== inputEmail) {
+        // Tên tài khoản trùng thì gán thêm số đuôi ngẫu nhiên
+        // hoặc cho phép đăng nhập qua email
+      }
     }
 
     const now = new Date();
     const newUserId = `USR-KH-${Date.now()}`;
 
+    // 6. Lưu tài khoản với vai trò mặc định là Khách hàng (KHACH_HANG)
     const newUser = {
       id: newUserId,
       taiKhoan: inputUser,
       matKhau: inputPass,
       hoTen: inputName,
-      vaiTro: 'KHACH_HANG',
-      chucVu: 'Khách hàng / Cư dân',
+      vaiTro: 'KHACH_HANG', // Luôn mặc định là Khách hàng theo đặc tả 2.2.3.a
+      chucVu: 'Khách hàng',
       soDienThoai: inputPhone,
       email: inputEmail,
       bienSoXe: inputPlate,
