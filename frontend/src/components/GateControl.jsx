@@ -258,6 +258,46 @@ export default function GateControl({
     }, 'image/jpeg', 0.95);
   };
 
+  
+  // ================= LÀM MỚI TRẠNG THÁI CAMERA & FORM =================
+  const handleResetInGate = () => {
+    if (inImagePreview && inImagePreview.startsWith('blob:')) {
+      try { URL.revokeObjectURL(inImagePreview); } catch (e) {}
+    }
+    setInImageFile(null);
+    setInImagePreview(null);
+    setInBox(null);
+    setInPlateCropBase64(null);
+    setInPlate('');
+    setInAiConfidence(null);
+    setInMessage(null);
+    setInTimeMs(null);
+    setInSlot('');
+    setInVehicleType('Xe may / Tay ga');
+
+    if (inStream && inVideoRef.current) {
+      inVideoRef.current.srcObject = inStream;
+      inVideoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleResetOutGate = () => {
+    if (outImagePreview && outImagePreview.startsWith('blob:')) {
+      try { URL.revokeObjectURL(outImagePreview); } catch (e) {}
+    }
+    setOutImageFile(null);
+    setOutImagePreview(null);
+    setOutPlate('');
+    setOutFeeEstimate(null);
+    setOutMessage(null);
+    setSelectedParkedVehicle(null);
+
+    if (outStream && outVideoRef.current) {
+      outVideoRef.current.srcObject = outStream;
+      outVideoRef.current.play().catch(() => {});
+    }
+  };
+
   // ================= TÍNH CƯỚC THỰC TẾ CHO CỔNG RA =================
   useEffect(() => {
     if (!outPlate) {
@@ -718,6 +758,17 @@ export default function GateControl({
                       <div className="relative rounded-xl overflow-hidden border border-slate-700 max-h-56 w-full flex items-center justify-center bg-black">
                         <img src={inImagePreview} alt="Phương tiện vào" className="object-contain max-h-52 w-auto rounded-lg" />
 
+                        {/* Nút Làm Mới nổi góc trên ảnh chụp */}
+                        <button
+                          type="button"
+                          onClick={handleResetInGate}
+                          className="absolute top-2 right-2 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-950 text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-700 shadow-lg transition-all cursor-pointer z-20 hover:scale-105 active:scale-95"
+                          title="Xóa ảnh và làm mới để chụp lại"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Làm mới / Chụp lại</span>
+                        </button>
+
                         {/* Bounding Box nhận diện biển số */}
                         {inBox && (
                           <div
@@ -792,6 +843,16 @@ export default function GateControl({
 
                         <button
                           type="button"
+                          onClick={handleResetInGate}
+                          className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm hover:text-white"
+                          title="Làm mới trạng thái & xóa ảnh đã chụp để chụp lại"
+                        >
+                          <RotateCcw className="w-4 h-4 text-cyan-400" />
+                          <span>Làm mới</span>
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => triggerInAiScan(null, true)}
                           title="Giả lập tình huống độ tin cậy thấp < 70% để kiểm tra xác nhận thủ công"
                           className="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-[10px] font-mono transition-all cursor-pointer"
@@ -862,6 +923,15 @@ export default function GateControl({
                       <FileEdit className="w-3.5 h-3.5 text-slate-600" />
                       Biển số xe vào (Làn 01):
                     </label>
+                    <button
+                      type="button"
+                      onClick={handleResetInGate}
+                      className="text-[11px] text-slate-500 hover:text-emerald-600 flex items-center gap-1 font-medium transition cursor-pointer"
+                      title="Xóa và làm mới ô nhập"
+                    >
+                      <RotateCcw className="w-3 h-3 text-emerald-500" />
+                      Làm mới
+                    </button>
                     <span className="text-[10px] text-slate-500 font-mono">Tự động viết hoa</span>
                   </div>
 
@@ -1064,6 +1134,17 @@ export default function GateControl({
                     ) : outImagePreview ? (
                       <div className="relative rounded-xl overflow-hidden border border-slate-700 max-h-56 w-full flex items-center justify-center bg-black">
                         <img src={outImagePreview} alt="Phương tiện ra" className="object-contain max-h-52 w-auto rounded-lg" />
+
+                        {/* Nút Làm Mới nổi góc trên ảnh chụp Cổng Ra */}
+                        <button
+                          type="button"
+                          onClick={handleResetOutGate}
+                          className="absolute top-2 right-2 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-950 text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-700 shadow-lg transition-all cursor-pointer z-20 hover:scale-105 active:scale-95"
+                          title="Xóa ảnh và làm mới để chụp lại"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Làm mới / Chụp lại</span>
+                        </button>
                       </div>
                     ) : outScanning ? (
                       <div className="space-y-2 py-8 text-white">
@@ -1118,6 +1199,16 @@ export default function GateControl({
                           className="flex-1 py-2 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer shadow"
                         >
                           <span>Quét biển số</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleResetOutGate}
+                          className="py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm hover:text-white"
+                          title="Làm mới trạng thái & xóa ảnh đã chụp để chụp lại"
+                        >
+                          <RotateCcw className="w-4 h-4 text-cyan-400" />
+                          <span>Làm mới</span>
                         </button>
                       </>
                     )}
