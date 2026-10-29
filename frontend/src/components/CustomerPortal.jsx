@@ -317,7 +317,7 @@ export default function CustomerPortal({
               <Sparkles className="w-3.5 h-3.5 text-cyan-600" />
               <span>Cổng Trải Nghiệm Khách Hàng DoXeAI v2.0</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-normal">
               Xin chào, {currentUser?.hoTen || 'Quý Khách'}! 👋
             </h1>
             <p className="text-sm text-slate-700 max-w-2xl">

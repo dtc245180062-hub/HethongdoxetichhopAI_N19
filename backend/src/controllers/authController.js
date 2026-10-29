@@ -397,6 +397,26 @@ const updateUser = (req, res) => {
       });
     }
 
+    // RÀNG BUỘC AN TOÀN (Mục 12): Không cho phép quản trị viên tự khóa hoặc tự hạ quyền của chính mình
+    const currentUserId = req.user ? req.user.id : null;
+    const currentUserTaiKhoan = req.user ? req.user.taiKhoan : null;
+    const isSelf = (currentUserId && currentUserId === user.id) || (currentUserTaiKhoan && currentUserTaiKhoan.toLowerCase() === user.taiKhoan.toLowerCase());
+
+    if (isSelf && user.vaiTro === 'ADMIN') {
+      if (trangThai && (trangThai === 'KHOA' || trangThai === 'LOCKED')) {
+        return res.status(403).json({
+          success: false,
+          message: 'Ràng buộc an toàn: Không cho phép Quản trị viên tự khóa tài khoản quản trị của chính mình!'
+        });
+      }
+      if (vaiTro && vaiTro !== 'ADMIN') {
+        return res.status(403).json({
+          success: false,
+          message: 'Ràng buộc an toàn: Không cho phép Quản trị viên tự hạ quyền tài khoản quản trị của chính mình!'
+        });
+      }
+    }
+
     if (taiKhoan && taiKhoan.trim() !== user.taiKhoan) {
       const isTaken = db.NguoiDung.some(
         u => u.id !== id && u.taiKhoan.toLowerCase() === taiKhoan.trim().toLowerCase()

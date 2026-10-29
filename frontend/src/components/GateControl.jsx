@@ -528,7 +528,7 @@ export default function GateControl({
             {currentGate === 'in' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 tracking-normal">
               {currentGate === 'in'
                 ? 'Kiểm Soát Cổng Vào (Làn 01 • Check-In)'
                 : 'Kiểm Soát Cổng Ra (Làn 02 • Check-Out)'}
@@ -656,7 +656,7 @@ export default function GateControl({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">CỔNG VÀO (LÀN 01 • CHECK-IN)</h3>
+                    <h3 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-normal">CỔNG VÀO (LÀN 01 • CHECK-IN)</h3>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                       GATE_IN_01
                     </span>
@@ -972,7 +972,7 @@ export default function GateControl({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-tight">CỔNG RA (LÀN 02 • CHECK-OUT)</h3>
+                    <h3 className="font-extrabold text-base sm:text-lg text-slate-900 tracking-normal">CỔNG RA (LÀN 02 • CHECK-OUT)</h3>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 border border-cyan-200">
                       GATE_OUT_01
                     </span>

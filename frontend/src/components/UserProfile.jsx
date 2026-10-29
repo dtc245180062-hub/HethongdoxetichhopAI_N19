@@ -76,7 +76,7 @@ export default function UserProfile({
               <Shield className="w-5 h-5 text-amber-600 stroke-[1.8]" />
             </div>
             <div>
-              <p className="text-sm font-bold text-amber-900 tracking-tight">
+              <p className="text-sm font-bold text-amber-900 tracking-normal">
                 Yêu cầu bổ sung thông tin cá nhân
               </p>
               <p className="text-xs text-amber-700/90 mt-0.5">
@@ -124,7 +124,7 @@ export default function UserProfile({
                   {initialLetter}
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                  <h1 className="text-2xl font-bold text-slate-900 tracking-normal">
                     {formData.hoTen || currentUser?.hoTen || 'Lê Quốc Bảo'}
                   </h1>
                   <p className="text-xs text-slate-500 mt-1 font-medium">
@@ -340,7 +340,7 @@ export default function UserProfile({
         <div className="lg:col-span-4 space-y-6">
           {/* Card 1: Mức độ hoàn thiện hồ sơ */}
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-sm space-y-5">
-            <h2 className="text-sm font-bold text-slate-900 tracking-tight">
+            <h2 className="text-sm font-bold text-slate-900 tracking-normal">
               Mức độ hoàn thiện hồ sơ
             </h2>
 
@@ -390,7 +390,7 @@ export default function UserProfile({
 
           {/* Card 2: Chi tiết hệ thống với kích thước h-12 rounded-2xl đồng nhất */}
           <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-7 shadow-sm space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <h2 className="text-sm font-bold text-slate-900 tracking-normal flex items-center gap-2">
               <Info className="w-4 h-4 text-slate-400" />
               Chi tiết hệ thống
             </h2>

@@ -392,7 +392,7 @@ export default function UserManagement({ currentUser }) {
       {/* TOP HEADER: Tiêu đề & Thông tin Admin */}
       {/* TOP HEADER: Tiêu đề trang */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-normal">
           Quản lý người dùng
         </h1>
         <p className="text-xs text-slate-500 mt-1">

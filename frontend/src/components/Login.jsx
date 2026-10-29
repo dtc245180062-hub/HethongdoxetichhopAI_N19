@@ -490,7 +490,7 @@ export default function Login({ onLoginSuccess }) {
       <div className="w-full max-w-[400px] rounded-[32px] bg-white/[0.10] backdrop-blur-2xl border border-white/20 p-8 sm:p-9 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] relative z-10 transition-all duration-300">
         
         {/* TIÊU ĐỀ */}
-        <h1 className="text-[26px] font-bold text-white text-center tracking-tight leading-tight">
+        <h1 className="text-[26px] font-bold text-white text-center tracking-normal leading-tight">
           {authMode === 'OTP' ? 'Xác Thực OTP' : authMode === 'SIGNUP' ? 'Đăng Ký Tài Khoản' : 'Chào Mừng Trở Lại'}
         </h1>
         

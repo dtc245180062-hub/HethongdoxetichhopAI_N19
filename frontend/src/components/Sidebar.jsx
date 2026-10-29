@@ -98,7 +98,7 @@ export default function Sidebar({
             <Car className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
-            <h1 className="font-extrabold text-[15px] tracking-tight text-slate-900 leading-none">
+            <h1 className="font-extrabold text-[15px] tracking-normal text-slate-900 leading-none">
               DOXE AI
             </h1>
             <p className="text-[11px] text-slate-400 font-medium mt-1">

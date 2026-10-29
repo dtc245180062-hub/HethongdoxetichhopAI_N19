@@ -330,7 +330,7 @@ export default function App() {
         {/* Top Header Bar */}
         <header className="h-[72px] border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-3">
-            <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
+            <h2 className="text-[18px] font-bold text-slate-900 tracking-normal">
               {activeTab === 'profile' && 'Hồ sơ cá nhân'}
 {activeTab === 'customer' && 'Cổng dịch vụ khách hàng & cư dân'}
               {activeTab === 'dashboard' && 'Bảng điều khiển tổng quan'}
@@ -382,7 +382,7 @@ export default function App() {
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-3xl border border-slate-200/90 shadow-2xl p-5 z-50 animate-fadeIn">
                   <div className="px-1 pt-1 pb-4">
-                    <div className="text-base font-bold text-slate-900 tracking-tight">
+                    <div className="text-base font-bold text-slate-900 tracking-normal">
                       {currentUser?.hoTen || 'Vũ Mai Hoa'}
                     </div>
                     <div className="text-xs text-slate-400 font-normal mt-0.5">

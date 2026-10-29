@@ -39,7 +39,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-600/30 text-blue-700 text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-cyan-700" /> Hệ Thống Quản Lý Bãi Đỗ Xe Thông Minh
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-normal">
               Trung Tâm Điều Hành Bãi Xe AI
             </h2>
             <p className="text-sm text-slate-700 max-w-xl">
@@ -78,7 +78,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
             </div>
           </div>
           <div className="mt-2">
-            <h3 className="text-3xl font-extrabold text-emerald-600 tracking-tight">
+            <h3 className="text-3xl font-extrabold text-emerald-600 tracking-normal">
               {data.soChoTrong} <span className="text-sm font-semibold text-slate-600">/ {data.tongSoCho} chỗ</span>
             </h3>
             <p className="text-[11px] text-emerald-600/80 mt-1 flex items-center gap-1 font-medium">
@@ -97,7 +97,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
             </div>
           </div>
           <div className="mt-2">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-3xl font-extrabold text-slate-900 tracking-normal">
               {data.soXeDangDo} <span className="text-sm font-semibold text-slate-600">xe</span>
             </h3>
             <div className="mt-2 flex items-center gap-2">
@@ -121,7 +121,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
             </div>
           </div>
           <div className="mt-2">
-            <h3 className="text-3xl font-extrabold text-cyan-600 tracking-tight">
+            <h3 className="text-3xl font-extrabold text-cyan-600 tracking-normal">
               {(data.doanhThuNgay || 0).toLocaleString('vi-VN')} <span className="text-sm font-semibold text-slate-600">VNĐ</span>
             </h3>
             <p className="text-[11px] text-cyan-600/80 mt-1 flex items-center gap-1 font-medium">
@@ -140,7 +140,7 @@ export default function Dashboard({ overview, onNavigate, onRefresh }) {
             </div>
           </div>
           <div className="mt-2">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h3 className="text-3xl font-extrabold text-slate-900 tracking-normal">
               {data.soKhuVuc} <span className="text-sm font-semibold text-slate-600">Khu Vực</span>
             </h3>
             <p className="text-[11px] text-slate-600 mt-1 flex items-center gap-1">

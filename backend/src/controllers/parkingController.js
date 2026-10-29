@@ -67,14 +67,48 @@ const xeVao = async (req, res) => {
 
     bienSo = bienSo.trim().toUpperCase();
 
-    // Kiểm tra xe có đang đỗ trong bãi hay không
+    // 1. KIỂM TRA DANH SÁCH ĐEN (BLACKLIST - Mục 7 & 13)
+    const isBlacklisted = (db.DanhSachDen || []).find(
+      b => b.bienSo && b.bienSo.toUpperCase() === bienSo
+    );
+    if (isBlacklisted) {
+      return res.status(403).json({
+        success: false,
+        blacklist: true,
+        message: `CẢNH BÁO AN NINH: Biển số ${bienSo} nằm trong DANH SÁCH ĐEN! Lý do: ${isBlacklisted.lyDo || 'Vi phạm an ninh'}. Hệ thống từ chối cho xe vào bãi!`,
+        data: {
+          bienSo,
+          lyDo: isBlacklisted.lyDo,
+          mucDo: isBlacklisted.mucDo || 'CANH_BAO'
+        }
+      });
+    }
+
+    // 2. RÀNG BUỘC PHIÊN GỬI XE HOẠT ĐỘNG (Chặn trùng lặp phiên - Mục 7 & Ràng buộc toàn vẹn)
     const xeDangDo = (db.LuotVaoRa || []).find(
       l => l.bienSo === bienSo && (l.trangThai === 'DANG_DO' || l.trangThai === 'Đang đỗ')
     );
     if (xeDangDo) {
       return res.status(400).json({
         success: false,
-        message: `Xe ${bienSo} hiện đang có lượt đỗ tại vị trí ${xeDangDo.maViTri}. Không thể check-in tiếp!`
+        message: `Xe ${bienSo} hiện đang có phiên gửi hoạt động tại vị trí ${xeDangDo.maViTri}. Không thể check-in trùng lặp!`
+      });
+    }
+
+    // 3. TỰ ĐỘNG GIẢI PHÓNG ĐẶT CHỖ QUÁ 30 PHÚT (Mục 4)
+    const nowTime = new Date();
+    if (Array.isArray(db.DatCho)) {
+      db.DatCho.forEach(booking => {
+        if (booking.trangThai === 'DA_XAC_NHAN' || booking.trangThai === 'CHO_DEN') {
+          const createTime = new Date(booking.thoiGianDat || booking.hanGiuCho || nowTime);
+          if (nowTime - createTime > 30 * 60 * 1000) {
+            booking.trangThai = 'HUY_DO_QUA_HAN';
+            const slotToFree = (db.ViTri || []).find(v => v.id === booking.maViTriGiuCho);
+            if (slotToFree && slotToFree.trangThai === 'DA_DAT') {
+              slotToFree.trangThai = 'TRONG';
+            }
+          }
+        }
       });
     }
 
@@ -641,12 +675,34 @@ const deleteXe = (req, res) => {
       });
     }
 
+    // RÀNG BUỘC (Mục 2): Chặn xóa nếu xe đang có phiên gửi hoạt động trong bãi
+    const isParking = (db.LuotVaoRa || []).some(
+      l => l.bienSo === xe.bienSo && (l.trangThai === 'DANG_DO' || l.trangThai === 'Đang đỗ')
+    );
+    if (isParking) {
+      return res.status(400).json({
+        success: false,
+        message: `Không thể xóa phương tiện ${xe.bienSo} vì xe đang có phiên gửi hoạt động trong bãi!`
+      });
+    }
+
+    // RÀNG BUỘC (Mục 2): Chặn xóa nếu xe đang có lượt đặt chỗ trước
+    const hasBooking = (db.DatCho || []).some(
+      b => b.bienSo === xe.bienSo && (b.trangThai === 'DA_XAC_NHAN' || b.trangThai === 'CHO_DEN')
+    );
+    if (hasBooking) {
+      return res.status(400).json({
+        success: false,
+        message: `Không thể xóa phương tiện ${xe.bienSo} vì xe đang có lượt đặt chỗ trước chưa hoàn tất!`
+      });
+    }
+
     db.Xe = db.Xe.filter(x => x.id !== xe.id && x.bienSo !== xe.bienSo);
     writeDb(db);
 
     res.json({
       success: true,
-      message: `Đã xóa thông tin xe ${xe.bienSo} (${xe.chuXe}) khỏi danh mục!`
+      message: `Đã xóa thông tin xe ${xe.bienSo} (${xe.chuXe || 'Khách'}) khỏi danh mục!`
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -667,6 +723,25 @@ const updateBangGia = (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Không tìm thấy cấu hình bảng giá tương ứng!'
+      });
+    }
+
+    // RÀNG BUỘC HỢP LỆ (Mục 11): Không có giá trị âm
+    const checkValues = [giaGioDau, giaGioTiepTheo, giaNgay, giaDem, giaThang];
+    if (checkValues.some(v => v !== undefined && Number(v) < 0)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ràng buộc bảng giá: Các mức phí không được là số âm!'
+      });
+    }
+
+    // RÀNG BUỘC HỢP LỆ (Mục 11): Trần phí ngày >= phí khối đầu
+    const targetGiaNgay = giaNgay !== undefined ? Number(giaNgay) : item.giaNgay;
+    const targetGiaGioDau = giaGioDau !== undefined ? Number(giaGioDau) : item.giaGioDau;
+    if (targetGiaNgay < targetGiaGioDau) {
+      return res.status(400).json({
+        success: false,
+        message: `Trần phí ngày (${targetGiaNgay.toLocaleString('vi-VN')} đ) phải lớn hơn hoặc bằng phí giờ đầu (${targetGiaGioDau.toLocaleString('vi-VN')} đ)!`
       });
     }
 
@@ -706,25 +781,28 @@ const updateViTriStatus = (req, res) => {
       });
     }
 
+    // RÀNG BUỘC (Mục 10): Không cho phép đổi trạng thái chỗ đang có xe hoặc đang được đặt trước
+    const isOccupied = slot.trangThai === 'DA_DO' || slot.trangThai === 'Đã đỗ' || Boolean(slot.bienSoXe);
+    const isReserved = slot.trangThai === 'DA_DAT' || slot.trangThai === 'Đã đặt';
+    if ((isOccupied || isReserved) && (trangThaiCode === 'DANG_BAO_TRI' || trangThai === 'Bảo trì')) {
+      return res.status(400).json({
+        success: false,
+        message: `Không thể chuyển vị trí '${id}' sang bảo trì vì vị trí đang có xe đỗ hoặc đang được đặt trước!`
+      });
+    }
+
     if (trangThaiCode === 'DANG_BAO_TRI' || trangThai === 'Bảo trì') {
       slot.trangThai = 'Bảo trì';
-      slot.bienSoXe = null;
-      slot.thoiGianVao = null;
-    } else if (trangThaiCode === 'TRONG' || trangThai === 'Trống') {
+    } else {
       slot.trangThai = 'Trống';
       slot.bienSoXe = null;
-      slot.thoiGianVao = null;
-    } else if (trangThaiCode === 'DA_DO' || trangThai === 'Đã đỗ') {
-      slot.trangThai = 'Đã đỗ';
-      if (req.body.bienSoXe) slot.bienSoXe = req.body.bienSoXe;
-      if (req.body.thoiGianVao) slot.thoiGianVao = req.body.thoiGianVao;
     }
 
     writeDb(db);
 
     res.json({
       success: true,
-      message: `Cập nhật trạng thái ô ${slot.id} thành '${slot.trangThai}' thành công!`,
+      message: `Cập nhật trạng thái vị trí '${id}' thành '${slot.trangThai}' thành công!`,
       data: slot
     });
   } catch (error) {
