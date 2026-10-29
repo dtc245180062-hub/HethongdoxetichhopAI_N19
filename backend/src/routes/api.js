@@ -118,4 +118,10 @@ router.post('/khach-hang/dat-cho', parkingController.customerBookSlot);
 router.post('/khach-hang/ho-tro', parkingController.customerSendSupport);
 router.get('/khach-hang/ho-tro', parkingController.customerGetSupportList);
 
+// ==========================================
+// 5. QUẢN LÝ DANH SÁCH ĐEN (BLACKLIST) - ADMIN
+// ==========================================
+router.get('/blacklist', parkingController.getBlacklist);
+router.post('/blacklist', requireRole(['ADMIN', 'BAO_VE']), parkingController.addBlacklist);
+router.delete('/blacklist/:id', requireRole(['ADMIN', 'BAO_VE', 'QUAN_LY_DIEU_HANH']), parkingController.deleteBlacklist);
 module.exports = router;

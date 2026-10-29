@@ -965,6 +965,102 @@ const customerGetSupportList = (req, res) => {
   }
 };
 
+
+/**
+ * GET /api/blacklist
+ */
+const getBlacklist = (req, res) => {
+  try {
+    const list = getTable('DanhSachDen') || [];
+    res.json({
+      success: true,
+      total: list.length,
+      data: list
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * POST /api/blacklist
+ */
+const addBlacklist = (req, res) => {
+  try {
+    const db = readDb();
+    if (!db.DanhSachDen) db.DanhSachDen = [];
+
+    const { bienSo, loaiXe, lyDo, mucDo, ghiChu } = req.body;
+    if (!bienSo || !lyDo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp Biển số xe và Lý do đưa vào danh sách đen!'
+      });
+    }
+
+    const cleanPlate = bienSo.trim().toUpperCase();
+    const existed = db.DanhSachDen.find(b => b.bienSo.toUpperCase() === cleanPlate);
+    if (existed) {
+      return res.status(400).json({
+        success: false,
+        message: `Biển số ${cleanPlate} đã có trong Danh sách đen!`
+      });
+    }
+
+    const newRecord = {
+      id: `BL-${Date.now()}`,
+      bienSo: cleanPlate,
+      loaiXe: loaiXe || 'OTO',
+      lyDo: lyDo.trim(),
+      mucDo: mucDo || 'CANH_BAO',
+      nguoiTao: req.user?.taiKhoan || 'admin',
+      ngayTao: new Date().toISOString().slice(0, 10),
+      ghiChu: ghiChu || ''
+    };
+
+    db.DanhSachDen.unshift(newRecord);
+    writeDb(db);
+
+    res.status(201).json({
+      success: true,
+      message: `Đã thêm biển số ${cleanPlate} vào danh sách đen thành công!`,
+      data: newRecord
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * DELETE /api/blacklist/:id
+ */
+const deleteBlacklist = (req, res) => {
+  try {
+    const db = readDb();
+    const { id } = req.params;
+
+    const before = (db.DanhSachDen || []).length;
+    db.DanhSachDen = (db.DanhSachDen || []).filter(b => b.id !== id && b.bienSo !== id);
+
+    if (db.DanhSachDen.length === before) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy phương tiện trong danh sách đen!'
+      });
+    }
+
+    writeDb(db);
+
+    res.json({
+      success: true,
+      message: 'Đã gỡ phương tiện khỏi danh sách đen thành công!'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 module.exports = {
   xeVao,
   xeRa,

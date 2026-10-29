@@ -11,7 +11,6 @@ import {
   LogOut,
   UserCheck,
   Key,
-  Cpu,
   ShieldAlert,
   ChevronRight,
   ChevronLeft
@@ -56,12 +55,6 @@ export default function Sidebar({
       visible: isRole !== 'KHACH_HANG' && perms.canAccessHistory !== false
     },
     {
-      id: 'camera_ai',
-      label: 'Trung tâm Camera AI',
-      icon: Cpu,
-      visible: isRole !== 'KHACH_HANG'
-    },
-    {
       id: 'pricing',
       label: 'Bảng giá dịch vụ',
       icon: BadgePercent,
@@ -77,7 +70,7 @@ export default function Sidebar({
       id: 'blacklist',
       label: 'Quản lý danh sách đen',
       icon: ShieldAlert,
-      visible: isRole === 'ADMIN' || isRole === 'BAO_VE'
+      visible: isRole === 'ADMIN' || isRole === 'BAO_VE' || isRole === 'QUAN_LY_DIEU_HANH'
     },
     {
       id: 'customer',

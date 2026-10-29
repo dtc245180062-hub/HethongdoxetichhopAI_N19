@@ -37,7 +37,7 @@
       "trangThai": "Đã đỗ",
       "loaiXe": "OTO",
       "bienSoXe": "36MI-108.88",
-      "thoiGianVao": "2026-10-29T14:15:04.348Z"
+      "thoiGianVao": "2026-10-29T15:00:25.885Z"
     },
     {
       "id": "A-02",
@@ -497,17 +497,34 @@
     },
     {
       "id": "LVR-1793283304348",
+
       "bienSo": "36MI-108.88",
       "loaiXe": "O to",
       "maViTri": "A-01",
-      "thoiGianVao": "2026-10-29T14:15:04.348Z",
+      "thoiGianVao": "2026-10-29T15:00:25.885Z",
       "thoiGianRa": null,
-      "anhVao": "/uploads/plate-1793283304346-834339467.jfif",
+      "anhVao": "/uploads/plate-1793286025880-481270253.jfif",
       "anhRa": null,
       "trangThai": "Đang đỗ",
       "tongTien": 0,
       "phuongThucThanhToan": null,
       "doTinCayAI": 0.88
+    },
+    {
+      "id": "LVR-1793283304348",
+      "bienSo": "36MI-108.88",
+      "loaiXe": "O to",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-29T14:15:04.348Z",
+      "thoiGianRa": "2026-10-29T14:25:43.857Z",
+      "anhVao": "/uploads/plate-1793283304346-834339467.jfif",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 20000,
+      "phuongThucThanhToan": "THE_NGAN_HANG",
+      "doTinCayAI": 0.88,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
     },
     {
       "id": "LVR-1793282984821",
@@ -1599,6 +1616,19 @@
       "bienSoXe": "51K-345.67",
       "trangThai": "HOAT_DONG",
       "ngayTao": "2026-05-20"
+    },
+    {
+      "id": "USR-OTP-1793284409786",
+      "taiKhoan": "dtc245180062",
+      "matKhau": "123456",
+      "hoTen": "Khách hàng (dtc245180062)",
+      "vaiTro": "KHACH_HANG",
+      "chucVu": "Khách hàng / Cư dân xác thực OTP",
+      "email": "dtc245180062@ictu.edu.vn",
+      "soDienThoai": "",
+      "bienSoXe": "",
+      "trangThai": "HOAT_DONG",
+      "ngayTao": "2026-10-29"
     }
   ],
   "DatCho": [
