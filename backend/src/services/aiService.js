@@ -247,8 +247,7 @@ const detectWithYOLOv8 = async (filePath) => {
     formData.append('file', blob, fileName);
 
     const controller = new AbortController();
-    // Giảm timeout xuống 1s để quét ngay lập tức nếu YOLO offline (chuyển sang AI mô phỏng)
-    const TIMEOUT_MS = parseInt(process.env.YOLO_TIMEOUT_MS || '1000');
+    const TIMEOUT_MS = parseInt(process.env.YOLO_TIMEOUT_MS || '10000');
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     const res = await fetch(YOLO_SERVICE_URL, {
@@ -340,8 +339,8 @@ const nhanDienBienSo = async (file = null, options = {}) => {
     }
   }
 
-  // 5. Ưu tiên 4: Sinh mẫu thông minh dự phòng nếu ảnh quá mờ hoặc không có ký tự
-  if (!bienSo) {
+  // 5. Dự phòng sinh mẫu CHỈ KHI gọi chế độ test mock tường minh và không tải ảnh
+  if (!bienSo && (!file || !file.path) && (options.mock === true || options.mock === 'true')) {
     const isBike = options.loai_xe === 'Xe may' || (options.loai_xe !== 'O to' && Math.random() < 0.4);
     if (isBike) {
       bienSo = sampleBikePlates[Math.floor(Math.random() * sampleBikePlates.length)];
@@ -350,15 +349,16 @@ const nhanDienBienSo = async (file = null, options = {}) => {
       bienSo = sampleCarPlates[Math.floor(Math.random() * sampleCarPlates.length)];
       loaiXe = 'O to';
     }
-    doTinCay = parseFloat((0.88 + Math.random() * 0.09).toFixed(2));
-    engine = 'Mô Phỏng AI Nhanh';
+    doTinCay = 0.95;
+    engine = 'Dữ Liệu Thử Nghiệm Mẫu';
   }
 
-  // 5. Nếu có ảnh tải lên nhưng hoàn toàn không nhận diện được ký tự nào
+  // 6. Nếu có ảnh thực tế nhưng không nhận diện được biển số hợp lệ
   if (!bienSo) {
     bienSo = '';
     doTinCay = 0.0;
     loaiXe = options.loai_xe || 'O to';
+    engine = 'YOLOv8 + EasyOCR (Không phát hiện biển số)';
   } else {
     if (!loaiXe) {
       const isBikePlate = /[0-9]{2}[A-Z][0-9]/.test(bienSo.replace(/[-. ]/g, ''));
