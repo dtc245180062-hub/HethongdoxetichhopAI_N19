@@ -329,44 +329,59 @@ export default function App() {
       {/* 2. Main Content Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top Header Bar */}
-        <header className="h-[72px] border-b border-slate-200/80 bg-white/70 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
+        <header className="h-[72px] border-b border-slate-200/80 bg-white/80 backdrop-blur-xl px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h2 className="text-[18px] font-bold text-slate-900 tracking-tight">
               {activeTab === 'profile' && 'Hồ sơ cá nhân'}
-              {activeTab === 'customer' && 'Cổng Dịch Vụ Khách Hàng & Cư Dân'}
-              {activeTab === 'dashboard' && 'Bảng Điều Khiển Tổng Quan'}
-              {activeTab === 'gate' && 'Kiểm Soát Cổng Vào (Làn 01 • Check-In)'}
-              {activeTab === 'gate_in' && 'Kiểm Soát Cổng Vào (Làn 01 • Check-In)'}
-              {activeTab === 'gate_out' && 'Kiểm Soát Cổng Ra (Làn 02 • Check-Out)'}
-              {activeTab === 'map' && 'Sơ Đồ Vị Trí Ô Đỗ Xe'}
-              {activeTab === 'history' && 'Nhật Ký Lịch Sử Xe Vào / Ra'}
-              {activeTab === 'pricing' && 'Bảng Giá & Định Mức Dịch Vụ'}
-              {activeTab === 'users' && 'Quản Lý Người Dùng & Phân Quyền'}
-              {activeTab === 'blacklist' && 'Quản Lý Danh Sách Đen Xe'}
+{activeTab === 'customer' && 'Cổng dịch vụ khách hàng & cư dân'}
+              {activeTab === 'dashboard' && 'Bảng điều khiển tổng quan'}
+              {activeTab === 'gate' && 'Kiểm soát trạm cổng vào / ra'}
+              {activeTab === 'gate_in' && 'Kiểm soát cổng vào (Làn 01 - Check-In)'}
+              {activeTab === 'gate_out' && 'Kiểm soát cổng ra (Làn 02 - Check-Out)'}
+              {activeTab === 'map' && 'Sơ đồ vị trí ô đỗ xe'}
+              {activeTab === 'history' && 'Nhật ký lịch sử xe vào / ra'}
+              {activeTab === 'pricing' && 'Bảng giá & định mức dịch vụ'}
+              {activeTab === 'users' && 'Quản lý người dùng & phân quyền'}
+              {activeTab === 'camera_ai' && 'Trung tâm Camera AI & ANPR'}
+              {activeTab === 'blacklist' && 'Quản lý danh sách đen xe'}
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Profile Dropdown Pop-up in Top Right Corner */}
+            {/* Chuông thông báo đỏ y như mẫu LOHA SALES */}
+            <div className="relative">
+              <button
+                type="button"
+                title="Thông báo mới (3)"
+                className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-50 flex items-center justify-center text-slate-600 hover:text-slate-900 transition shadow-2xs cursor-pointer"
+              >
+                <Bell className="w-4 h-4" />
+              </button>
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white shadow-xs">
+                3
+              </span>
+            </div>
+
+            {/* Profile Dropdown Pop-up chuẩn thiết kế LOHA SALES */}
             <div className="relative" ref={profileDropdownRef}>
               <button
                 type="button"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="h-12 px-3.5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 shadow-2xs hover:shadow-xs flex items-center gap-3 transition cursor-pointer group"
+                className="h-10 px-3.5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 shadow-2xs hover:shadow-xs flex items-center gap-2.5 transition cursor-pointer group"
               >
                 {/* Rounded avatar */}
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
-                  {(currentUser?.hoTen || 'Lê Quốc Bảo').charAt(0).toUpperCase()}
+                <div className="w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
+                  {(currentUser?.hoTen || 'V').charAt(0).toUpperCase()}
                 </div>
 
                 {/* Name & Role */}
                 <div className="text-left leading-tight hidden sm:block">
-                  <div className="text-xs font-bold text-slate-800">
-                    {currentUser?.hoTen || 'Lê Quốc Bảo'}
+                  <div className="text-[13px] font-bold text-slate-800">
+                    {currentUser?.hoTen || 'Vũ Mai Hoa'}
                   </div>
-                  <div className="text-[11px] text-blue-600 font-medium flex items-center gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 inline-block"></span>
-                    <span>{currentUser?.chucVu || 'Quản trị hệ thống'}</span>
+                  <div className="text-[11px] text-emerald-600 font-medium flex items-center gap-1.5 mt-0.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                    <span>{currentUser?.chucVu || 'Kế toán công nợ'}</span>
                   </div>
                 </div>
 
@@ -377,15 +392,15 @@ export default function App() {
                 )}
               </button>
 
-              {/* Pop-up Menu exactly matching LOHA SALES design & proportions */}
+              {/* Pop-up Menu */}
               {isProfileDropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-3xl border border-slate-200/90 shadow-2xl p-5 z-50 animate-fadeIn">
                   <div className="px-1 pt-1 pb-4">
                     <div className="text-base font-bold text-slate-900 tracking-tight">
-                      {currentUser?.hoTen || 'Lê Quốc Bảo'}
+                      {currentUser?.hoTen || 'Vũ Mai Hoa'}
                     </div>
                     <div className="text-xs text-slate-400 font-normal mt-0.5">
-                      {currentUser?.chucVu || 'Quản trị hệ thống'}
+                      {currentUser?.chucVu || 'Kế toán công nợ'}
                     </div>
                   </div>
 
