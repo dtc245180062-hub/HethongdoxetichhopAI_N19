@@ -380,7 +380,7 @@ export default function GateControl({
           setInMessage({
             type: 'warning',
             text: detected 
-              ? `Độ chính xác nhận diện thấp (${(conf * 100).toFixed(1)}% < 70%). Vui lòng kiểm tra và hiệu chỉnh thủ công biển số (UC-15)!`
+              ? `Độ chính xác nhận diện thấp (${(conf * 100).toFixed(1)}% < 70%). Vui lòng kiểm tra và hiệu chỉnh thủ công biển số!`
               : `Không tìm thấy biển số xe hợp lệ từ ảnh. Vui lòng nhập biển số thủ công vào ô bên dưới!`,
             canOverride: true
           });
@@ -820,10 +820,20 @@ export default function GateControl({
                       <button
                         type="button"
                         onClick={captureInFrame}
-                        className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow"
+                        disabled={inScanning}
+                        className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow disabled:opacity-50"
                       >
-                        <Scan className="w-4 h-4" />
-                        <span>Chụp & Nhận Diện</span>
+                        {inScanning ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                            <span>Đang nhận diện...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Scan className="w-4 h-4" />
+                            <span>Chụp & Nhận Diện</span>
+                          </>
+                        )}
                       </button>
                     ) : (
                       <>
@@ -839,7 +849,17 @@ export default function GateControl({
                           disabled={inScanning}
                           className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer shadow"
                         >
-                          <span>Quét biển số</span>
+                          {inScanning ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                              <span>Đang quét...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Scan className="w-4 h-4" />
+                              <span>Quét biển số</span>
+                            </>
+                          )}
                         </button>
 
                         <button
@@ -850,15 +870,6 @@ export default function GateControl({
                         >
                           <RotateCcw className="w-4 h-4 text-cyan-400" />
                           <span>Làm mới</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => triggerInAiScan(null, true)}
-                          title="Giả lập tình huống độ tin cậy thấp < 70% để kiểm tra xác nhận thủ công"
-                          className="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 text-[10px] font-mono transition-all cursor-pointer"
-                        >
-                          Test UC-15
                         </button>
                       </>
                     )}
@@ -1171,10 +1182,20 @@ export default function GateControl({
                       <button
                         type="button"
                         onClick={captureOutFrame}
-                        className="flex-1 py-2 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow"
+                        disabled={outScanning}
+                        className="flex-1 py-2 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow disabled:opacity-50"
                       >
-                        <Scan className="w-4 h-4" />
-                        <span>Chụp & Nhận Diện</span>
+                        {outScanning ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                            <span>Đang nhận diện...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Scan className="w-4 h-4" />
+                            <span>Chụp & Nhận Diện</span>
+                          </>
+                        )}
                       </button>
                     ) : (
                       <>
@@ -1190,7 +1211,17 @@ export default function GateControl({
                           disabled={outScanning}
                           className="flex-1 py-2 px-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer shadow"
                         >
-                          <span>Quét biển số</span>
+                          {outScanning ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                              <span>Đang quét...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Scan className="w-4 h-4" />
+                              <span>Quét biển số</span>
+                            </>
+                          )}
                         </button>
 
                         <button

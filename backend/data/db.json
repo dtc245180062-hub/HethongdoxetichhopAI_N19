@@ -34,19 +34,19 @@
       "id": "A-01",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-01",
-      "trangThai": "Đã đỗ",
+      "trangThai": "Trống",
       "loaiXe": "OTO",
-      "bienSoXe": "36MI-108.88",
-      "thoiGianVao": "2026-10-29T15:00:25.885Z"
+      "bienSoXe": null,
+      "thoiGianVao": null
     },
     {
       "id": "A-02",
       "maKhuVuc": "KV-A",
       "tenViTri": "Vị trí A-02",
-      "trangThai": "Đã đỗ",
+      "trangThai": "Trống",
       "loaiXe": "OTO",
-      "bienSoXe": "36-N1 108.88",
-      "thoiGianVao": "2026-10-29T16:30:01.795Z"
+      "bienSoXe": null,
+      "thoiGianVao": null
     },
     {
       "id": "A-03",
@@ -133,10 +133,10 @@
       "id": "C-01",
       "maKhuVuc": "KV-C",
       "tenViTri": "Vị trí Xe máy C-01",
-      "trangThai": "Trống",
+      "trangThai": "Đã đỗ",
       "loaiXe": "XE_MAY",
-      "bienSoXe": null,
-      "thoiGianVao": null
+      "bienSoXe": "36-N1 108.88",
+      "thoiGianVao": "2026-10-29T23:08:30.558Z"
     },
     {
       "id": "C-02",
@@ -478,22 +478,148 @@
       "loaiDangKy": "VANG_LAI",
       "maTheRFID": "RFID-946286",
       "ngayDangKy": "2026-10-29"
+    },
+    {
+      "id": "XE-1793304771517",
+      "bienSo": "89-E1 188.96",
+      "loaiXe": "XE_MAY",
+      "chuXe": "Khách vãng lai",
+      "soDienThoai": "",
+      "loaiDangKy": "VANG_LAI",
+      "maTheRFID": "RFID-796177",
+      "ngayDangKy": "2026-10-29"
+    },
+    {
+      "id": "XE-1793304806842",
+      "bienSo": "20-M3 6052",
+      "loaiXe": "XE_MAY",
+      "chuXe": "Khách vãng lai",
+      "soDienThoai": "",
+      "loaiDangKy": "VANG_LAI",
+      "maTheRFID": "RFID-403936",
+      "ngayDangKy": "2026-10-29"
+    },
+    {
+      "id": "XE-1793304967756",
+      "bienSo": "23-D1 117.79",
+      "loaiXe": "XE_MAY",
+      "chuXe": "Khách vãng lai",
+      "soDienThoai": "",
+      "loaiDangKy": "VANG_LAI",
+      "maTheRFID": "RFID-842509",
+      "ngayDangKy": "2026-10-29"
     }
   ],
   "LuotVaoRa": [
+    {
+      "id": "LVR-1793315310558",
+      "bienSo": "36-N1 108.88",
+      "loaiXe": "Xe may",
+      "maViTri": "C-01",
+      "thoiGianVao": "2026-10-29T23:08:30.558Z",
+      "thoiGianRa": null,
+      "anhVao": "/uploads/plate-1793315310550-584957777.jpg",
+      "anhRa": null,
+      "trangThai": "Đang đỗ",
+      "tongTien": 0,
+      "phuongThucThanhToan": null,
+      "doTinCayAI": 0.95
+    },
+    {
+      "id": "LVR-1793305097676",
+      "bienSo": "20-M3 6052",
+      "loaiXe": "O to",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-29T20:18:17.676Z",
+      "thoiGianRa": "2026-10-29T20:18:23.179Z",
+      "anhVao": "/uploads/plate-1793305097673-940449927.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 20000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
+    {
+      "id": "LVR-1793304967756",
+      "bienSo": "23-D1 117.79",
+      "loaiXe": "Xe may",
+      "maViTri": "C-01",
+      "thoiGianVao": "2026-10-29T20:16:07.756Z",
+      "thoiGianRa": "2026-10-29T20:16:39.648Z",
+      "anhVao": "/uploads/plate-1793304967753-953331253.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
+    {
+      "id": "LVR-1793304869819",
+      "bienSo": "23-D1 497.07",
+      "loaiXe": "Xe may",
+      "maViTri": "C-01",
+      "thoiGianVao": "2026-10-29T20:14:29.819Z",
+      "thoiGianRa": "2026-10-29T20:14:36.609Z",
+      "anhVao": "/uploads/plate-1793304869816-883962966.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
+    {
+      "id": "LVR-1793304806842",
+      "bienSo": "20-M3 6052",
+      "loaiXe": "Xe may",
+      "maViTri": "A-08",
+      "thoiGianVao": "2026-10-29T20:13:26.842Z",
+      "thoiGianRa": "2026-10-29T20:13:46.058Z",
+      "anhVao": "/uploads/plate-1793304806834-271612028.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "TIEN_MAT",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
+    {
+      "id": "LVR-1793304771517",
+      "bienSo": "89-E1 188.96",
+      "loaiXe": "Xe may",
+      "maViTri": "A-01",
+      "thoiGianVao": "2026-10-29T20:12:51.517Z",
+      "thoiGianRa": "2026-10-29T20:12:59.505Z",
+      "anhVao": "/uploads/plate-1793304771513-571241387.jpg",
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.95,
+      "soGioGui": 1,
+      "loaiVe": "VANG_LAI"
+    },
     {
       "id": "LVR-1793291401795",
       "bienSo": "36-N1 108.88",
       "loaiXe": "Xe may",
       "maViTri": "A-02",
       "thoiGianVao": "2026-10-29T16:30:01.795Z",
-      "thoiGianRa": null,
+      "thoiGianRa": "2026-10-29T19:23:01.052Z",
       "anhVao": "/uploads/plate-1793291401789-663059723.jpg",
-      "anhRa": null,
-      "trangThai": "Đang đỗ",
-      "tongTien": 0,
-      "phuongThucThanhToan": null,
-      "doTinCayAI": 0.88
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 5000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.88,
+      "soGioGui": 3,
+      "loaiVe": "VANG_LAI"
     },
     {
       "id": "LVR-1793283304348",
@@ -501,13 +627,15 @@
       "loaiXe": "O to",
       "maViTri": "A-01",
       "thoiGianVao": "2026-10-29T15:00:25.885Z",
-      "thoiGianRa": null,
+      "thoiGianRa": "2026-10-29T19:25:18.858Z",
       "anhVao": "/uploads/plate-1793286025880-481270253.jfif",
-      "anhRa": null,
-      "trangThai": "Đang đỗ",
-      "tongTien": 0,
-      "phuongThucThanhToan": null,
-      "doTinCayAI": 0.88
+      "anhRa": "/uploads/default_out.jpg",
+      "trangThai": "Đã ra",
+      "tongTien": 100000,
+      "phuongThucThanhToan": "QR_CODE",
+      "doTinCayAI": 0.88,
+      "soGioGui": 5,
+      "loaiVe": "VANG_LAI"
     },
     {
       "id": "LVR-1793283304348",
@@ -1707,7 +1835,7 @@
       "thoiGianDat": "2026-10-29T18:58:15.706Z",
       "thoiGianDen": "12:00",
       "hanGiuCho": "2026-10-29T19:28:15.706Z",
-      "trangThai": "DA_XAC_NHAN",
+      "trangThai": "HUY_DO_QUA_HAN",
       "ghiChu": "cẩn thận"
     },
     {
@@ -1721,7 +1849,7 @@
       "thoiGianDat": "2026-10-28T10:45:59.646Z",
       "thoiGianDen": "2026-10-28T11:15:59.646Z",
       "hanGiuCho": "2026-10-28T11:30:59.646Z",
-      "trangThai": "DA_XAC_NHAN",
+      "trangThai": "HUY_DO_QUA_HAN",
       "ghiChu": "Đặt giữ chỗ trước ô Vị trí A-01"
     },
     {
@@ -1735,7 +1863,7 @@
       "thoiGianDat": "2026-10-28T08:57:18.402Z",
       "thoiGianDen": "16:37",
       "hanGiuCho": "2026-10-28T09:42:18.402Z",
-      "trangThai": "DA_XAC_NHAN",
+      "trangThai": "HUY_DO_QUA_HAN",
       "ghiChu": "hh"
     },
     {
@@ -1749,7 +1877,7 @@
       "thoiGianDat": "2026-10-03T08:47:18.468Z",
       "thoiGianDen": "2026-10-03T09:17:18.468Z",
       "hanGiuCho": "2026-10-03T09:32:18.468Z",
-      "trangThai": "DA_XAC_NHAN",
+      "trangThai": "HUY_DO_QUA_HAN",
       "ghiChu": "Đặt giữ chỗ trước ô Vị trí A-02"
     }
   ],
@@ -1907,6 +2035,107 @@
       "answer": "Tổng doanh thu thực nhận hôm nay đạt 49.785.000 VNĐ từ 62 lượt thanh toán. Phân bổ phương thức thanh toán: Chuyển khoản QR đạt 38% (19.020.000 VNĐ), Tiền mặt chiếm 62%, Thẻ tháng/cư dân chiếm 0%. Tỷ lệ thanh toán không tiền mặt đạt 38%.",
       "intent": "REVENUE",
       "created_at": "2026-10-29T18:19:31.752Z"
+    },
+    {
+      "id": "LOG-1793305117960-744",
+      "admin_id": "USR-001",
+      "question": "hi",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T20:18:37.960Z"
+    },
+    {
+      "id": "LOG-1793305140239-71",
+      "admin_id": "USR-001",
+      "question": "chỗ còn trống",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T20:19:00.239Z"
+    },
+    {
+      "id": "LOG-1793305171439-103",
+      "admin_id": "USR-001",
+      "question": "doanh thu",
+      "answer": "Tổng doanh thu thực nhận hôm nay đạt 49.930.000 VNĐ từ 69 lượt thanh toán. Phân bổ phương thức thanh toán: Chuyển khoản QR đạt 38% (19.160.000 VNĐ), Tiền mặt chiếm 62%, Thẻ tháng/cư dân chiếm 0%. Tỷ lệ thanh toán không tiền mặt đạt 38%.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T20:19:31.439Z"
+    },
+    {
+      "id": "LOG-1793305180743-350",
+      "admin_id": "USR-001",
+      "question": "khung giờ cao điem",
+      "answer": "Khung giờ đông xe nhất trong ngày là 17:30 - 20:30 (đạt mật độ 92% công suất). Ngoài ra có khung giờ cao điểm sáng lúc 07:30 - 09:00 (~75%). Hiện tại bãi đang có 0 xe đang đỗ (0% công suất).",
+      "intent": "PEAK_HOURS",
+      "created_at": "2026-10-29T20:19:40.743Z"
+    },
+    {
+      "id": "LOG-1793305191243-826",
+      "admin_id": "USR-001",
+      "question": "ca truc",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T20:19:51.243Z"
+    },
+    {
+      "id": "LOG-1793305199705-412",
+      "admin_id": "USR-001",
+      "question": "ca trực",
+      "answer": "Đề xuất bố trí 2 nhân viên cho Ca Chiều - Tối (14h - 22h) và 1 nhân viên cho Ca Sáng, 1 nhân viên cho Ca Đêm. Tổng định mức nhân sự trong ngày là 4 người, nhờ hệ thống AI OCR tự động hóa 98.5% lượt xe vào/ra.",
+      "intent": "STAFFING",
+      "created_at": "2026-10-29T20:19:59.705Z"
+    },
+    {
+      "id": "LOG-1793306011603-151",
+      "admin_id": "USR-001",
+      "question": "doanh thu hôm nay",
+      "answer": "Tổng doanh thu thực nhận hôm nay đạt 49.930.000 VNĐ từ 69 lượt thanh toán. Phân bổ phương thức thanh toán: Chuyển khoản QR đạt 38% (19.160.000 VNĐ), Tiền mặt chiếm 62%, Thẻ tháng/cư dân chiếm 0%. Tỷ lệ thanh toán không tiền mặt đạt 38%.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T20:33:31.603Z"
+    },
+    {
+      "id": "LOG-1793306715214-52",
+      "user_id": "ADMIN",
+      "role": "ADMIN",
+      "question": "hãy tính tổng doanh thu với thời gian thực và tính đúng theo ngày chứ không được tổng hợp như này",
+      "answer": "Doanh thu thực nhận hôm nay (30/10/2026) đạt 145.000 VNĐ từ 7 lượt xe đã xuất bãi (thời gian thực lúc 03:45:15). So với hôm qua (60.000 VNĐ, 3 lượt), doanh thu tăng trưởng +142%. Phương thức thanh toán hôm nay: Chuyển khoản QR đạt 140.000 VNĐ (97%), Tiền mặt đạt 5.000 VNĐ (3%). Tổng doanh thu tích lũy toàn hệ thống (All-time) đạt 49.930.000 VNĐ từ 69 lượt xe.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T20:45:15.214Z"
+    },
+    {
+      "id": "LOG-1793306777872-424",
+      "user_id": "ADMIN",
+      "role": "ADMIN",
+      "question": "hãy tính tổng doanh thu với thời gian thực và tính đúng theo ngày chứ không được tổng hợp như này",
+      "answer": "Doanh thu thực nhận hôm nay (30/10/2026) đạt 145.000 VNĐ từ 7 lượt xe đã xuất bãi (thời gian thực lúc 03:46:17). So với hôm qua (60.000 VNĐ, 3 lượt), doanh thu tăng trưởng +142%. Phương thức thanh toán hôm nay: Chuyển khoản QR đạt 140.000 VNĐ (97%), Tiền mặt đạt 5.000 VNĐ (3%). Tổng doanh thu tích lũy toàn hệ thống (All-time) đạt 49.930.000 VNĐ từ 69 lượt xe.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T20:46:17.872Z"
+    },
+    {
+      "id": "LOG-1793306850718-893",
+      "user_id": "USR-001",
+      "role": "ADMIN",
+      "question": "tổng doanh thu ngày hôm nay",
+      "answer": "Doanh thu thực nhận hôm nay (30/10/2026) đạt 145.000 VNĐ từ 7 lượt xe đã xuất bãi (thời gian thực lúc 03:47:30). So với hôm qua (60.000 VNĐ, 3 lượt), doanh thu tăng trưởng +142%. Phương thức thanh toán hôm nay: Chuyển khoản QR đạt 140.000 VNĐ (97%), Tiền mặt đạt 5.000 VNĐ (3%). Tổng doanh thu tích lũy toàn hệ thống (All-time) đạt 49.930.000 VNĐ từ 69 lượt xe.",
+      "intent": "REVENUE",
+      "created_at": "2026-10-29T20:47:30.718Z"
+    },
+    {
+      "id": "LOG-1793309795309-351",
+      "user_id": "USR-001",
+      "role": "ADMIN",
+      "question": "alo",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T21:36:35.309Z"
+    },
+    {
+      "id": "LOG-1793315392298-479",
+      "user_id": "USR-001",
+      "role": "ADMIN",
+      "question": "alo",
+      "answer": "Câu hỏi nằm ngoài phạm vi nghiệp vụ quản lý bãi đỗ xe hoặc chưa rõ nghĩa. Quản trị viên vui lòng tra cứu các chủ đề hợp lệ: Doanh thu bãi xe, Khung giờ cao điểm, Phương thức thanh toán, hoặc Đề xuất bố trí ca trực.",
+      "intent": "GENERAL",
+      "created_at": "2026-10-29T23:09:52.298Z"
     }
   ]
 }
