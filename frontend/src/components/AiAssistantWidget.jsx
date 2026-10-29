@@ -9,29 +9,57 @@ import {
   DollarSign,
   Users,
   RefreshCw,
-  Lightbulb
+  Car,
+  HelpCircle,
+  MessageSquare
 } from 'lucide-react';
 import { api } from '../services/api';
 
-const SAMPLE_PROMPTS = [
-  {
-    icon: Clock,
-    label: 'Khung giờ nào đông xe nhất?',
-    prompt: 'Khung giờ nào đông xe nhất?'
-  },
-  {
-    icon: DollarSign,
-    label: 'Báo cáo doanh thu hôm nay',
-    prompt: 'Báo cáo doanh thu hôm nay'
-  },
-  {
-    icon: Users,
-    label: 'Bố trí nhân sự thế nào?',
-    prompt: 'Bố trí nhân sự thế nào?'
-  }
-];
-
 export default function AiAssistantWidget({ currentUser }) {
+  // RÀNG BUỘC PHÂN QUYỀN: Nhân viên bảo vệ (BAO_VE / Operator) KHÔNG ĐƯỢC PHÉP truy cập
+  if (currentUser?.vaiTro === 'BAO_VE') {
+    return null;
+  }
+
+  const isKhachHang = currentUser?.vaiTro === 'KHACH_HANG';
+
+  // Danh mục câu hỏi gợi ý nhanh theo vai trò
+  const SAMPLE_PROMPTS = isKhachHang
+    ? [
+        {
+          icon: Car,
+          label: 'Bãi xe còn bao nhiêu chỗ trống?',
+          prompt: 'Bãi xe còn bao nhiêu chỗ trống các khu vực?'
+        },
+        {
+          icon: DollarSign,
+          label: 'Bảng giá gửi xe chi tiết?',
+          prompt: 'Bảng giá gửi xe ô tô và xe máy tính như thế nào?'
+        },
+        {
+          icon: HelpCircle,
+          label: 'Hướng dẫn thủ tục đặt chỗ trước?',
+          prompt: 'Hướng dẫn quy trình đặt chỗ đỗ xe trước và quản lý phương tiện'
+        }
+      ]
+    : [
+        {
+          icon: Clock,
+          label: 'Khung giờ nào đông xe nhất?',
+          prompt: 'Khung giờ nào đông xe nhất trong ngày?'
+        },
+        {
+          icon: DollarSign,
+          label: 'Báo cáo doanh thu hôm nay',
+          prompt: 'Báo cáo doanh thu và phương thức thanh toán hôm nay'
+        },
+        {
+          icon: Users,
+          label: 'Bố trí nhân sự ca trực thế nào?',
+          prompt: 'Đề xuất phân bổ và bố trí nhân sự các ca trực hôm nay'
+        }
+      ];
+
   const [isOpen, setIsOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,15 +69,23 @@ export default function AiAssistantWidget({ currentUser }) {
       sender: 'assistant',
       time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
       data: {
-        topic: 'Trợ lý AI hỗ trợ quản trị',
-        summary: 'Xin chào Quản trị viên! Tôi là Trợ lý AI hỗ trợ tra cứu nhanh số liệu doanh thu, phân tích khung giờ cao điểm và đề xuất bố trí ca trực.',
-        details: [
-          '🕒 **Phân tích khung giờ cao điểm**: Xác định thời điểm bãi xe đạt mật độ đông nhất và dự báo lưu lượng xe.',
-          '💰 **Báo cáo doanh thu & dòng tiền**: Thống kê số tiền thực nhận hôm nay và phân bổ theo phương thức thanh toán.',
-          '👥 **Đề xuất bố trí nhân sự**: Gợi ý phân bổ số lượng nhân sự các ca trực hợp lý theo lưu lượng xe dự kiến.'
-        ],
+        topic: isKhachHang ? 'Trợ lý AI Dịch vụ Khách hàng' : 'Trợ lý AI hỗ trợ quản trị',
+        summary: isKhachHang
+          ? 'Xin chào quý khách! Tôi là Trợ lý AI hỗ trợ tra cứu chỗ trống bãi xe theo thời gian thực, bảng giá dịch vụ và hướng dẫn thủ tục gửi xe.'
+          : 'Xin chào Quản trị viên! Tôi là Trợ lý AI hỗ trợ tra cứu nhanh số liệu doanh thu, phân tích khung giờ cao điểm và đề xuất bố trí ca trực.',
+        details: isKhachHang
+          ? [
+              '🚗 **Tình trạng chỗ trống**: Cập nhật tức thời số lượng vị trí trống tại Khu A, Khu B, Khu C và Khu D.',
+              '💵 **Bảng giá minh bạch**: Tra cứu biểu phí gửi xe theo giờ, qua đêm và vé tháng dành cho ô tô, xe máy.',
+              '📋 **Hướng dẫn dịch vụ**: Hỗ trợ thủ tục đặt chỗ trước, đăng ký vé tháng và quy trình ra vào cổng tự động.'
+            ]
+          : [
+              '🕒 **Phân tích khung giờ cao điểm**: Xác định thời điểm bãi xe đạt mật độ đông nhất và dự báo lưu lượng xe 24h tới.',
+              '💰 **Báo cáo doanh thu & dòng tiền**: Thống kê số tiền thực nhận hôm nay và phân bổ theo phương thức thanh toán.',
+              '👥 **Đề xuất bố trí nhân sự**: Gợi ý phân bổ số lượng nhân sự các ca trực hợp lý theo lưu lượng xe dự kiến.'
+            ],
         recommendations: [
-          'Bạn có thể bấm vào các câu hỏi gợi ý nhanh bên trên hoặc nhập nội dung câu hỏi tự do vào ô chat bên dưới.'
+          'Bạn có thể bấm vào các câu hỏi gợi ý nhanh bên trên hoặc nhập nội dung câu hỏi vào ô chat bên dưới.'
         ]
       }
     }
@@ -90,7 +126,7 @@ export default function AiAssistantWidget({ currentUser }) {
           sender: 'assistant',
           time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
           data: res.data || {
-            topic: res.topic || 'Trợ lý AI hỗ trợ quản trị',
+            topic: res.topic || (isKhachHang ? 'Trợ lý AI Dịch vụ Khách hàng' : 'Trợ lý AI hỗ trợ quản trị'),
             summary: res.answer || res.summary,
             details: [res.answer]
           }
@@ -124,27 +160,34 @@ export default function AiAssistantWidget({ currentUser }) {
 
   return (
     <>
-      {/* 1. Nút nổi mở Chat (Nền trắng chữ đen sang trọng) */}
+      {/* 1. NÚT BONG BÓNG CHAT MÀU XANH GỌN GÀNG (FAB - KHÔNG BỊ VƯỚNG) */}
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group flex items-center gap-3 px-4 py-3 rounded-full bg-white hover:bg-slate-50 text-gray-900 font-semibold shadow-xl shadow-gray-400/25 border border-gray-200 transition-all duration-200 transform hover:scale-105 active:scale-95 cursor-pointer"
-        >
-          <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-100">
-            <Bot className="w-4 h-4" />
-            <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
+        <div className="fixed bottom-6 right-6 z-50 flex items-center group">
+          {/* Tooltip chỉ hiển thị khi rê chuột vào để không che các nút chức năng khác */}
+          <div className="mr-3 px-3 py-1.5 rounded-xl bg-gray-900/90 backdrop-blur-md text-white text-xs font-medium shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap hidden sm:block">
+            {isKhachHang ? 'Trợ lý AI Khách hàng' : 'Trợ lý AI Quản trị'}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 border-4 border-transparent border-l-gray-900/90"></div>
           </div>
-          <span className="text-xs font-bold text-gray-900 tracking-tight">Trợ lý AI hỗ trợ quản trị</span>
-          <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
-            Online
-          </span>
-        </button>
+
+          {/* Bong bóng chat hình tròn màu xanh hiện đại */}
+          <button
+            onClick={() => setIsOpen(true)}
+            aria-label="Mở Trợ lý AI"
+            title={isKhachHang ? 'Trợ lý AI Khách hàng' : 'Trợ lý AI Quản trị'}
+            className="relative w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/35 border-2 border-white transition-all duration-200 transform hover:scale-110 active:scale-95 cursor-pointer"
+          >
+            <Bot className="w-7 h-7 drop-shadow-xs" />
+
+            {/* Chấm trạng thái Online xanh lá cây */}
+            <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+            </span>
+          </button>
+        </div>
       )}
 
-      {/* 2. Cửa sổ Chat Trợ lý AI (Giao diện Màu trắng chữ đen) */}
+      {/* 2. CỬA SỔ CHAT TRỢ LÝ AI (NỀN TRẮNG CHỮ ĐEN HIỆN ĐẠI, 0% CHỮ UC) */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[95vw] sm:w-[480px] h-[640px] max-h-[85vh] rounded-2xl bg-white border border-gray-200 shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
           {/* Header */}
@@ -155,14 +198,18 @@ export default function AiAssistantWidget({ currentUser }) {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-sm text-gray-900">Trợ lý AI hỗ trợ quản trị</h3>
+                  <h3 className="font-bold text-sm text-gray-900">
+                    {isKhachHang ? 'Trợ lý AI Dịch vụ Khách hàng' : 'Trợ lý AI hỗ trợ quản trị'}
+                  </h3>
                   <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-medium border border-emerald-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     Online
                   </span>
                 </div>
                 <p className="text-[11px] text-gray-500 mt-0.5">
-                  Tra cứu doanh thu • Giờ cao điểm • Bố trí ca trực
+                  {isKhachHang
+                    ? 'Chỗ trống thời gian thực • Bảng giá • Đặt chỗ'
+                    : 'Tra cứu doanh thu • Giờ cao điểm • Bố trí ca trực'}
                 </p>
               </div>
             </div>
@@ -252,44 +299,31 @@ export default function AiAssistantWidget({ currentUser }) {
                           )}
 
                           {msg.data.recommendations && msg.data.recommendations.length > 0 && (
-                            <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100 space-y-1 mt-2 text-gray-800">
-                              <div className="text-[11px] font-bold text-blue-900 uppercase flex items-center gap-1.5">
-                                <Lightbulb className="w-3.5 h-3.5 text-amber-500" /> Đề xuất điều phối:
+                            <div className="mt-2 p-2.5 rounded-xl bg-blue-50/60 border border-blue-100 text-blue-900 text-[11px] space-y-1">
+                              <div className="font-semibold text-blue-800 flex items-center gap-1">
+                                <span>💡 Khuyến nghị tối ưu:</span>
                               </div>
-                              <ul className="list-disc list-inside text-[11px] text-gray-700 space-y-0.5">
-                                {msg.data.recommendations.map((rec, i) => (
-                                  <li key={i}>{rec}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          {msg.data.stats && (
-                            <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                              {Object.entries(msg.data.stats).map(([k, v]) => (
-                                <span
-                                  key={k}
-                                  className="px-2.5 py-0.5 rounded-md bg-gray-50 text-gray-800 border border-gray-200 text-[10px] font-medium"
-                                >
-                                  {k}: <strong className="text-gray-900 font-bold">{v}</strong>
-                                </span>
+                              {msg.data.recommendations.map((rec, rIdx) => (
+                                <div key={rIdx} className="leading-relaxed">
+                                  • {rec}
+                                </div>
                               ))}
                             </div>
                           )}
                         </>
                       ) : (
-                        <p className="text-gray-800 leading-relaxed">{msg.text}</p>
+                        <div className="text-gray-800 leading-relaxed">{msg.text}</div>
                       )}
                     </div>
                   )}
 
-                  <span className="text-[10px] text-gray-400 px-1 font-mono block">
+                  <div className={`text-[10px] text-gray-400 px-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
                     {msg.time}
-                  </span>
+                  </div>
                 </div>
 
                 {msg.sender === 'user' && (
-                  <div className="w-7 h-7 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center shrink-0 border border-gray-200 mt-0.5">
+                  <div className="w-7 h-7 rounded-lg bg-gray-900 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
                     <User className="w-3.5 h-3.5" />
                   </div>
                 )}
@@ -297,7 +331,7 @@ export default function AiAssistantWidget({ currentUser }) {
             ))}
 
             {loading && (
-              <div className="flex gap-3 justify-start items-center">
+              <div className="flex gap-3 justify-start">
                 <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200">
                   <Bot className="w-3.5 h-3.5 animate-spin" />
                 </div>
@@ -327,7 +361,11 @@ export default function AiAssistantWidget({ currentUser }) {
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Nhập câu hỏi về doanh thu, khung giờ cao điểm, ca trực..."
+              placeholder={
+                isKhachHang
+                  ? 'Hỏi về chỗ trống, bảng giá, thủ tục đặt chỗ...'
+                  : 'Nhập câu hỏi về doanh thu, khung giờ cao điểm, ca trực...'
+              }
               disabled={loading}
               className="flex-1 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs text-gray-900 placeholder-gray-400 outline-none transition-all"
             />
